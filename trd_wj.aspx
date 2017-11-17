@@ -63,6 +63,8 @@
                 bbmMask = [['txtDatea', r_picd], ['txtMon', r_picm], ['txtBdate', r_picd], ['txtEdate', r_picd], ['txtBtrandate', r_picd], ['txtEtrandate', r_picd], ['txtVccadate', r_picd]];
                 q_mask(bbmMask);
                 //q_cmbParse("cmbCarteamno", t_carteam);
+                var t_where = "where=^^ 1=1 ^^";
+                q_gt('calctype',t_where, 0, 0, 0, "");
                 
 				$('#txtBdate').datepicker();
 				$('#txtEdate').datepicker();
@@ -122,6 +124,7 @@
                 	var t_etrandate = $.trim($('#txtEtrandate').val());
                 	var t_baddrno = $.trim($('#txtStraddrno').val());
                 	var t_eaddrno = $.trim($('#txtEndaddrno').val());
+                	var t_trtype = $.trim($('#cmbTrtype').val());
                 	var t_where = "(b.noa is null or b.noa='"+t_noa+"')";
                 	t_where += " and a.custno='"+t_custno+"'";
                 	t_where += t_bdate.length>0?" and a.datea>='"+t_bdate+"'":"";
@@ -130,6 +133,7 @@
                 	t_where += t_etrandate.length>0?" and a.trandate<='"+t_etrandate+"'":"";
                 	t_where += t_baddrno.length>0?" and a.straddrno>='"+t_baddrno+"'":"";
                 	t_where += t_eaddrno.length>0?" and a.straddrno<='"+t_eaddrno+"'":"";
+                	t_where += t_trtype.length>0?" and a.calctype<='"+t_trtype+"'":"";
 
                 	var t_po = "";
                 	if ($.trim($('#txtPo').val()).length > 0) {
@@ -171,6 +175,14 @@
 				
             function q_gtPost(t_name) {
                 switch (t_name) {
+                    case 'calctype':
+                        var as = _q_appendData("calctype", "", true);
+                        var t_calctype='@';
+                        for ( i = 0; i < as.length; i++) {
+                            t_calctype+=","+as[i].namea;
+                        }
+                        q_cmbParse("cmbTrtype", t_calctype);
+                        break;
                 	case 'carteam':
 						var as = _q_appendData("carteam", "", true);
 						t_carteam = "@";
@@ -824,8 +836,8 @@
 						<td class="tdZ"> </td>
 					</tr>
 					<tr class="trX">
-						<td> </td>
-						<td> </td>
+						<td><span> </span><a id="lblTrtype_wj" class="lbl">類別</a></td>
+						<td><select id="cmbTrtype"> </select></td>
 						<td> </td>
 						<td> </td>
 						<td> </td>

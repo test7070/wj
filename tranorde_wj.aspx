@@ -31,7 +31,7 @@
             q_alias = '';
             q_desc = 1;
             //q_xchg = 1;
-            brwCount2 = 5;
+            brwCount2 = 9;
             aPop = new Array(['txtCustno', 'lblCust', 'cust', 'noa,comp,nick,memo2', 'txtCustno,txtComp,txtNick,txtMemo', 'cust_b.aspx'] 
                 ,['txtAddrno', 'lblAddr_js', 'addr2_wj', 'custno,cust,address', 'txtAddrno,txtAddr,txtBoat', 'addr2_b2.aspx']
                 ,['txtProductno_', 'btnProduct_', 'ucc', 'noa,product', 'txtProductno_,txtProduct_', 'ucc_b.aspx']
@@ -225,11 +225,18 @@
                     $('#lblNo__' + i).text(i + 1);
                     if($('#btnMinus__' + i).hasClass('isAssign'))
                         continue;
+                    $('#combCalctype_' + i).change(function() {
+                            t_IdSeq = -1;
+                            q_bodyId($(this).attr('id'));
+                            b_seq = t_IdSeq;
+                            if(q_cur==1 || q_cur==2)
+                                $('#txtCalctype_'+b_seq).val($('#combCalctype_'+b_seq).find("option:selected").text());
+                    });
                 }
                 _bbtAssign();
             }
             function bbsSave(as) {
-                if (!as['addrno2'] && !as['addrno'] && !as['productno'] && !as['product2']) {
+                if (!as['calctype'] && !as['addrno2'] && !as['addrno'] && !as['productno'] && !as['product2']) {
                     as[bbsKey[1]] = '';
                     return;
                 }
@@ -379,6 +386,16 @@
                             t_chgitem+=","+as[i].item;
                         }
                         q_cmbParse("combProduct", t_chgitem,'s');
+                        var t_where = "where=^^ 1=1 ^^";
+                        q_gt('calctype',t_where, 0, 0, 0, "");
+                        break;
+                    case 'calctype':
+                        var as = _q_appendData("calctype", "", true);
+                        var t_calctype='@';
+                        for ( i = 0; i < as.length; i++) {
+                            t_calctype+=","+as[i].namea;
+                        }
+                        q_cmbParse("combCalctype", t_calctype,'s');
                         break;
                     case 'addr2':
                             var as = _q_appendData("addr2", "", true);
@@ -593,8 +610,8 @@
                     <tr>
                         <td align="center" style="width:20px; color:black;"><a id='vewChk'> </a></td>
                         <td align="center" style="width:120px; color:black;"><a>單號</a></td>
-                        <td align="center" style="width:120px; color:black;"><a>客戶</a></td>
-                        <td align="center" style="width:80px; color:black;"><a>日期</a></td>
+                        <td align="center" style="width:130px; color:black;"><a>客戶</a></td>
+                        <td align="center" style="width:95px; color:black;"><a>日期</a></td>
                     </tr>
                     <tr>
                         <td><input id="chkBrow.*" type="checkbox"/></td>
@@ -698,6 +715,7 @@
                 <tr style='color:white; background:#003366;' >
                     <td align="center" style="width:25px"><input class="btn"  id="btnPlus" type="button" value='+' style="font-weight: bold;"  /></td>
                     <td align="center" style="width:20px;"> </td>
+                    <td align="center" style="width:70px"><a>類別</a></td>
                     <td align="center" style="width:200px"><a>提貨地點</a></td>
                     <td align="center" style="width:70px"><a>危險等級</a></td>
                     <td align="center" style="width:150px"><a>品名</a></td>
@@ -734,6 +752,10 @@
                         <input type="text" id="txtNoq.*" style="display:none;"/>
                     </td>
                     <td><a id="lblNo.*" style="font-weight: bold;text-align: center;display: block;"> </a></td>
+                    <td>
+                        <input type="text" id="txtCalctype.*" type="text" class="txt c1" style="width: 69%;"/>
+                        <select id="combCalctype.*" class="txt" style="width: 17px;"> </select>
+                    </td>
                     <td>
                         <input type="text" id="txtAddrno.*" style="width:45%;" />
                         <input type="text" id="txtAddr.*" style="width:45%;" />

@@ -87,7 +87,8 @@
                     t_custno=$('#txtAddrno').val();
                     t_cno=$('#txtCno').val();
                     t_po=$('#txtLat').val();
-                    var t_where = "(addrno3='"+t_cno+"' or len('"+t_cno+"')=0) and (conn='"+t_custno+"' or len('"+t_custno+"')=0) and (caseno='"+t_po+"' or len('"+t_po+"')=0)and not exists(select noa,noq from view_tranvcces where ordeno=a.noa and no2=a.noq)";
+                    t_date=$('#txtDatea').val();
+                    var t_where = "(date2 between '"+q_cdn(t_date,-1)+"' and '"+q_cdn(t_date,1)+"') and (addrno3='"+t_cno+"' or len('"+t_cno+"')=0) and (conn='"+t_custno+"' or len('"+t_custno+"')=0) and (caseno='"+t_po+"' or len('"+t_po+"')=0)and not exists(select noa,noq from view_tranvcces where ordeno=a.noa and no2=a.noq)";
                     q_box("tranordewj_b.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";" + t_where, 'tranorde_tranvcce', "100%", "100%", "");
                 });
 
@@ -197,8 +198,8 @@
                                 if (!b_ret || b_ret.length == 0)
                                     return;
                                     ret = q_gridAddRow(bbsHtm, 'tbbs', 
-                                    'txtConn,txtCustno,txtCust,txtBdate,txtTime1,txtEdate,txtTime2,txtTypea,txtProductno,txtProduct,txtUnit,txtWeight,txtMount,txtTvolume,txtTheight,txtCarno,txtDriverno,txtDriver,txtAddrno,txtAddr,txtAddress,txtAddrno2,txtAddr2,txtAddress2,txtTranno,txtOrdeno,txtNo2,txtMemo,txtUno,txtVolume,txtTotal,txtWidth,txtTotal2,txtProduct2,txtHeight,txtLat', b_ret.length, b_ret, 
-                                    'caseno,conn,tel,date1,time1,date2,time2,typea,productno,product,unit,theight,mount,total2,total3,carno,driverno,driver,addrno,addr,address,addrno2,addr2,address2,tranno,noa,noq,memo,uno,price,money,width,total,product2,height,containerno1','txtCustno,txtAddrno,txtCarno');
+                                    'txtCalctype,txtConn,txtCustno,txtCust,txtBdate,txtTime1,txtEdate,txtTime2,txtTypea,txtProductno,txtProduct,txtUnit,txtWeight,txtMount,txtTvolume,txtTheight,txtCarno,txtDriverno,txtDriver,txtAddrno,txtAddr,txtAddress,txtAddrno2,txtAddr2,txtAddress2,txtTranno,txtOrdeno,txtNo2,txtMemo,txtUno,txtVolume,txtTotal,txtWidth,txtTotal2,txtProduct2,txtHeight,txtLat', b_ret.length, b_ret, 
+                                    'calctype,caseno,conn,tel,date1,time1,date2,time2,typea,productno,product,unit,theight,mount,total2,total3,carno,driverno,driver,addrno,addr,address,addrno2,addr2,address2,tranno,noa,noq,memo,uno,price,money,width,total,product2,height,containerno1','txtCalctype,txtBdate,txtTime1,txtEdate,txtTime2,,txtCustno,txtAddrno,txtCarno');
                              }
                         break;
                     case q_name + '_s':
@@ -217,6 +218,16 @@
                             t_chgitem+=","+as[i].item;
                         }
                         q_cmbParse("combProduct", t_chgitem,'s');
+                        var t_where = "where=^^ 1=1 ^^";
+                        q_gt('calctype',t_where, 0, 0, 0, "");
+                        break;
+                    case 'calctype':
+                        var as = _q_appendData("calctype", "", true);
+                        var t_calctype='@';
+                        for ( i = 0; i < as.length; i++) {
+                            t_calctype+=","+as[i].namea;
+                        }
+                        q_cmbParse("combCalctype", t_calctype,'s');
                         break;
                     case 'addr2':
                             var as = _q_appendData("addr2", "", true);
@@ -422,6 +433,14 @@
                          $('#txtCust_' + i).focus(function () {
                             if (!$(this).val())
                                 q_msg($(this), '=號複製上一筆摘要');
+                         });
+                         
+                         $('#combCalctype_' + i).change(function() {
+                            t_IdSeq = -1;
+                            q_bodyId($(this).attr('id'));
+                            b_seq = t_IdSeq;
+                            if(q_cur==1 || q_cur==2)
+                                $('#txtCalctype_'+b_seq).val($('#combCalctype_'+b_seq).find("option:selected").text());
                          });           
                 }
                 _bbsAssign();
@@ -490,7 +509,7 @@
             }
 
             function bbsSave(as) {
-                if (!as['custno'] && !as['addrno2'] && !as['carno']) {
+                if (!as['calctype'] && !as['custno'] && !as['addrno2'] && !as['carno']) {
                     as[bbsKey[1]] = '';
                     return;
                 }
@@ -872,6 +891,7 @@
 				<tr style='color:white; background:#003366;' >
 					<td align="center" style="width:25px"><input class="btn"  id="btnPlus" type="button" value='+' style="font-weight: bold;"  /></td>
 					<td align="center" style="width:20px;"> </td>
+					<td align="center" style="width:70px"><a>類別</a></td>
 					<td align="center" style="width:60px"><a>客戶</a></td>
 					<td align="center" style="width:150px"><a>提貨地點</a></td>
 					<td align="center" style="width:50px"><a>裝貨日期</a></td>
@@ -910,6 +930,10 @@
 						<input type="text" id="txtNoq.*" style="display:none;"/>
 					</td>
 					<td><a id="lblNo.*" style="font-weight: bold;text-align: center;display: block;"> </a></td>
+					<td>
+                        <input type="text" id="txtCalctype.*" type="text" class="txt c1" style="width: 70%;"/>
+                        <select id="combCalctype.*" class="txt" style="width: 20px;"> </select>
+                    </td>
 					<td>
 					    <input type="text" id="txtConn.*" style="display:none;" />
                         <input type="text" id="txtCustno.*" style="float:left;width:95%;" />

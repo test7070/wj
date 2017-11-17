@@ -205,6 +205,14 @@
                             if(q_cur==1 || q_cur==2)
                                 $('#txtTimea_'+b_seq).val($('#combProduct_'+b_seq).find("option:selected").text());
                     });
+                    
+                    $('#combCalctype_' + i).change(function() {
+                            t_IdSeq = -1;
+                            q_bodyId($(this).attr('id'));
+                            b_seq = t_IdSeq;
+                            if(q_cur==1 || q_cur==2)
+                                $('#txtCalctype_'+b_seq).val($('#combCalctype_'+b_seq).find("option:selected").text());
+                    }); 
 				}
 				_bbsAssign();
 				$('#tbbs').find('tr.data').children().hover(function(e){
@@ -225,7 +233,7 @@
 			}
 
 			function bbsSave(as) {
-				if (!as['custno'] && !as['straddrno'] && !as['endaddrno']) {
+				if (!as['calctype'] && !as['custno'] && !as['straddrno'] && !as['endaddrno']) {
 					as[bbsKey[1]] = '';
 					return;
 				}
@@ -246,8 +254,8 @@
                         	as = b_ret;
                         	while(q_bbsCount<as.length)
                         		$('#btnPlus').click();
-				q_gridAddRow(bbsHtm, 'tbbs', 'txtOrdeno,txtCstype,txtCarno,txtCustno,txtComp,txtNick,txtProductno,txtProduct,txtMount,txtUnit,txtVolume,txtWeight,txtStraddrno,txtStraddr,txtEndaddrno,txtEndaddr,txtMemo,txtTotal'
-                        	, as.length, as, 'ordeno,typea,carno,custno,cust,cust,productno,product,mount,unit,volume,weight,straddrno,straddr,endaddrno,endaddr,memo,total', '','');
+				q_gridAddRow(bbsHtm, 'tbbs', 'txtCalctype,txtOrdeno,txtCstype,txtCarno,txtCustno,txtComp,txtNick,txtProductno,txtProduct,txtMount,txtUnit,txtVolume,txtWeight,txtStraddrno,txtStraddr,txtEndaddrno,txtEndaddr,txtMemo,txtTotal'
+                        	, as.length, as, 'calctype,ordeno,typea,carno,custno,cust,cust,productno,product,mount,unit,volume,weight,straddrno,straddr,endaddrno,endaddr,memo,total', '','');
                         	sum();
                         }else{
                         	Unlock(1);
@@ -268,6 +276,16 @@
                             t_chgitem+=","+as[i].item;
                         }
                         q_cmbParse("combProduct", t_chgitem,'s');
+                        var t_where = "where=^^ 1=1 ^^";
+                        q_gt('calctype',t_where, 0, 0, 0, "");
+                        break;
+                    case 'calctype':
+                        var as = _q_appendData("calctype", "", true);
+                        var t_calctype='@';
+                        for ( i = 0; i < as.length; i++) {
+                            t_calctype+=","+as[i].namea;
+                        }
+                        q_cmbParse("combCalctype", t_calctype,'s');
                         break;
                     case q_name:
                         if (q_cur == 4)
@@ -730,6 +748,7 @@
 				<tr style='color:white; background:#003366;' >
 					<td align="center" style="width:25px"><input class="btn"  id="btnPlus" type="button" value='+' style="font-weight: bold;"  /></td>
 					<td align="center" style="width:20px;"> </td>
+					<td align="center" style="width:80px"><a>類別</a></td>
 					<td align="center" style="width:100px;"><a>運輸單號</a></td>
 					<td align="center" style="width:100px;"><a>承車日期</a></td>
 					<td align="center" style="width:150px;"><a>託運人</a></td>
@@ -744,6 +763,9 @@
 					<td align="center" style="width:80px;">空車</td>	
 					<td align="center" style="width:80px;">合計</td>	
 					<td align="center" style="width:60px;"><a>抽成<br>獎金</a></td>
+					<td align="center" style="width:15px;">裝貨</td>
+                    <td align="center" style="width:15px;">拉貨</td>
+                    <td align="center" style="width:15px;">卸貨</td>
 					<td align="center" style="width:80px;">出發時間</td>
 					<td align="center" style="width:80px;">回場時間</td>
 					<td align="center" style="width:80px;"><a>應收運費</a></td>
@@ -760,6 +782,10 @@
 						<input type="text" id="txtNoq.*" style="display:none;"/>
 					</td>
 					<td><a id="lblNo.*" style="font-weight: bold;text-align: center;display: block;"> </a></td>					
+					<td>
+                        <input type="text" id="txtCalctype.*" type="text" class="txt c1" style="width: 70%;"/>
+                        <select id="combCalctype.*" class="txt" style="width: 20px;"> </select>
+                    </td>
 					<td><input type="text" id="txtPo.*" style="width:95%;"/></td> 
 					<td><input type="text" id="txtTrandate.*" style="width:95%;"/></td> 
 					<td>	
@@ -795,6 +821,9 @@
 					<td><input type="text" class="num"  id="txtemiles.*" style="width:95%;"/></td>
 					<td><input type="text" id="txtMiles.*" class="num" style="width:95%;"/></td>
 					<td><input type="text" id="txtReserve.*" class="num" style="width:95%;"/></td>
+					<td align="center"><input id="chkChk1.*" type="checkbox"/></td>
+                    <td align="center"><input id="chkChk2.*" type="checkbox"/></td>
+                    <td align="center"><input id="chkChk3.*" type="checkbox"/></td>
 					<td><input type="text" id="txtltime.*"  style="float:left;width:95%;"/></td>
 					<td><input type="text" id="txtStime.*"  style="float:left;width:95%;"/></td>
 					<td><input type="text" id="txtTotal.*" class="num" style="float:center;width:95%;"/></td>
