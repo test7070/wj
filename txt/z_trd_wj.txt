@@ -1,95 +1,139 @@
-z_trd_wj1:--z_trd_wj1
+﻿z_trd_wj1:--z_trd_wj1
 declare @t_mon nvarchar(10)
 declare @t_bcustno nvarchar(20)
 declare @t_ecustno nvarchar(20)
+declare @t_bnoa nvarchar(20) 
+declare @t_enoa nvarchar(20) 
 set @t_mon = case when '#non'=[2] then '' else [2] end
 set @t_bcustno = case when '#non'=[3] then '' else [3] end
 set @t_ecustno = case when '#non'=[4] then char(255) else [4] end
-declare @tmp table(
-  gno nvarchar(1),
-  trdnoa nvarchar(100),
-  recno int,
-  rr int,
-  custno nvarchar(100),
-  cust nvarchar(100),
-  boss nvarchar(100),
-  tel nvarchar(100),
-  fax nvarchar(100),
-  serial nvarchar(100),
-  yy nvarchar(10),
-  mm nvarchar(10),
-  invoiceno nvarchar(100),
-  
-  trandate nvarchar(100),
-  datea nvarchar(100),
-  carno nvarchar(100),
-  straddr nvarchar(max),
-  endaddr nvarchar(max),
-  nick nvarchar(100),
-  product nvarchar(100),
-  mount nvarchar(30),
-  weight nvarchar(30),
-  weight2 nvarchar(30),
-  noa nvarchar(50),
-  price float,
-  total float,
-  cost float,--人工裝卸費
-  total2 float,
-  total3 float,
-  cartype nvarchar(50),
-  tranno nvarchar(50),
-  typea nvarchar(50),
-  range nvarchar(100),
-  total4 float,--自運金額
-  total5 float,--外車金額
-  cost2 float,--管理收入
-  tax  float,
-  total6 float
-)
+set @t_bnoa = case when '#non'=[5] then '' else [5] end
+set @t_enoa = case when '#non'=[6] then char(255) else [6] end
+declare @tmp table( 
+gno nvarchar(1), 
+trdnoa nvarchar(100), 
+recno int, 
+rr int, 
+custno nvarchar(100), 
+cust nvarchar(100), 
+boss nvarchar(100), 
+tel nvarchar(100), 
+fax nvarchar(100), 
+serial nvarchar(100), 
+invoiceno nvarchar(100), 
+
+trandate nvarchar(100), 
+datea nvarchar(100), 
+carno nvarchar(100), 
+straddr nvarchar(max), 
+endaddr nvarchar(max), 
+nick nvarchar(100), 
+product nvarchar(100), 
+mount nvarchar(30), 
+weight nvarchar(30), 
+weight2 nvarchar(30), 
+noa nvarchar(50), 
+price float, 
+total float, 
+cost float,--人工裝卸費 
+total2 float, 
+total3 float, 
+cartype nvarchar(50), 
+tranno nvarchar(50), 
+typea nvarchar(50), 
+range nvarchar(100), 
+total4 float,--自運金額 
+total5 float,--外車金額 
+cost2 float,--管理收入 
+tax float, 
+total6 float, 
+enda nvarchar(20) 
+) 
+if([2]='#non') 
+begin 
 insert into @tmp 
-select '0',a.noa,'',ROW_NUMBER()over(partition by c.po order by c.po,c.datea),a.custno,a.comp,e.boss,e.tel,e.fax,e.serial,
-SUBSTRING(a.datea,1,3),SUBSTRING(a.datea,5,2),a.vccano,c.trandate,c.datea,c.carno
-,addr,addr2
-,c.endaddr,b.product,b.mount,d.uweight,c.weight,c.po
-,b.price,b.total,c.price2,b.total+c.price2,'',case when f.cartype='2' or f.cartype='6' then '自' else '外' end
-,d.tranno,d.typea,cast(g.rate as nvarchar(50))+'T~'+cast(g.rate2 as nvarchar(50))+'T','','',c.price3,'',''
-from view_trd a
-left join view_trds b on a.noa = b.noa
-left join view_trans c on b.tranno=c.noa and b.trannoq=c.noq
-left join view_tranvcces106 d on c.ordeno=d.noa and c.so=d.noq
-left join cust e on a.custno=e.noa
-left join car2 f on c.carno=f.noa
-left join addr2s g on c.straddrno=g.noa and c.price=g.value and d.typea=g.carno
-where left(a.datea,6)=@t_mon and a.custno between @t_bcustno and @t_ecustno
+select '0',a.noa,'',b.trannoq,a.custno,a.comp,e.boss,e.tel,e.fax,e.serial, 
+a.vccano,c.trandate,c.datea,c.carno 
+,b.straddr,addr2 
+,c.endaddr,b.product,b.mount,d.uweight,c.weight,c.po 
+,b.price,b.total,c.price2,b.total+c.price2,'',case when f.cartype='2' or f.cartype='6' then '自' else '外' end 
+,d.tranno,d.typea,cast(g.rate as nvarchar(50))+'T~'+cast(g.rate2 as nvarchar(50))+'T','','',c.price3,'','','' 
+from view_trd a 
+left join view_trds b on a.noa = b.noa 
+left join view_trans c on b.tranno=c.noa and b.trannoq=c.noq 
+left join view_tranvcces106 d on c.ordeno=d.noa and c.so=d.noq 
+left join cust e on a.custno=e.noa 
+left join car2 f on c.carno=f.noa 
+left join addr2s g on c.straddrno=g.noa and c.price=g.value and d.typea=g.carno 
+where a.custno between @t_bcustno and @t_ecustno and a.noa between @t_bnoa and @t_enoa 
+end 
+else 
+begin 
+insert into @tmp 
+select '0',a.noa,'',b.trannoq,a.custno,a.comp,e.boss,e.tel,e.fax,e.serial, 
+a.vccano,c.trandate,c.datea,c.carno 
+,b.straddr,addr2 
+,c.endaddr,b.product,b.mount,d.uweight,c.weight,c.po 
+,b.price,b.total,c.price2,b.total+c.price2,'',case when f.cartype='2' or f.cartype='6' then '自' else '外' end 
+,d.tranno,d.typea,cast(g.rate as nvarchar(50))+'T~'+cast(g.rate2 as nvarchar(50))+'T','','',c.price3,'','','' 
+from view_trd a 
+left join view_trds b on a.noa = b.noa 
+left join view_trans c on b.tranno=c.noa and b.trannoq=c.noq 
+left join view_tranvcces106 d on c.ordeno=d.noa and c.so=d.noq 
+left join cust e on a.custno=e.noa 
+left join car2 f on c.carno=f.noa 
+left join addr2s g on c.straddrno=g.noa and c.price=g.value and d.typea=g.carno 
+where left(a.datea,6)=@t_mon and a.custno between @t_bcustno and @t_ecustno and a.noa between @t_bnoa and @t_enoa 
+end 
 
-update @tmp
-set recno=b.rx,total3=b.total2,total4=case when a.cartype='自' then b.total2 else '' end,total5=case when a.cartype='外' then b.total2 else '' end
-from @tmp a
-outer apply(select ROW_NUMBER()over(partition by gno order by noa)rx,recno,noa,SUM(total2)total2 from @tmp group by noa,gno,recno)b
-where a.noa=b.noa
+update @tmp 
+set total3=b.total2,total4=case when a.cartype='自' then a.total2 else '' end,total5=case when a.cartype='外' then a.total2 else '' end 
+from @tmp a 
+outer apply(select trdnoa,SUM(total2)total2 from @tmp group by trdnoa)b 
+where a.trdnoa=b.trdnoa 
 
-update @tmp
+update @tmp 
 set gno=case when rr=1 then 0 else 1 end 
 
-insert @tmp(gno,noa,custno,total,total2,total3,tax,total4,total5,total6)
-select '2',CHAR(255),custno,SUM(total),SUM(total2),SUM(total3),SUM(total3)*0.05,SUM(total4),SUM(total5),SUM(total3)*1.05
-from @tmp
-group by custno
+insert @tmp(gno,trdnoa,custno,total,total2,total3,tax,total4,total5,total6) 
+select '2',trdnoa,CHAR(255),SUM(total),SUM(total2),total3,total3*0.05,SUM(total4),SUM(total5),total3*1.05 
+from @tmp 
+group by trdnoa,total3 
 
-insert @tmp(gno,noa,custno)
-select '3',CHAR(255),custno
-from @tmp
-group by custno
-
+insert @tmp(gno,trdnoa) 
+select '3',trdnoa 
+from @tmp group by trdnoa 
+------------------------------------------------------------------ 
+update @tmp set enda = cast(substring(datea,1,3) as int) + 1911 
+update @tmp set enda = cast(cast(substring(datea,1,3) as int) + 1911 as nvarchar) 
+update @tmp set enda = cast(cast(substring(datea,1,3) as int) + 1911 as nvarchar) + substring(datea,4,6) 
+update @tmp set enda = DATEADD(MM, DATEDIFF(MM, -1,cast(cast(substring(datea,1,3) as int) + 1911 as nvarchar) + substring(datea,4,6) ), 0) - 1 
+update @tmp set enda = cast(cast(substring(enda,8,4) as int)-1911 as nvarchar) + '/'+ 
+replace(substring(enda,1,3),substring(enda,1,3), 
+case when substring(enda,1,3) ='Jan' then '01' 
+when substring(enda,1,3) ='Feb' then '02' 
+when substring(enda,1,3) ='Mar' then '03' 
+when substring(enda,1,3) ='Apr' then '04' 
+when substring(enda,1,3) ='May' then '05' 
+when substring(enda,1,3) ='Jun' then '06' 
+when substring(enda,1,3) ='Jul' then '07' 
+when substring(enda,1,3) ='Aug' then '08' 
+when substring(enda,1,3) ='Sep' then '09' 
+when substring(enda,1,3) ='Oct' then '10' 
+when substring(enda,1,3) ='Nov' then '11' 
+when substring(enda,1,3) ='Dec' then '12' end)+'/'+substring(enda,5,2) 
+------------------------------------------------------------------ 
 select 
-RIGHT(datea,5)datea
-,dbo.getComma(total,0)total
-,dbo.getComma(total2,0)total2
-,dbo.getComma(total3,0)total3
-,dbo.getComma(total4,0)total4
-,dbo.getComma(total5,0)total5
-,dbo.getComma(total6,0)total6
-,dbo.getComma(tax,0)tax
-,dbo.getComma(cost,0)cost
-,dbo.getComma(cost2,0)cost2
-,* from @tmp order by noa,datea,recno,rr;
+substring(datea,5,5) datea 
+,substring(datea,1,3) yy 
+,substring(datea,5,2) mm 
+,dbo.getComma(total,0)total 
+,dbo.getComma(total2,0)total2 
+,dbo.getComma(total3,0)total3	
+,dbo.getComma(total4,0)total4 
+,dbo.getComma(total5,0)total5 
+,dbo.getComma(total6,0)total6 
+,dbo.getComma(tax,0)tax 
+,dbo.getComma(cost,0)cost 
+,dbo.getComma(cost2,0)cost2 
+,* from @tmp order by trdnoa,gno ;
