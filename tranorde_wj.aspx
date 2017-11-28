@@ -744,7 +744,8 @@
                     <td align="center" style="width:80px"><a>出單日期</a></td>
                     <td align="center" style="width:100px"><a>送(提)貨單號</a></td>
                     <td align="center" style="width:100px"><a>批號</a></td>
-                    <td align="center" style="width:100px"><a>注意事項</a></td>
+                    <td align="center" style="width:100px"><a>備註</a></td>
+					<td align="center" style="width:100px"><a>注意事項</a></td>
                 </tr>
                 <tr class="data" style='background:#cad3ff;'>
                     <td align="center">
@@ -793,7 +794,7 @@
                         <input type="text" id="txtContainerno1.*" style="width:25%;" />
                                                 <input type="text" id="txtAddress2.*" style="width:68%;" />
                         <input type="button" id="btnAddr2.*" style="display:none;">
-                        <input type="text" id="txtMemo2.*" style="display:none;">
+                        <!--<input type="text" id="txtMemo2.*" style="display:none;">-->
                         <input type="text" id="txtCaseno.*" style="display:none;">
                         <input type="text" id="txtAddrno3.*" style="display:none;">
                         <input type="text" id="txtAddr3.*" style="display:none;">
@@ -821,6 +822,7 @@
                     <td><input type="text" id="txtTranno.*" style="width:95%;" /></td>
                     <td><input type="text" id="txtUno.*" style="width:95%;" /></td>
                     <td><input type="text" id="txtMemo.*" style="width:95%;" /></td>
+					<td><input type="text" id="txtMemo2.*" style="width:95%;" /></td>
                     <td bgcolor="white">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
             </table>
         <input id="q_sys" type="hidden" />
