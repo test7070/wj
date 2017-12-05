@@ -20,7 +20,7 @@
             var q_readonly = ['txtNoa'];
             var bbmNum = [];
             var bbmMask = [];
-            var bbsNum = [['txtRate', 10, 2, 1],['txtRate2', 10, 2, 1],['txtValue', 10, 0, 1]];
+            var bbsNum = [['txtRate', 10, 3, 1],['txtRate2', 10, 3, 1],['txtValue', 10, 0, 1]];
             var bbsMask = [];
             q_sqlCount = 6;
             brwCount = 6;
