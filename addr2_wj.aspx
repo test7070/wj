@@ -24,7 +24,7 @@
             var bbsMask = [];
             q_sqlCount = 6;
             brwCount = 6;
-            q_desc = 1;
+            q_desc = 0;
             brwList = [];
             brwNowPage = 0;
             brwKey = 'noa';
@@ -33,7 +33,7 @@
                 bbmKey = ['noa'];
                 bbsKey = ['noa', 'noq'];
                 q_brwCount();
-                q_content = ' order=^^datea desc, noa desc ^^';
+                //q_content = ' order=^^custno^^';
                 q_gt(q_name, q_content, q_sqlCount, 1, 0, '',r_accy);
             });
             function main() {
@@ -97,7 +97,7 @@
             function btnIns() {
                 _btnIns();
                 refreshBbm();
-                $('#txtNoa').val('AUTO'); 
+                //$('#txtNoa').val('AUTO'); 
                 $('#txtSdate').val(q_date());
 				$('#txtCustno').focus();
             }
