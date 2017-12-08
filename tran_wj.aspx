@@ -234,7 +234,7 @@
 			}
 
 			function bbsSave(as) {
-				if (!as['calctype'] && !as['custno'] && !as['straddrno'] && !as['endaddrno']) {
+				if (!as['calctype'] && !as['custno'] && !as['comp'] && !as['straddrno'] && !as['straddr'] && !as['endaddrno'] && !as['endaddr'] && !as['productno'] && !as['product']) {
 					as[bbsKey[1]] = '';
 					return;
 				}

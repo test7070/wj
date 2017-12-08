@@ -236,7 +236,7 @@
                 _bbtAssign();
             }
             function bbsSave(as) {
-                if (!as['calctype'] && !as['addrno2'] && !as['addrno'] && !as['productno'] && !as['product2']) {
+                if (!as['calctype'] && !as['addrno2'] && !as['addr2']  && !as['addrno'] && !as['addr'] && !as['productno'] && !as['product'] && !as['product2']) {
                     as[bbsKey[1]] = '';
                     return;
                 }

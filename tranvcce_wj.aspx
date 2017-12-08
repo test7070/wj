@@ -509,7 +509,7 @@
             }
 
             function bbsSave(as) {
-                if (!as['calctype'] && !as['custno'] && !as['addrno2'] && !as['carno']) {
+                if (!as['calctype'] && !as['custno'] && !as['cust'] && !as['addrno2'] && !as['addrno'] && !as['addr'] && !as['addr2'] && !as['carno']) {
                     as[bbsKey[1]] = '';
                     return;
                 }
