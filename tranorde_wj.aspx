@@ -691,7 +691,9 @@
                     <tr>
                         <td><span> </span><a id="lbl" class="lbl">總毛重</a></td>
                         <td colspan="2"><input id="txtTweight2" type="text"  class="txt c1 num"/></td>
-                        <td></td>
+                        <td><span> </span><a id="lbl" class="lbl">總淨重</a></td>
+                        <td colspan="2"><input id="txtPrice2" type="text"  class="txt c1 num"/></td>
+						<td></td>
                         <td><input id="btnPrice" type="button" value="單價計算" style="width:100%;"/></td>
                     </tr>
                     <tr>
