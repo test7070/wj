@@ -718,33 +718,31 @@
                     <td align="center" style="width:25px"><input class="btn"  id="btnPlus" type="button" value='+' style="font-weight: bold;"  /></td>
                     <td align="center" style="width:20px;"> </td>
                     <td align="center" style="width:70px"><a>類別</a></td>
+					<td align="center" style="width:80px"><a>出單日期</a></td>
+					<td align="center" style="width:100px"><a>送(提)貨單號</a></td>
+					<td align="center" style="width:140px"><a>提貨日期</a></td>
                     <td align="center" style="width:200px"><a>提貨地點</a></td>
+					<td align="center" style="width:140px"><a>卸貨日期</a></td>
+					<td align="center" style="width:250px"><a>收貨人/地點</a></td>
                     <td align="center" style="width:70px"><a>危險等級</a></td>
                     <td align="center" style="width:150px"><a>品名</a></td>
                     <td align="center" style="width:50px"><a>單位</a></td>
-                    <!--<td align="center" style="width:70px"><a>長cm</a></td>
-                    <td align="center" style="width:70px"><a>寬cm</a></td>
-                    -->
                     <td align="center" style="width:80px"><a>單位毛<br/>重(KG)</a></td>
                     <td align="center" style="width:70px"><a>單位淨<br/>重(KG)</a></td>
                     <td align="center" style="width:100px"><a>毛重(KG)</a></td>
                     <td align="center" style="width:100px"><a>淨重(KG)</a></td>
                     <td align="center" style="width:70px"><a>數量</a></td>
                     <td align="center" style="width:70px"><a>單價</a></td>
-                    <td align="center" style="width:80px"><a>應收金額</a></td>
-                    <td align="center" style="width:70px"><a>應付單價</a></td>
+                    <td align="center" style="width:80px"><a>運費</a></td>
+					<td align="center" style="width:120px"><a>加項品名</a></td>
+                    <!--<td align="center" style="width:70px"><a>應付單價</a></td>
                     <td align="center" style="width:80px"><a>應付金額</a></td>
-                    <td align="center" style="width:120px"><a>加項品名</a></td>
-                    <td align="center" style="width:70px;"><a>加項金額</a></td>
+                    <td align="center" style="width:70px;"><a>加項金額</a></td>-
                     <td align="center" style="width:80px"><a>人工裝費</a></td>
                     <td align="center" style="width:80px"><a>管理收入</a></td>
-                    <td align="center" style="width:250px"><a>收貨人/地點</a></td>
                     <td align="center" style="width:80px"><a>車牌</a></td>
-                    <td align="center" style="width:140px"><a>司機</a></td>
-                    <td align="center" style="width:140px"><a>提貨日期</a></td>
-                    <td align="center" style="width:140px"><a>卸貨日期</a></td>
-                    <td align="center" style="width:80px"><a>出單日期</a></td>
-                    <td align="center" style="width:100px"><a>送(提)貨單號</a></td>
+                    <td align="center" style="width:140px"><a>司機</a></td>-->
+					<td align="center" style="width:120px"><a>應收運費</a></td>
                     <td align="center" style="width:100px"><a>批號</a></td>
                     <td align="center" style="width:100px"><a>備註</a></td>
 					<td align="center" style="width:100px"><a>注意事項</a></td>
@@ -759,11 +757,34 @@
                         <input type="text" id="txtCalctype.*" type="text" class="txt c1" style="width: 69%;"/>
                         <select id="combCalctype.*" class="txt" style="width: 17px;"> </select>
                     </td>
+					<td><input type="text" id="txtTrandate.*" style="width:95%;" /></td>
+					<td><input type="text" id="txtTranno.*" style="width:95%;" /></td>
+					<td>
+                        <input type="text" id="txtDate1.*" style="width:55%;" />
+                        <input type="text" id="txtTime1.*" style="width:35%;" />
+                    </td>
                     <td>
                         <input type="text" id="txtAddrno.*" style="width:45%;" />
                         <input type="text" id="txtAddr.*" style="width:45%;" />
                         <input type="text" id="txtAddress.*" style="width:95%;" />
                         <input type="button" id="btnAddr1.*" style="display:none;">
+                    </td>
+					<td>
+                        <input type="text" id="txtDate2.*" style="width:55%;" />
+                        <input type="text" id="txtTime2.*" style="width:35%;" />
+                    </td>
+					<td>
+                        <input type="text" id="txtAddrno2.*" style="width:30%;" />
+                        <input type="text" id="txtAddr2.*" style="width:63%;" />
+                        <input type="text" id="txtContainerno1.*" style="width:25%;" />
+                        <input type="text" id="txtAddress2.*" style="width:68%;" />
+                        <input type="button" id="btnAddr2.*" style="display:none;">
+                        <!--<input type="text" id="txtMemo2.*" style="display:none;">-->
+                        <input type="text" id="txtCaseno.*" style="display:none;">
+                        <input type="text" id="txtAddrno3.*" style="display:none;">
+                        <input type="text" id="txtAddr3.*" style="display:none;">
+                        <input type="text" id="txtConn.*" style="display:none;">
+                        <input type="text" id="txtTel.*" style="display:none;">
                     </td>
                     <td><input type="text" id="txtTypea.*" style="width:95%;" /></td>
                     <td>
@@ -780,29 +801,17 @@
                     <td><input type="text" id="txtMount.*" class="num" style="width:95%;" /></td>
                     <td><input type="text" id="txtPrice.*" class="num" style="width:95%;" /></td>
                     <td><input type="text" id="txtMoney.*" class="num" style="width:95%;" /></td>
-                    <td><input type="text" id="txtWidth.*" class="num" style="width:95%;" /> </td>
-                    <td><input type="text" id="txtTotal.*" class="num" style="width:95%;" /> </td>
-                    <td>
+                    <!--<td><input type="text" id="txtWidth.*" class="num" style="width:95%;" /> </td>-->
+					<td>
                         <input type="text" id="txtProductno2.*" style="display:none;" />
                         <input type="text" id="txtProduct2.*" type="text" class="txt c1" style="width: 75%;"/>
                         <select id="combProduct.*" class="txt" style="width: 20px;"> </select>
                     </td>
+                    <td><input type="text" id="txtTotal.*" class="num" style="width:95%;" /> </td>
+					<!--
                     <td><input type="text" id="txtHeight.*" class="num" style="width:95%;" /> </td>
                     <td><input type="text" id="txtTotal2.*" class="num" style="width:95%;" /></td>
                     <td><input type="text" id="txtTotal3.*" class="num" style="width:95%;" /></td>
-                    <td>
-                        <input type="text" id="txtAddrno2.*" style="width:30%;" />
-                        <input type="text" id="txtAddr2.*" style="width:63%;" />
-                        <input type="text" id="txtContainerno1.*" style="width:25%;" />
-                                                <input type="text" id="txtAddress2.*" style="width:68%;" />
-                        <input type="button" id="btnAddr2.*" style="display:none;">
-                        <!--<input type="text" id="txtMemo2.*" style="display:none;">-->
-                        <input type="text" id="txtCaseno.*" style="display:none;">
-                        <input type="text" id="txtAddrno3.*" style="display:none;">
-                        <input type="text" id="txtAddr3.*" style="display:none;">
-                        <input type="text" id="txtConn.*" style="display:none;">
-                        <input type="text" id="txtTel.*" style="display:none;">
-                    </td>
                     <td>
                         <input type="text" id="txtCarno.*" style="width:95%;"/>
                         <input type="button" id="btnCarno.*" style="display:none;"/>
@@ -811,21 +820,11 @@
                         <input type="text" id="txtDriverno.*" style="width:45%"/>
                         <input type="text" id="txtDriver.*" style="width:45%"/>
                         <input type="button" id="btnDriver.*" style="display:none;"/>
-                    </td>
-                    <td>
-                        <input type="text" id="txtDate1.*" style="width:55%;" />
-                        <input type="text" id="txtTime1.*" style="width:35%;" />
-                    </td>
-                    <td>
-                        <input type="text" id="txtDate2.*" style="width:55%;" />
-                        <input type="text" id="txtTime2.*" style="width:35%;" />
-                    </td>
-                    <td><input type="text" id="txtTrandate.*" style="width:95%;" /></td>
-                    <td><input type="text" id="txtTranno.*" style="width:95%;" /></td>
+                    </td>-->
                     <td><input type="text" id="txtUno.*" style="width:95%;" /></td>
                     <td><input type="text" id="txtMemo.*" style="width:95%;" /></td>
 					<td><input type="text" id="txtMemo2.*" style="width:95%;" /></td>
-                    <td bgcolor="white">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                    <td bgcolor="white">&nbsp;</td>
             </table>
         <input id="q_sys" type="hidden" />
         <div id="dbbt" style="position: absolute;top:250px; left:450px; display:none;width:400px;">
