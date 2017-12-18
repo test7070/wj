@@ -384,49 +384,61 @@
                                 q_bodyId($(this).attr('id'));
                                 b_seq = t_IdSeq;
                                 if (b_seq > 0) {
-                                    var i = b_seq - 1;
-                                    var s1 = $('#txtCustno_' + i).val();
-                                    $('#txtCustno_' + b_seq).val(s1);
-                                    var s2 = $('#txtCust_' + i).val();
-                                    $('#txtCust_' + b_seq).val(s2); 
-                                    var s3 = $('#txtAddrno_' + i).val();
-                                    $('#txtAddrno_' + b_seq).val(s3);
-                                    var s4 = $('#txtAddr_' + i).val();
-                                    $('#txtAddr_' + b_seq).val(s4);
-                                    var s5 = $('#txtAddress_' + i).val();
-                                    $('#txtAddress_' + b_seq).val(s5); 
-                                    var s6 = $('#txtBdate_' + i).val();
-                                    $('#txtBdate_' + b_seq).val(s6);
-                                    var s7 = $('#txtEdate_' + i).val();
-                                    $('txtEdate_' + b_seq).val(s7);
-                                    var s8 = $('#txtAddrno2_' + i).val();
-                                    $('#txtAddrno2_' + b_seq).val(s8); 
-                                    var s9 = $('#txtAddr2_' + i).val();
-                                    $('#txtAddr2_' + b_seq).val(s9); 
-                                    var s10 = $('#txtLat_' + i).val();
-                                    $('#txtLat_' + b_seq).val(s10);
-                                    var s11 = $('#txtAddress2_' + i).val();
-                                    $('#txtAddress2_' + b_seq).val(s11);
-                                    var s12 = $('#txtTypea_' + i).val();
-                                    $('#txtTypea_' + b_seq).val(s12);
-                                    var s13 = $('#txtProductno_' + i).val();
-                                    $('#txtProductno_' + b_seq).val(s13);
-                                    var s14 = $('#txtProduct_' + i).val();
-                                    $('#txtProduct_' + b_seq).val(s14);
-                                    var s15 = $('#txtCarno_' + i).val();
-                                    $('#txtCarno_' + b_seq).val(s15);
-                                    var s16 = $('#txtDriverno_' + i).val();
-                                    $('#txtDriverno_' + b_seq).val(s16);
-                                    var s17 = $('#txtDriver_' + i).val();
-                                    $('#txtDriver_' + b_seq).val(s17);
-                                    var s18 = $('#txtLng2_' + i).val();
-                                    $('#txtLng2_' + b_seq).val(s18);
-                                    var s19 = $('#txtAddrno3_' + i).val();
-                                    $('#txtAddrno3_' + b_seq).val(s19);
-                                    var s20 = $('#txtAddr3_' + i).val();
-                                    $('#txtAddr3_' + b_seq).val(s20);
-                                    var s21 = $('#txtMemo_' + i).val();
-                                    $('#txtMemo_' + b_seq).val(s21);
+                                    var y=-1;
+                                    for (var x = -1;x <b_seq;x++) {
+                                        if ($('#Copy_'+x).is(':checked')==true) {
+                                                y=y+1;
+                                                var seq=b_seq+y;
+                                                var s1 = $('#txtCustno_' + x).val();
+                                                $('#txtCustno_' + seq).val(s1);
+                                                var s2 = $('#txtCust_' + x).val();
+                                                $('#txtCust_' + seq).val(s2); 
+                                                var s3 = $('#txtAddrno_' + x).val();
+                                                $('#txtAddrno_' + seq).val(s3);
+                                                var s4 = $('#txtAddr_' + x).val();
+                                                $('#txtAddr_' + seq).val(s4);
+                                                var s5 = $('#txtAddress_' + x).val();
+                                                $('#txtAddress_' + seq).val(s5); 
+                                                var s6 = $('#txtBdate_' + x).val();
+                                                $('#txtBdate_' + seq).val(s6);
+                                                var s7 = $('#txtEdate_' + x).val();
+                                                $('txtEdate_' + seq).val(s7);
+                                                var s8 = $('#txtAddrno2_' + x).val();
+                                                $('#txtAddrno2_' + seq).val(s8); 
+                                                var s9 = $('#txtAddr2_' + x).val();
+                                                $('#txtAddr2_' + seq).val(s9); 
+                                                var s10 = $('#txtLat_' + x).val();
+                                                $('#txtLat_' + seq).val(s10);
+                                                var s11 = $('#txtAddress2_' + x).val();
+                                                $('#txtAddress2_' + seq).val(s11);
+                                                var s12 = $('#txtTypea_' + x).val();
+                                                $('#txtTypea_' + seq).val(s12);
+                                                var s13 = $('#txtProductno_' + x).val();
+                                                $('#txtProductno_' + seq).val(s13);
+                                                var s14 = $('#txtProduct_' + x).val();
+                                                $('#txtProduct_' + seq).val(s14);
+                                                var s15 = $('#txtCarno_' + x).val();
+                                                $('#txtCarno_' + seq).val(s15);
+                                                var s16 = $('#txtDriverno_' + x).val();
+                                                $('#txtDriverno_' + seq).val(s16);
+                                                var s17 = $('#txtDriver_' + x).val();
+                                                $('#txtDriver_' + seq).val(s17);
+                                                var s18 = $('#txtLng2_' + x).val();
+                                                $('#txtLng2_' + seq).val(s18);
+                                                var s19 = $('#txtAddrno3_' + x).val();
+                                                $('#txtAddrno3_' + seq).val(s19);
+                                                var s20 = $('#txtAddr3_' + x).val();
+                                                $('#txtAddr3_' + seq).val(s20);
+                                                var s21 = $('#txtMemo_' + x).val();
+                                                $('#txtMemo_' + seq).val(s21);
+                                                var s22 = $('#txtUnit_' + x).val();
+                                                $('#txtUnit_' + seq).val(s22);
+                                                var s23 = $('#txtMount_' + x).val();
+                                                $('#txtMount_' + seq).val(s23);
+                                        }else{
+                                             y=y
+                                        }
+                                    }
                                 }
                             }
                          });  
@@ -891,6 +903,7 @@
 				<tr style='color:white; background:#003366;' >
 					<td align="center" style="width:25px"><input class="btn"  id="btnPlus" type="button" value='+' style="font-weight: bold;"  /></td>
 					<td align="center" style="width:20px;"> </td>
+					<td align="center" style="width:10px"><a>複製</a></td>
 					<td align="center" style="width:70px"><a>類別</a></td>
 					<td align="center" style="width:60px"><a>客戶</a></td>
 					<td align="center" style="width:150px"><a>提貨地點</a></td>
@@ -930,6 +943,7 @@
 						<input type="text" id="txtNoq.*" style="display:none;"/>
 					</td>
 					<td><a id="lblNo.*" style="font-weight: bold;text-align: center;display: block;"> </a></td>
+					<td align="center"><input id="Copy.*" type="checkbox"/></td>
 					<td>
                         <input type="text" id="txtCalctype.*" type="text" class="txt c1" style="width: 70%;"/>
                         <select id="combCalctype.*" class="txt" style="width: 20px;"> </select>
