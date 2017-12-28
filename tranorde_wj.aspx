@@ -654,8 +654,8 @@
                         <td><span> </span><a id="lblCust" class="lbl btn"> </a></td>
                         <td colspan="6">
                             <input type="text" id="txtCustno" class="txt" style="width:30%;float: left; " />
-                            <input type="text" id="txtComp" class="txt" style="width:70%;float: left; " />
-                            <input type="text" id="txtNick" class="txt" style="display:none; " />
+                            <input type="text" id="txtNick" class="txt" style="width:70%;float: left; " />
+                            <input type="text" id="txtComp" class="txt" style="display:none; " />
                         </td>
                     </tr>
                     <!--<tr>
