@@ -39,8 +39,8 @@
 			aPop = new Array(	//參數1,2 使用的物件 3,資料表名稱 4,顯示的欄位 5,6寫入的欄位 7,檔案名稱
 				['txtCno', 'lblCno', 'acomp', 'noa,acomp', 'txtCno,txtAcomp', 'acomp_b.aspx']
 				,['txtUccno_', 'btnProduct_', 'ucc', 'noa,product', 'txtUccno_,txtProduct_', 'ucc_b.aspx']
-				,['txtStraddrno_', 'btnStraddr_', 'addr2_wj', 'custno,addr', 'txtStraddrno_,txtStraddr_', 'addr2_b2.aspx']
-				,['txtEndaddrno_', 'btnEndaddr_', 'addr2_wj', 'custno,addr', 'txtEndaddrno_,txtEndaddr_', 'addr2_b2.aspx']
+				,['txtStraddrno_', 'btnStraddr_', 'addr2_wj', 'custno,addr,b.address', 'txtStraddrno_,txtStraddr_,txtSaddr_', 'addr2_b2.aspx']
+				,['txtEndaddrno_', 'btnEndaddr_', 'addr2_wj', 'custno,addr,b.address', 'txtEndaddrno_,txtEndaddr_,txtAaddr_', 'addr2_b2.aspx']
 				,['txtCardeal_', 'btnCardeal_', 'carplate', 'noa,driver', 'txtCardeal_', 'carplate_b.aspx']
 				,['txtDriverno', 'lblDriver', 'driver', 'noa,namea', 'txtDriverno,txtDriver', 'driver_b.aspx']
 				,['txtEtime', 'lblCarplateno', 'carplate', 'noa,driver', 'txtEtime', 'carplate_b.aspx']
@@ -759,13 +759,14 @@
 					<td align="center" style="width:80px"><a>類別</a></td>
 					<td align="center" style="width:100px;"><a>運輸單號</a></td>
 					<td align="center" style="width:100px;"><a>承車日期</a></td>
-					<td align="center" style="width:150px;"><a>託運人</a></td>
-					<td align="center" style="width:150px;"><a>品名</a></td>
+					<td align="center" style="width:100px;"><a>託運人</a></td>
+					<td align="center" style="width:100px;"><a>品名</a></td>
 					<td align="center" style="width:80px;"><a>單價</a></td>
 					<td align="center" style="width:80px;"><a>件數</a></td>
 					<td align="center" style="width:80px;"><a>噸位</a></td>
 					<td align="center" style="width:200px;"><a>起運地點</a></td>
 					<td align="center" style="width:200px;"><a>卸貨地點</a></td>
+					<td align="center" style="width:100px;"><a>中繼站</a></td>
 					<td align="center" style="width:80px;"><a>板台<br>號碼</a></td>
 					<td align="center" style="width:80px;">實車</td>
 					<td align="center" style="width:80px;">空車</td>	
@@ -797,15 +798,15 @@
 					<td><input type="text" id="txtPo.*" style="width:95%;"/></td> 
 					<td><input type="text" id="txtTrandate.*" style="width:95%;"/></td> 
 					<td>	
-						<input type="text" id="txtCustno.*" style="width:40%;"/>
-						<input type="text" id="txtComp.*" style="width:50%;"/>
+						<input type="text" id="txtCustno.*" style="width:95%;"/>
+						<input type="text" id="txtComp.*" style="width:95%;"/>
 						<input type="text" id="txtNick.*"  style ="display:none;"/>
 						<input type="button" id="btnCust.*" style="display:none;">
 					</td>
 					<td>
-						<input type="text" id="txtUccno.*" style="float:left;width:40%;"/>
+						<input type="text" id="txtUccno.*" style="float:left;width:95%;"/>
 						<input type="button" id="btnProduct.*" style="display:none;">
-						<input type="text" id="txtProduct.*" style="float:left;width:50%;"/>	
+						<input type="text" id="txtProduct.*" style="float:left;width:95%;"/>	
 					</td>
 						<td><input type="text" id="txtPrice.*" class="num" style="float:left;width:95%;"/></td>
 						<td><input type="text" id="txtMount.*" class="num" style="float:left;width:95%;"/></td>
@@ -814,13 +815,20 @@
 					<td>
 						<input type="text" id="txtStraddrno.*" style="float:left;width:30%;"/>
 						<input type="text" id="txtStraddr.*" style="float:left;width:65%;"/>
+						<input type="text" id="txtSaddr.*" style="float:left;width:95%;"/>
 						<input type="button" id="btnStraddr.*" style="display:none;">
 					</td>	
 					<td>
 						<input type="text" id="txtEndaddrno.*" style="float:left;width:30%;"/>
-						<input type="text" id="txtEndaddr.*"style="float:left;width:65%;"/>	
+						<input type="text" id="txtEndaddr.*"style="float:left;width:65%;"/>
+						<input type="text" id="txtAaddr.*" style="float:left;width:95%;"/>
 						<input type="button" id="btnEndaddr.*" style="display:none;">
 					</td>
+					<td>
+                        <input type="text" id="txtAddno3.*" style="width:95%;" />
+                        <input type="text" id="txtAdd3.*" style="width:95%;" />
+                        <input type="button" id="btnAddr3.*" style="display:none;">
+                    </td>
 					<td>
 						<input type="text" id="txtCardeal.*" class="txt c1" style="width:95%;"/>
 						<input type="text" id="btnCardeal.*" style="display:none;"/>

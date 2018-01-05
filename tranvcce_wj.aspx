@@ -932,9 +932,10 @@
                     <td align="center" id='hid_trandate' style="width:60px"><a>結關日期</a></td>
                     <td align="center" style="width:40px"><a>車趟<br/>(1去2回)</a></td>
                     <td align="center" style="width:150px"><a>隨車 / 派車狀況<br/>注意事項</a></td>
-                    <td align="center" style="width:30px"><a>提貨</a></td>
-                    <td align="center" style="width:30px"><a>卸貨</a></td>
-                    <td align="center" style="width:30px"><a>完工</a></td>
+                    <td align="center" style="width:20px"><a>裝貨</a></td>
+                    <td align="center" style="width:20px"><a>卸貨</a></td>
+                    <td align="center" style="width:20px"><a>拉貨</a></td>
+                    <td align="center" style="width:20px"><a>完工</a></td>
                     <td align="center" id='hid_ordeno' style="width:120px"><a>訂單編號</a></td>
 				</tr>
 				<tr class="data" style='background:#cad3ff;'>
@@ -1026,6 +1027,7 @@
 					</td>
 					<td align="center"><input id="chkChk1.*" type="checkbox"/></td>
 					<td align="center"><input id="chkChk2.*" type="checkbox"/></td>
+					<td align="center"><input id="chkChk4.*" type="checkbox"/></td>
 					<td align="center"><input id="chkChk3.*" type="checkbox"/></td>
 					<td align="center"  id='hid_ordeno.*'>
                         <input type="text" id="txtOrdeno.*" style="width:95%;" />
