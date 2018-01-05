@@ -273,7 +273,7 @@ begin
 	insert @tmp
 	select '0','','',a.noa,a.datea,a.custno,a.nick,b.addrno,b.addr,d.memo,a.po, 
 	b.typea,b.uno,b.productno,b.product,b.unit,b.weight,b.theight,b.tvolume,b.mount, 
-	b.total2,b.total3,b.addrno2,b.addr2,b.address2,c.carno,c.driverno,c.driver,b.tranno,b.trandate,b.date2,b.memo,c.noa 
+	b.total2,b.total3,b.addrno2,b.addr2,dbo.charbr(b.address2,18),c.carno,c.driverno,c.driver,b.tranno,b.trandate,b.date2,replace(dbo.charbr(replace(b.memo,'chr(10)','<BR>'),57),'<BR><BR>','<BR>'),c.noa 
 	from view_tranorde a left join view_tranordes b on a.noa=b.noa 
 	left join view_tranvcces c on c.ordeno=b.noa and c.no2=b.noa
 	outer apply(select top 1 memo from addr2 where custno=b.addrno order by sdate desc)d
@@ -287,7 +287,7 @@ begin
 	insert @tmp
 	select '0','','',a.noa,a.datea,a.custno,a.nick,b.addrno,b.addr,d.memo,a.po, 
 	b.typea,b.uno,b.productno,b.product,b.unit,b.weight,b.theight,b.tvolume,b.mount, 
-	b.total2,b.total3,b.addrno2,b.addr2,b.address2,c.carno,c.driverno,c.driver,b.tranno,b.trandate,b.date2,b.memo,c.noa 
+	b.total2,b.total3,b.addrno2,b.addr2,dbo.charbr(b.address2,18),c.carno,c.driverno,c.driver,b.tranno,b.trandate,b.date2,replace(dbo.charbr(replace(b.memo,'chr(10)','<BR>'),57),'<BR><BR>','<BR>'),c.noa 
 	from view_tranorde a left join view_tranordes b on a.noa=b.noa 
 	left join view_tranvcces c on c.ordeno=b.noa and c.no2=b.noa
 	outer apply(select top 1 memo from addr2 where custno=b.addrno order by sdate desc)d
