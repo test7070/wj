@@ -1,0 +1,210 @@
+﻿zxls_ordetsrc:--轉倉
+SET QUOTED_IDENTIFIER OFF
+declare @curdate nvarchar(max) = replace(substring(convert(nvarchar,getDate(),120),1,10),'-','/')
+declare @tmp table(
+noa nvarchar(30),
+custno nvarchar(30),
+comp nvarchar(30),
+nick nvarchar(30),
+datea nvarchar(30),
+date1 nvarchar(30),
+po nvarchar(30),
+tweight2 float,
+price2 float,
+addr nvarchar(100),
+addr2 nvarchar(100),
+page nvarchar(10)
+)
+declare @tmps table(
+noa nvarchar(30),
+noq nvarchar(10),
+calctype nvarchar(10),
+date1 nvarchar(30),
+date2 nvarchar(30),
+product nvarchar(30),
+addrno nvarchar(300),
+addr nvarchar(300),
+addrno2 nvarchar(300),
+addr2 nvarchar(300),
+[weight] float,
+tvolume float,
+mount float,
+uno nvarchar(30),
+caseno nvarchar(50),
+addrno3 nvarchar(10),
+addr3 nvarchar(50),
+page nvarchar(10),
+tel nvarchar(30),
+conn nvarchar(30)
+)
+declare @tmpz table(
+a nvarchar(100),
+b nvarchar(100),
+c nvarchar(100),
+d nvarchar(100),
+e nvarchar(100),
+f nvarchar(100),
+g nvarchar(100),
+h nvarchar(100),
+i nvarchar(100),
+j nvarchar(100),
+k nvarchar(100),
+l nvarchar(100),
+page nvarchar(10)
+)
+declare @cutpage table(
+bnoa int,
+enoa int,
+page int
+)
+declare @noa nvarchar(max)
+declare @a nvarchar(max)
+declare @b nvarchar(max)
+declare @c nvarchar(max)
+declare @d nvarchar(max)
+declare @e nvarchar(max)
+declare @f nvarchar(max)
+declare @g nvarchar(max)
+declare @h nvarchar(max)
+declare @i nvarchar(max)
+declare @j nvarchar(max)
+declare @k nvarchar(max)
+declare @l nvarchar(max)
+declare @page int = 0
+----------------------------------------------------------------------------------------------------
+declare cursor_table cursor for
+select noa,a,b,c,d,e,f,g,h,i,j,k from ztmpxls order by CAST(noa as int)
+open cursor_table
+fetch next from cursor_table
+into @noa,@a,@b,@c,@d,@e,@f,@g,@h,@i,@j,@k
+while(@@FETCH_STATUS <> -1)
+begin
+	begin try
+	insert into @tmpz (a,b,c,d,e,f,g,h,i,j,k,page) values(@noa,@a,@b,@c,@d,@e,@f,@g,@h,@i,@j,@page)
+	if(CHARINDEX('台橡',@b)>0 or CHARINDEX('台橡',@c)>0 or CHARINDEX('台橡',@d)>0 or CHARINDEX('台橡',@e)>0 or CHARINDEX('台橡',@f)>0 or CHARINDEX('台橡',@g)>0 or CHARINDEX('台橡',@h)>0)
+	begin
+		set @page = @page + 1
+		insert into @tmp (datea,page,custno,comp,nick) values(cast(cast(substring(REPLACE(@curdate,' ',''),1,4) as int)-1911 as nvarchar) + '/' + substring(REPLACE(@curdate,' ',''),6,2) + '/' + substring(REPLACE(@curdate,' ',''),9,2),@page,'029-004','世捷股份有限公司','世捷-移倉')
+	end
+	end try
+	begin catch
+	end catch
+	fetch next from cursor_table
+	into @noa,@a,@b,@c,@d,@e,@f,@g,@h,@i,@j,@k
+end
+close cursor_table
+deallocate cursor_table
+----------------------------------------------------------------------------------------------------
+declare cursor_table cursor for
+select * from @tmpz
+open cursor_table
+fetch next from cursor_table
+into @a,@b,@c,@d,@e,@f,@g,@h,@i,@j,@k,@l,@page
+while(@@FETCH_STATUS <> -1)
+begin
+	begin try
+	if(CHARINDEX('物料',@b)>0)
+		insert into @cutpage (bnoa,page) values(@a,@page)
+	if(CHARINDEX('淨重',@b)>0)
+		insert into @cutpage (enoa,page) values(@a,@page)
+	end try
+	begin catch
+	end catch
+	fetch next from cursor_table
+	into @a,@b,@c,@d,@e,@f,@g,@h,@i,@j,@k,@l,@page
+end
+close cursor_table
+deallocate cursor_table
+----------------------------------------------------------------------------------------------------
+declare @bnoa nvarchar(max)
+declare @enoa nvarchar(max)
+declare cursor_table cursor for
+select SUM(bnoa) bnoa,SUM(enoa) enoa,page from @cutpage group by page
+open cursor_table
+fetch next from cursor_table
+into @bnoa,@enoa,@page
+while(@@FETCH_STATUS <> -1)
+begin
+	begin try
+	insert into @tmps (calctype,noq,product,mount,tvolume,weight,uno,addrno3,addr3,page)
+	select '移倉',ROW_NUMBER()over(partition by page order by a),c,
+	cast(replace(substring(h,1,CHARINDEX(CHAR(10),h)),CHAR(10),'')as float),
+	cast(replace(replace(substring(h,CHARINDEX(CHAR(10),h),len(h)),CHAR(10),''),',','')as float),
+	cast(replace(replace(substring(h,CHARINDEX(CHAR(10),h),len(h)),CHAR(10),''),',','')as float)/cast(replace(substring(h,1,CHARINDEX(CHAR(10),h)),CHAR(10),'')as float),
+	d,
+	'01','文揚通運股份有限公司',page
+	from @tmpz where CAST(a as int) between @bnoa+1 and @enoa-1
+	end try
+	begin catch
+	end catch
+	fetch next from cursor_table
+	into @bnoa,@enoa,@page
+end
+close cursor_table
+deallocate cursor_table
+update @tmps set noq = RIGHT('000'+noq,3)
+----------------------------------------------------------------------------------------------------
+declare cursor_table cursor for
+select * from @tmpz
+open cursor_table
+fetch next from cursor_table
+into @a,@b,@c,@d,@e,@f,@g,@h,@i,@j,@k,@l,@page
+while(@@FETCH_STATUS <> -1)
+begin
+	begin try
+	if(CHARINDEX('單號',@b)>0)
+	begin
+		update @tmp set noa = 'B'+@c,po=@c where page=@page
+		update @tmps set noa = 'B'+@c,caseno=@c where page=@page
+	end
+	if(CHARINDEX('日',@h)>0)
+	begin
+		update @tmp set date1 = cast(cast(substring(REPLACE(@h,' ',''),1,4) as int)-1911 as nvarchar) + '/' + substring(REPLACE(@h,' ',''),6,2) + '/' + substring(REPLACE(@h,' ',''),9,2) where page=@page
+		update @tmps set date1 = cast(cast(substring(REPLACE(@h,' ',''),1,4) as int)-1911 as nvarchar) + '/' + substring(REPLACE(@h,' ',''),6,2) + '/' + substring(REPLACE(@h,' ',''),9,2),
+						 date2 = cast(cast(substring(REPLACE(@h,' ',''),1,4) as int)-1911 as nvarchar) + '/' + substring(REPLACE(@h,' ',''),6,2) + '/' + substring(REPLACE(@h,' ',''),9,2)
+		where page=@page
+	end
+	if(CHARINDEX('淨重',@b)>0)
+	begin
+		update @tmp set tweight2 = replace(@f,',','') where page=@page
+		update @tmp set price2 = replace(@c,',','') where page=@page
+	end
+	if(CHARINDEX('倉庫',@b)>0)
+		update @tmps set addrno = @c,addr=@c,addrno2=@f,addr2=@f where page=@page
+	end try
+	begin catch
+	end catch
+	fetch next from cursor_table
+	into @a,@b,@c,@d,@e,@f,@g,@h,@i,@j,@k,@l,@page
+end
+close cursor_table
+deallocate cursor_table
+update @tmps set conn='029-004',tel='世捷-移倉'
+----------------------------------------------------------------------------------------------------
+DECLARE MyCursor Cursor FOR
+select noa from @tmp
+Open MyCursor 
+declare @ordenoa nvarchar(25) 
+--如有相同noa 刪除後再insert
+Fetch NEXT FROM MyCursor INTO @ordenoa
+While (@@FETCH_STATUS <> -1)
+BEGIN
+	if exists(select * from tranorde106 where noa = @ordenoa) 
+	begin
+		delete from tranorde106 where noa=@ordenoa
+	end
+	if exists(select * from tranordes106 where noa = @ordenoa) 
+	begin
+		delete from tranordes106 where noa=@ordenoa
+	end
+Fetch NEXT FROM MyCursor INTO @ordenoa
+END
+CLOSE MyCursor
+DEALLOCATE MyCursor
+----------------------------------------------------------------------------------------------------
+insert into tranorde106 (custno,comp,nick,noa,datea,date1,po,tweight2,price2,cno,acomp)
+select DISTINCT custno,comp,nick,noa,datea,date1,po,tweight2,price2,'01','文揚通運股份有限公司' from @tmp
+
+insert into tranordes106 (noa,noq,calctype,date1,date2,product,addrno,addr,addrno2,addr2,tvolume,weight,mount,uno,caseno,addrno3,addr3,conn,tel)
+select DISTINCT noa,noq,calctype,date1,date2,product,addrno,addr,addrno2,addr2,tvolume,weight,mount,uno,caseno,addrno3,addr3,conn,tel
+from @tmps;
