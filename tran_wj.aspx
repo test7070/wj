@@ -770,7 +770,8 @@
 					<td align="center" style="width:80px;"><a>板台<br>號碼</a></td>
 					<td align="center" style="width:80px;">實車</td>
 					<td align="center" style="width:80px;">空車</td>	
-					<td align="center" style="width:80px;">合計</td>	
+					<td align="center" style="width:80px;">合計</td>
+					<td align="center" style="width:180px;"><a>派車單號</a></td>	
 					<td align="center" style="width:60px;"><a>抽成<br>獎金</a></td>
 					<td align="center" style="width:15px;">裝貨</td>
                     <td align="center" style="width:15px;">拉貨</td>
@@ -783,7 +784,6 @@
 					<td align="center" style="width:80px;"><a>人工裝費</a></td>
 					<td align="center" style="width:80px;"><a>管理收入</a></td>
 					<td align="center" style="width:80px;"><a>應付運費</a></td>
-					<td align="center" style="width:180px;"><a>派車單號</a></td>
 				</tr>
 				<tr class="data" style='background:#cad3ff;'>
 					<td align="center">
@@ -836,6 +836,8 @@
 					<td><input type="text" class="num"  id="txtbmiles.*" style="width:95%;"/></td>
 					<td><input type="text" class="num"  id="txtemiles.*" style="width:95%;"/></td>
 					<td><input type="text" id="txtMiles.*" class="num" style="width:95%;"/></td>
+					<td><input type="text" id="txtOrdeno.*"  style="float:left;width:65%;"/>
+                        <input type="text" id="txtSo.*"  style="float:left;width:30%;"/></td>
 					<td><input type="text" id="txtReserve.*" class="num" style="width:95%;"/></td>
 					<td align="center"><input id="chkChk1.*" type="checkbox"/></td>
                     <td align="center"><input id="chkChk2.*" type="checkbox"/></td>
@@ -851,8 +853,6 @@
 					<td><input type="text" id="txtPrice2.*" class="num" style="float:center;width:95%;"/></td>
 					<td><input type="text" id="txtPrice3.*" class="num" style="float:center;width:95%;"/></td>
 					<td><input type="text" id="txtTotal2.*" class="num" style="float:center;width:95%;"/></td>
-					<td><input type="text" id="txtOrdeno.*"  style="float:left;width:65%;"/>
-                        <input type="text" id="txtSo.*"  style="float:left;width:30%;"/></td>
 				</tr>
 			</table>
 		</div>
