@@ -737,7 +737,7 @@
                 margin: -1px;
             }
             .dbbs {
-                width: 2400px;
+                width: 2500px;
             }
             .tbbs a {
                 font-size: medium;
@@ -899,12 +899,13 @@
 			</div>
 		</div>
 		<div class='dbbs' >
-			<table id="tbbs" class='tbbs' style="width:1800px;">
+			<table id="tbbs" class='tbbs' style="width:1900px;">
 				<tr style='color:white; background:#003366;' >
 					<td align="center" style="width:25px"><input class="btn"  id="btnPlus" type="button" value='+' style="font-weight: bold;"  /></td>
 					<td align="center" style="width:20px;"> </td>
 					<td align="center" style="width:10px"><a>複製</a></td>
-					<td align="center" style="width:70px"><a>類別</a></td>
+					<td align="center" style="width:70px"><a>類別</a></td>			
+					<td align="center" style="width:100px"><a>運輸單號</a></td>
 					<td align="center" style="width:60px"><a>客戶</a></td>
 					<td align="center" style="width:150px"><a>提貨地點</a></td>
 					<td align="center" style="width:50px"><a>裝貨日期</a></td>
@@ -949,8 +950,10 @@
                         <input type="text" id="txtCalctype.*" type="text" class="txt c1" style="width: 70%;"/>
                         <select id="combCalctype.*" class="txt" style="width: 20px;"> </select>
                     </td>
+                    <td>
+                        <input type="text" id="txtConn.*" style="float:left;width:95%;" />
+                    </td>
 					<td>
-					    <input type="text" id="txtConn.*" style="display:none;" />
                         <input type="text" id="txtCustno.*" style="float:left;width:95%;" />
                         <input type="text" id="txtCust.*" style="float:left;width:95%;">
                         <input type="button" id="btnCust.*" style="display:none;">
