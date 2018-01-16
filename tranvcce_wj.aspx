@@ -490,6 +490,7 @@
                                 $("#hid_ordeno_"+ j).hide();
                            }
                  }
+                 refreshBbs();
             }
 
             function btnIns() {
@@ -497,12 +498,14 @@
                 $('#txtNoa').val('AUTO');
                 $('#txtTrandate').val(q_date());
                 $('#txtDatea').val(q_date()).focus();
+                refreshBbs();
             }
 
             function btnModi() {
                 if (emp($('#txtNoa').val()))
                     return;
                 _btnModi();
+                refreshBbs();
             }
 
             function btnPrint() {
@@ -563,7 +566,7 @@
                                 $("#hid_ordeno_"+ j).hide();
                             }
                      }
-                
+                refreshBbs();
             }
 
             function readonly(t_para, empty) {
@@ -639,6 +642,52 @@
                         break;
                     default:
                         break;
+                }
+            }
+            
+            function refreshBbs() {
+                for(var i=0;i<q_bbsCount;i++){
+                    if($('#chkChk1_'+i).prop('checked') && $('#chkChk2_'+i).prop('checked')){
+                        $('#txtAddrno_'+i).css('color','green');
+                        $('#txtAddr_'+i).css('color','green');
+                        $('#txtAddress_'+i).css('color','green');
+                        $('#txtAddrno2_'+i).css('color','green');
+                        $('#txtAddr2_'+i).css('color','green');
+                        $('#txtAddress2_'+i).css('color','green');
+                        $('#txtLat_'+i).css('color','green');
+                        $('#txtAddrno3_'+i).css('color','green');
+                        $('#txtAddr3_'+i).css('color','green');
+                    }else if($('#chkChk1_'+i).prop('checked')){
+                        $('#txtAddrno_'+i).css('color','red');
+                        $('#txtAddr_'+i).css('color','red');
+                        $('#txtAddress_'+i).css('color','red');
+                        $('#txtAddrno2_'+i).css('color','red');
+                        $('#txtAddr2_'+i).css('color','red');
+                        $('#txtAddress2_'+i).css('color','red');
+                        $('#txtLat_'+i).css('color','red');
+                        $('#txtAddrno3_'+i).css('color','red');
+                        $('#txtAddr3_'+i).css('color','red');
+                    }else if($('#chkChk2_'+i).prop('checked')){
+                        $('#txtAddrno_'+i).css('color','blue');
+                        $('#txtAddr_'+i).css('color','blue');
+                        $('#txtAddress_'+i).css('color','blue');
+                        $('#txtAddrno2_'+i).css('color','blue');
+                        $('#txtAddr2_'+i).css('color','blue');
+                        $('#txtAddress2_'+i).css('color','blue');
+                        $('#txtLat_'+i).css('color','blue');
+                        $('#txtAddrno3_'+i).css('color','blue');
+                        $('#txtAddr3_'+i).css('color','blue');
+                    }else if($('#chkChk4_'+i).prop('checked')){
+                        $('#txtAddrno_'+i).css('color','purple');
+                        $('#txtAddr_'+i).css('color','purple');
+                        $('#txtAddress_'+i).css('color','purple');
+                        $('#txtAddrno2_'+i).css('color','purple');
+                        $('#txtAddr2_'+i).css('color','purple');
+                        $('#txtAddress2_'+i).css('color','purple');
+                        $('#txtLat_'+i).css('color','purple');
+                        $('#txtAddrno3_'+i).css('color','purple');
+                        $('#txtAddr3_'+i).css('color','purple');
+                    }
                 }
             }
 

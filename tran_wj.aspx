@@ -23,7 +23,7 @@
 			var q_readonlyt = [];
 			var bbmNum = new Array();
 			var bbmMask = new Array(['txtDatea', '999/99/99'],['txtTrandate', '999/99/99']);
-			var bbsNum = new Array(['txtTotal', 10, 0, 1],['txtTotal2', 10, 0, 1],['txtPrice', 10, 0, 1],['txtPrice2', 10, 0, 1],['txtPrice3', 10, 0, 1],['txtMount', 10, 0, 1],['txtPlus', 10, 0, 1]);
+			var bbsNum = new Array(['txtTotal', 10, 0, 1],['txtTotal2', 10, 0, 1],['txtPrice', 10, 0, 1],['txtPrice2', 10, 0, 1],['txtPrice3', 10, 0, 1],['txtMount', 10, 0, 1],['txtPlus', 10, 0, 1],['txtMinus', 10, 0, 1]);
 			var bbsMask = new Array(['txtTrandate', '999/99/99'],['txtltime', '99:99'],['txtStime', '99:99']);
 			var bbtNum  = new Array(); 
 			var bbtMask = new Array();
@@ -207,6 +207,14 @@
                                 $('#txtTimea_'+b_seq).val($('#combProduct_'+b_seq).find("option:selected").text());
                     });
                     
+                    $('#combProduct1_' + i).change(function() {
+                            t_IdSeq = -1;
+                            q_bodyId($(this).attr('id'));
+                            b_seq = t_IdSeq;
+                            if(q_cur==1 || q_cur==2)
+                                $('#txtFill_'+b_seq).val($('#combProduct1_'+b_seq).find("option:selected").text());
+                    });
+                    
                     $('#combCalctype_' + i).change(function() {
                             t_IdSeq = -1;
                             q_bodyId($(this).attr('id'));
@@ -277,6 +285,7 @@
                             t_chgitem+=","+as[i].item;
                         }
                         q_cmbParse("combProduct", t_chgitem,'s');
+                        q_cmbParse("combProduct1", t_chgitem,'s');
                         var t_where = "where=^^ 1=1 ^^";
                         q_gt('calctype',t_where, 0, 0, 0, "");
                         break;
@@ -402,6 +411,44 @@
 						$('#btnFile_'+i).removeAttr('disabled');
 						$('#btnUpload_'+i).removeAttr('disabled');
 					}
+					
+					if($('#chkChk1_'+i).prop('checked') && $('#chkChk3_'+i).prop('checked')){
+                        $('#txtStraddrno_'+i).css('color','green');
+                        $('#txtStraddr_'+i).css('color','green');
+                        $('#txtSaddr_'+i).css('color','green');
+                        $('#txtEndaddrno_'+i).css('color','green');
+                        $('#txtEndaddr_'+i).css('color','green');
+                        $('#txtAaddr_'+i).css('color','green');
+                        $('#txtAddno3_'+i).css('color','green');
+                        $('#txtAdd3_'+i).css('color','green');
+                    }else if($('#chkChk1_'+i).prop('checked')){
+                        $('#txtStraddrno_'+i).css('color','red');
+                        $('#txtStraddr_'+i).css('color','red');
+                        $('#txtSaddr_'+i).css('color','red');
+                        $('#txtEndaddrno_'+i).css('color','red');
+                        $('#txtEndaddr_'+i).css('color','red');
+                        $('#txtAaddr_'+i).css('color','red');
+                        $('#txtAddno3_'+i).css('color','red');
+                        $('#txtAdd3_'+i).css('color','red');
+                    }else if($('#chkChk3_'+i).prop('checked')){
+                        $('#txtStraddrno_'+i).css('color','blue');
+                        $('#txtStraddr_'+i).css('color','blue');
+                        $('#txtSaddr_'+i).css('color','blue');
+                        $('#txtEndaddrno_'+i).css('color','blue');
+                        $('#txtEndaddr_'+i).css('color','blue');
+                        $('#txtAaddr_'+i).css('color','blue');
+                        $('#txtAddno3_'+i).css('color','blue');
+                        $('#txtAdd3_'+i).css('color','blue');
+                    }else if($('#chkChk2_'+i).prop('checked')){
+                        $('#txtStraddrno_'+i).css('color','purple');
+                        $('#txtStraddr_'+i).css('color','purple');
+                        $('#txtSaddr_'+i).css('color','purple');
+                        $('#txtEndaddrno_'+i).css('color','purple');
+                        $('#txtEndaddr_'+i).css('color','purple');
+                        $('#txtAaddr_'+i).css('color','purple');
+                        $('#txtAddno3_'+i).css('color','purple');
+                        $('#txtAdd3_'+i).css('color','purple');
+                    }
 				}
 			}
 
@@ -487,6 +534,7 @@
 						break;
 				}
 			}
+			
 		</script>
 		
 		<style type="text/css">
@@ -584,7 +632,7 @@
 				margin: -1px;
 			}
 			.dbbs {
-				width: 2800px;
+				width: 3000px;
 			}
 			.dbbt {
 				width: 2000px;
@@ -744,7 +792,7 @@
 						<!--<td><input type="button" id="btnTranvcce" value="派車匯入"/></td>-->
 						<td colspan="2"><input type="button" id="btnMao" value="行車里程及耗油狀況"/></td>
 						<td><input type="button" id="btnTick" value="回數票"/></td>
-						<td><input type="button" id="btnCarcost" value="出車費用"/></td>
+						<td style ="display:none;"><input type="button" id="btnCarcost" value="出車費用" /></td>
 					</tr>
 				</table>
 			</div>
@@ -773,14 +821,16 @@
 					<td align="center" style="width:80px;">合計</td>
 					<td align="center" style="width:180px;"><a>派車單號</a></td>	
 					<td align="center" style="width:60px;"><a>抽成<br>獎金</a></td>
+					<td align="center" style="width:100px;"><a>司機加減項</a></td>
+                    <td align="center" style="width:80px;"><a>司機加減項金額</a></td>
 					<td align="center" style="width:15px;">裝貨</td>
                     <td align="center" style="width:15px;">拉貨</td>
                     <td align="center" style="width:15px;">卸貨</td>
 					<td align="center" style="width:80px;">出發時間</td>
 					<td align="center" style="width:80px;">回場時間</td>
 					<td align="center" style="width:80px;"><a>應收運費</a></td>
-					<td align="center" style="width:100px;"><a>加項品名</a></td>
-					<td align="center" style="width:80px;"><a>加項金額</a></td>
+					<td align="center" style="width:100px;"><a>客戶加項品名</a></td>
+					<td align="center" style="width:80px;"><a>客戶加項金額</a></td>
 					<td align="center" style="width:80px;"><a>人工裝費</a></td>
 					<td align="center" style="width:80px;"><a>管理收入</a></td>
 					<td align="center" style="width:80px;"><a>應付運費</a></td>
@@ -839,6 +889,11 @@
 					<td><input type="text" id="txtOrdeno.*"  style="float:left;width:65%;"/>
                         <input type="text" id="txtSo.*"  style="float:left;width:30%;"/></td>
 					<td><input type="text" id="txtReserve.*" class="num" style="width:95%;"/></td>
+					<td>
+                        <input type="text" id="txtFill.*" type="text" class="txt c1" style="width: 75%;"/>
+                        <select id="combProduct1.*" class="txt" style="width: 20px;"> </select>
+                    </td>
+                    <td><input type="text" id="txtMinus.*" class="num" style="float:center;width:95%;"/></td>
 					<td align="center"><input id="chkChk1.*" type="checkbox"/></td>
                     <td align="center"><input id="chkChk2.*" type="checkbox"/></td>
                     <td align="center"><input id="chkChk3.*" type="checkbox"/></td>
