@@ -655,22 +655,13 @@
                         $('#txtAddr2_'+i).css('color','green');
                         $('#txtAddress2_'+i).css('color','green');
                         $('#txtLat_'+i).css('color','green');
-                        $('#txtAddrno3_'+i).css('color','green');
-                        $('#txtAddr3_'+i).css('color','green');
                     }else if($('#chkChk1_'+i).prop('checked')){
                         $('#txtAddrno_'+i).css('color','red');
                         $('#txtAddr_'+i).css('color','red');
                         $('#txtAddress_'+i).css('color','red');
-                        $('#txtAddrno2_'+i).css('color','red');
-                        $('#txtAddr2_'+i).css('color','red');
-                        $('#txtAddress2_'+i).css('color','red');
-                        $('#txtLat_'+i).css('color','red');
                         $('#txtAddrno3_'+i).css('color','red');
                         $('#txtAddr3_'+i).css('color','red');
                     }else if($('#chkChk2_'+i).prop('checked')){
-                        $('#txtAddrno_'+i).css('color','blue');
-                        $('#txtAddr_'+i).css('color','blue');
-                        $('#txtAddress_'+i).css('color','blue');
                         $('#txtAddrno2_'+i).css('color','blue');
                         $('#txtAddr2_'+i).css('color','blue');
                         $('#txtAddress2_'+i).css('color','blue');
@@ -681,10 +672,6 @@
                         $('#txtAddrno_'+i).css('color','purple');
                         $('#txtAddr_'+i).css('color','purple');
                         $('#txtAddress_'+i).css('color','purple');
-                        $('#txtAddrno2_'+i).css('color','purple');
-                        $('#txtAddr2_'+i).css('color','purple');
-                        $('#txtAddress2_'+i).css('color','purple');
-                        $('#txtLat_'+i).css('color','purple');
                         $('#txtAddrno3_'+i).css('color','purple');
                         $('#txtAddr3_'+i).css('color','purple');
                     }
@@ -957,9 +944,10 @@
 					<td align="center" style="width:100px"><a>運輸單號</a></td>
 					<td align="center" style="width:60px"><a>客戶</a></td>
 					<td align="center" style="width:150px"><a>提貨地點</a></td>
+					<td align="center" style="width:70px"><a>中繼站</a></td>
+					<td align="center" style="width:180px"><a>收貨人/地點</a></td>
 					<td align="center" style="width:50px"><a>裝貨日期</a></td>
 					<td align="center" style="width:50px"><a>卸貨日期</a></td>
-					<td align="center" style="width:180px"><a>收貨人/地點</a></td>
 					<td align="center" style="width:45px"><a>危險<br/>等級</a></td>
 					<td align="center" style="width:80px"><a>品名</a></td>
 					<td align="center" style="width:30px"><a>單位</a></td>
@@ -977,7 +965,6 @@
 					<td align="center" style="width:60px"><a>車牌</a></td>
                     <td align="center" style="width:50px"><a>司機</a></td>
                     <td align="center" style="width:50px"><a>板台</a></td>
-                    <td align="center" style="width:70px"><a>中繼站</a></td>
                     <td align="center" id='hid_tranno' style="width:100px"><a>送貨單號</a></td>
                     <td align="center" id='hid_trandate' style="width:60px"><a>結關日期</a></td>
                     <td align="center" style="width:40px"><a>車趟<br/>(1去2回)</a></td>
@@ -1013,13 +1000,10 @@
                         <input type="text" id="txtAddress.*" style="width:97%;" />
                         <input type="button" id="btnAddr1.*" style="display:none;">
                     </td>
-					<td>
-                        <input type="text" id="txtBdate.*" style="width:95%;" />
-                        <input type="text" id="txtTime1.*" style="width:95%;" />
-                    </td>
                     <td>
-                        <input type="text" id="txtEdate.*" style="width:95%;" />
-                        <input type="text" id="txtTime2.*" style="width:95%;" />
+                        <input type="text" id="txtAddrno3.*" style="width:95%;" />
+                        <input type="text" id="txtAddr3.*" style="width:95%;" />
+                        <input type="button" id="btnAddr3.*" style="display:none;">
                     </td>
                     <td>
                         <input type="text" id="txtMemo2.*" style="display:none;" />
@@ -1028,6 +1012,14 @@
                         <input type="text" id="txtLat.*" style="width:25%;" />
                         <input type="text" id="txtAddress2.*" style="width:69%;" />
                         <input type="button" id="btnAddr2.*" style="display:none;">
+                    </td>
+					<td>
+                        <input type="text" id="txtBdate.*" style="width:95%;" />
+                        <input type="text" id="txtTime1.*" style="width:95%;" />
+                    </td>
+                    <td>
+                        <input type="text" id="txtEdate.*" style="width:95%;" />
+                        <input type="text" id="txtTime2.*" style="width:95%;" />
                     </td>
                     <td><input type="text" id="txtTypea.*" style="width:95%;"/></td>
 					<td>
@@ -1064,11 +1056,6 @@
                     <td>
                         <input type="text" id="txtLng2.*" style="width:95%;"/>
                         <input type="button" id="btnCarplate.*" style="display:none;"/>
-                    </td>
-                    <td>
-                        <input type="text" id="txtAddrno3.*" style="width:95%;" />
-                        <input type="text" id="txtAddr3.*" style="width:95%;" />
-                        <input type="button" id="btnAddr3.*" style="display:none;">
                     </td>
                     <td id='hid_tranno.*' ><input type="text" id="txtTranno.*" style="width:95%;"/></td>
 					<td id='hid_trandate.*'><input type="text" id="txtLng.*" style="width:95%;"/></td>

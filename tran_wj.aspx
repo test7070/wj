@@ -419,21 +419,13 @@
                         $('#txtEndaddrno_'+i).css('color','green');
                         $('#txtEndaddr_'+i).css('color','green');
                         $('#txtAaddr_'+i).css('color','green');
-                        $('#txtAddno3_'+i).css('color','green');
-                        $('#txtAdd3_'+i).css('color','green');
                     }else if($('#chkChk1_'+i).prop('checked')){
                         $('#txtStraddrno_'+i).css('color','red');
                         $('#txtStraddr_'+i).css('color','red');
                         $('#txtSaddr_'+i).css('color','red');
-                        $('#txtEndaddrno_'+i).css('color','red');
-                        $('#txtEndaddr_'+i).css('color','red');
-                        $('#txtAaddr_'+i).css('color','red');
                         $('#txtAddno3_'+i).css('color','red');
                         $('#txtAdd3_'+i).css('color','red');
                     }else if($('#chkChk3_'+i).prop('checked')){
-                        $('#txtStraddrno_'+i).css('color','blue');
-                        $('#txtStraddr_'+i).css('color','blue');
-                        $('#txtSaddr_'+i).css('color','blue');
                         $('#txtEndaddrno_'+i).css('color','blue');
                         $('#txtEndaddr_'+i).css('color','blue');
                         $('#txtAaddr_'+i).css('color','blue');
@@ -443,9 +435,6 @@
                         $('#txtStraddrno_'+i).css('color','purple');
                         $('#txtStraddr_'+i).css('color','purple');
                         $('#txtSaddr_'+i).css('color','purple');
-                        $('#txtEndaddrno_'+i).css('color','purple');
-                        $('#txtEndaddr_'+i).css('color','purple');
-                        $('#txtAaddr_'+i).css('color','purple');
                         $('#txtAddno3_'+i).css('color','purple');
                         $('#txtAdd3_'+i).css('color','purple');
                     }
@@ -813,8 +802,8 @@
 					<td align="center" style="width:80px;"><a>件數</a></td>
 					<td align="center" style="width:80px;"><a>噸位</a></td>
 					<td align="center" style="width:200px;"><a>起運地點</a></td>
-					<td align="center" style="width:200px;"><a>卸貨地點</a></td>
 					<td align="center" style="width:100px;"><a>中繼站</a></td>
+					<td align="center" style="width:200px;"><a>卸貨地點</a></td>
 					<td align="center" style="width:80px;"><a>板台<br>號碼</a></td>
 					<td align="center" style="width:80px;">實車</td>
 					<td align="center" style="width:80px;">空車</td>	
@@ -867,18 +856,18 @@
 						<input type="text" id="txtStraddr.*" style="float:left;width:65%;"/>
 						<input type="text" id="txtSaddr.*" style="float:left;width:95%;"/>
 						<input type="button" id="btnStraddr.*" style="display:none;">
-					</td>	
+					</td>
+					<td>
+                        <input type="text" id="txtAddno3.*" style="width:95%;" />
+                        <input type="text" id="txtAdd3.*" style="width:95%;" />
+                        <input type="button" id="btnAddr3.*" style="display:none;">
+                    </td>	
 					<td>
 						<input type="text" id="txtEndaddrno.*" style="float:left;width:30%;"/>
 						<input type="text" id="txtEndaddr.*"style="float:left;width:65%;"/>
 						<input type="text" id="txtAaddr.*" style="float:left;width:95%;"/>
 						<input type="button" id="btnEndaddr.*" style="display:none;">
 					</td>
-					<td>
-                        <input type="text" id="txtAddno3.*" style="width:95%;" />
-                        <input type="text" id="txtAdd3.*" style="width:95%;" />
-                        <input type="button" id="btnAddr3.*" style="display:none;">
-                    </td>
 					<td>
 						<input type="text" id="txtCardeal.*" class="txt c1" style="width:95%;"/>
 						<input type="text" id="btnCardeal.*" style="display:none;"/>
