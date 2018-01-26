@@ -95,8 +95,13 @@
                 
                 $('#btnPrice').click(function(e) {
                    if(q_cur == 1 || q_cur == 2){
-                             var t_where = "where=^^ noa in(select max(noa)  from addr2 where sdate<='"+$('#txtDatea').val()+"' and custno in (select noa from cust) group by custno,cust)^^ stop=999";
-                             q_gt('addr2', t_where, 0, 0, 0, "addr2");
+                             var t_weight=dec(q_div($('#txtTweight2').val(),1000));
+                             for (var i = 0; i < q_bbsCount; i++) {
+                                 var t_where = "where=^^ addrno='"+$('#txtAddrno_'+i).val()+"' and ('"+$('#txtContainerno1_'+i).val()+"' between lat and lng) and carno='"+$('#txtTypea_'+i).val()+"' and ('"+t_weight+"' between rate and rate2)^^ stop=999";
+                                 q_gt('addr2s', t_where, 0, 0, 0, "addr2s", r_accy, 1);
+                             }
+                             sum();
+                             
                    }
                 });
             }
@@ -279,6 +284,7 @@
                 //q_box('z_tranorde_js.aspx?' + r_userno + ";" + r_name + ";" + q_time + ";" + $('#txtNoa').val() + ";" + r_accy, '', "95%", "95%", q_getMsg("popPrint"));
                 q_box("z_tranorde_js.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";" + JSON.stringify({noa:trim($('#txtNoa').val())}) + ";" + r_accy + "_" + r_cno, 'tranorde_js', "95%", "95%", q_getMsg("popPrint"));
             }
+            
             function btnOk() {
                 $('#txtDatea').val($.trim($('#txtDatea').val()));
                 if ($('#txtDatea').val().length == 0 || !q_cd($('#txtDatea').val())) {
@@ -397,20 +403,14 @@
                         }
                         q_cmbParse("combCalctype", t_calctype,'s');
                         break;
-                    case 'addr2':
-                            var as = _q_appendData("addr2", "", true);
-                            var t_weight=$('#txtTweight2').val();
-                            if(as[0]!=undefined){
+                    case 'addr2s':
                                 var addr2s = _q_appendData("addr2s", "", true);
                                 for (var j = 0; j< q_bbsCount; j++) {
                                     for (var i = 0; i < addr2s.length; i++) {
-                                        if(addr2s[i].addrno==$('#txtAddrno_'+j).val() && addr2s[i].carno==$('#txtTypea_'+j).val() && dec(addr2s[i].rate)<=dec(q_div(t_weight,1000)) && dec(addr2s[i].rate2)>=dec(q_div(t_weight,1000)) && dec(addr2s[i].lat)<=$('#txtContainerno1_'+j).val() && dec(addr2s[i].lng)>=$('#txtContainerno1_'+j).val()){
-                                            $('#txtPrice_'+j).val(addr2s[i].value);
-                                            $('#txtMoney_'+j).val(round(dec(q_mul(q_div($('#txtTheight_'+j).val(),1000),addr2s[i].value)),0));
-                                        }
+                                        $('#txtPrice_'+j).val(addr2s[0].value);
+                                        $('#txtMoney_'+j).val(round(dec(q_mul(q_div($('#txtTheight_'+j).val(),1000),addr2s[0].value)),0));
                                     }
                                 }
-                            }
                             t_weight=0;
                             break;
                     case q_name:
