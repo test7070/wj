@@ -49,7 +49,8 @@
 				q_getFormat();
 				q_langShow();
 				q_popAssign();
-				
+				$('#txtMon').mask('999/99');
+
 				if(window.parent.q_name=='trd'){
 					var wParent = window.parent.document;
 					var t_Noa= wParent.getElementById("txtNoa").value
