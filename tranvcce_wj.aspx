@@ -186,8 +186,10 @@
                                 if (!b_ret || b_ret.length == 0)
                                     return;
                                     ret = q_gridAddRow(bbsHtm, 'tbbs', 
-                                    'txtCalctype,txtConn,txtCustno,txtCust,txtBdate,txtTime1,txtEdate,txtTime2,txtTypea,txtProductno,txtProduct,txtUnit,txtWeight,txtMount,txtTvolume,txtTheight,txtCarno,txtDriverno,txtDriver,txtAddrno,txtAddr,txtAddress,txtAddrno2,txtAddr2,txtAddress2,txtTranno,txtOrdeno,txtNo2,txtMemo,txtUno,txtVolume,txtTotal,txtWidth,txtTotal2,txtProduct2,txtHeight,txtLat', b_ret.length, b_ret, 
-                                    'calctype,caseno,conn,tel,date1,time1,date2,time2,typea,productno,product,unit,theight,mount,total2,total3,carno,driverno,driver,addrno,addr,address,addrno2,addr2,address2,tranno,noa,noq,memo,uno,price,money,width,total,product2,height,containerno1','txtCalctype,txtBdate,txtTime1,txtEdate,txtTime2,,txtCustno,txtAddrno,txtCarno');
+                                    'txtCalctype,txtConn,txtCustno,txtCust,txtBdate,txtTime1,txtEdate,txtTime2,txtTypea,txtProductno,txtProduct,txtUnit,txtWeight,txtMount,txtTvolume,txtTheight,txtCarno,txtDriverno,txtDriver,txtAddrno,txtAddr,txtAddress,txtAddrno2,txtAddr2,txtAddress2,txtTranno,txtOrdeno,txtNo2,txtMemo,txtUno,txtVolume,txtTotal,txtWidth,txtTotal2,txtProduct2,txtHeight,txtLat,txtPaths'
+									, b_ret.length, b_ret
+									,'calctype,caseno,conn,tel,date1,time1,date2,time2,typea,productno,product,unit,theight,mount,total2,total3,carno,driverno,driver,addrno,addr,address,addrno2,addr2,address2,tranno,noa,noq,memo,uno,price,money,width,total,product2,height,containerno1,unit2'
+									,'txtCalctype,txtBdate,txtTime1,txtEdate,txtTime2,,txtCustno,txtAddrno,txtCarno');
                              }
                         break;
                     case q_name + '_s':
@@ -967,6 +969,7 @@
 					<td align="center" style="width:80px"><a>品名</a></td>
 					<td align="center" style="width:30px"><a>單位</a></td>
 					<td align="center" style="width:50px"><a>數量</a></td>
+					<td align="center" style="width:50px"><a>計價<br/>單位</a></td>
 					<td align="center" style="width:60px"><a>品重(KG)<br/>毛重(KG)</a></td>
 					<td align="center" id='hid_po' style="width:100px"><a>批號</a></td>
 					<td align="center" id='hid_price' style="width:60px"><a>應收單價</a></td>
@@ -998,7 +1001,7 @@
 					<td><a id="lblNo.*" style="font-weight: bold;text-align: center;display: block;"> </a></td>
 					<td align="center"><input id="Copy.*" type="checkbox"/></td>
 					<td>
-                        <input type="text" id="txtCalctype.*" type="text" class="txt c1" style="width: 70%;"/>
+                        <input type="text" id="txtCalctype.*" type="text" class="txt c1" style="width: 65%;"/>
                         <select id="combCalctype.*" class="txt" style="width: 20px;"> </select>
                     </td>
                     <td>
@@ -1044,6 +1047,7 @@
                     </td>
                     <td><input type="text" id="txtUnit.*" style="width:95%;"/></td>
                     <td><input type="text" id="txtMount.*" class="num" style="width:95%;"/></td>
+					<td><input type="text" id="txtPaths.*" class="num" style="width:95%;"/></td>
 					<td><input type="text" id="txtUweight.*" class="num" style="width:95%;"/>
 					    <input type="text" id="txtWeight.*" class="num" style="width:95%;"/></td>
 					<td id='hid_po.*'><input type="text" id="txtUno.*" style="width:95%;"/></td>

@@ -92,7 +92,9 @@
                 q_mask(bbmMask);
                 var t_where = "where=^^ 1=1 ^^";
                 q_gt('chgitem', t_where, 0, 0, 0, "");
-                
+                //q_cmbParse("combUnit", q_getPara('sys.unit'));
+				//q_cmbParse("combUnit2", q_getPara('sys.unit'));
+
                 $('#btnPrice').click(function(e) {
                    if(q_cur == 1 || q_cur == 2){
                              var t_weight=dec(q_div($('#txtTweight2').val(),1000));
@@ -107,6 +109,8 @@
             }
             function bbsAssign() {
                 for (var i = 0; i < q_bbsCount; i++) {
+				q_cmbParse("combUnit_"+i, q_getPara('sys.unit'));
+				q_cmbParse("combUnit2_"+i, q_getPara('sys.unit'));
                     $('#lblNo_' + i).text(i + 1);
                     if($('#btnMinus_' + i).hasClass('isAssign'))
                         continue;
@@ -216,6 +220,20 @@
                             b_seq = t_IdSeq;
                             if(q_cur==1 || q_cur==2)
                                 $('#txtProduct2_'+b_seq).val($('#combProduct_'+b_seq).find("option:selected").text());
+                    });
+					$('#combUnit_' + i).change(function() {
+						t_IdSeq = -1;
+						q_bodyId($(this).attr('id'));
+						b_seq = t_IdSeq;
+						if(q_cur==1 || q_cur==2)
+							$('#txtUnit_'+b_seq).val($('#combUnit_'+b_seq).find("option:selected").text());
+                    });
+					$('#combUnit2_' + i).change(function() {
+						t_IdSeq = -1;
+						q_bodyId($(this).attr('id'));
+						b_seq = t_IdSeq;
+						if(q_cur==1 || q_cur==2)
+							$('#txtUnit2_'+b_seq).val($('#combUnit2_'+b_seq).find("option:selected").text());
                     });
                 }
                 _bbsAssign();
@@ -726,13 +744,14 @@
 					<td align="center" style="width:250px"><a>收貨人/地點</a></td>
                     <td align="center" style="width:70px"><a>危險等級</a></td>
                     <td align="center" style="width:150px"><a>品名</a></td>
-                    <td align="center" style="width:50px"><a>單位</a></td>
+                    <td align="center" style="width:70px"><a>單位</a></td>
                     <td align="center" style="width:80px"><a>單位毛<br/>重(KG)</a></td>
                     <td align="center" style="width:70px"><a>單位淨<br/>重(KG)</a></td>
                     <td align="center" style="width:100px"><a>毛重(KG)</a></td>
                     <td align="center" style="width:100px"><a>淨重(KG)</a></td>
                     <td align="center" style="width:70px"><a>數量</a></td>
                     <td align="center" style="width:70px"><a>單價</a></td>
+					<td align="center" style="width:70px"><a>計價單位</a></td>
                     <td align="center" style="width:80px"><a>運費</a></td>
 					<td align="center" style="width:120px"><a>加項品名</a></td>
                     <!--<td align="center" style="width:70px"><a>應付單價</a></td>
@@ -792,7 +811,10 @@
                         <input type="text" id="txtProduct.*" style="width:55%;" />
                         <input type="button" id="btnProduct.*" style="display:none;">
                     </td>
-                    <td><input type="text" id="txtUnit.*" class="num" style="width:95%;" /> </td>
+                    <td>
+					<input type="text" id="txtUnit.*" class="num" style="width:55%;" /> 
+					<select id="combUnit.*" class="txt" style="width: 20px;"> </select>
+					</td>
                     <!--<td><input type="text" id="txtLengthb.*" class="num" style="width:95%;" /> </td>-->
                     <td><input type="text" id="txtVolume.*" class="num" style="width:95%;" /> </td>
                     <td><input type="text" id="txtWeight.*" class="num" style="width:95%;" /> </td>
@@ -800,6 +822,10 @@
                     <td><input type="text" id="txtTvolume.*" class="num" style="width:95%;" /> </td>
                     <td><input type="text" id="txtMount.*" class="num" style="width:95%;" /></td>
                     <td><input type="text" id="txtPrice.*" class="num" style="width:95%;" /></td>
+					<td>
+					<input type="text" id="txtUnit2.*" class="num" style="width:55%;" />
+					<select id="combUnit2.*" class="txt" style="width: 20px;"> </select>
+					</td>
                     <td><input type="text" id="txtMoney.*" class="num" style="width:95%;" /></td>
                     <!--<td><input type="text" id="txtWidth.*" class="num" style="width:95%;" /> </td>-->
 					<td>

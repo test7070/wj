@@ -801,6 +801,7 @@
 					<td align="center" style="width:80px;"><a>單價</a></td>
 					<td align="center" style="width:80px;"><a>件數</a></td>
 					<td align="center" style="width:80px;"><a>噸位</a></td>
+					<td align="center" style="width:50px;"><a>計價<br/>單位</a></td>
 					<td align="center" style="width:200px;"><a>起運地點</a></td>
 					<td align="center" style="width:100px;"><a>中繼站</a></td>
 					<td align="center" style="width:200px;"><a>卸貨地點</a></td>
@@ -850,6 +851,7 @@
 						<td><input type="text" id="txtPrice.*" class="num" style="float:left;width:95%;"/></td>
 						<td><input type="text" id="txtMount.*" class="num" style="float:left;width:95%;"/></td>
 						<td><input type="text" id="txtWeight.*" class="num" style="float:left;width:95%;"/></td>
+						<td><input type="text" id="txtUnit.*" style="float:left;width:95%;"/></td>
 					
 					<td>
 						<input type="text" id="txtStraddrno.*" style="float:left;width:30%;"/>

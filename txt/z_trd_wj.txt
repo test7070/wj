@@ -313,48 +313,75 @@ z_trd_wj5:--z_trd_wj5
 declare @t_mon nvarchar(10)
 set @t_mon = case when '#non'=[2] then '' else [2] end
 declare @tmp table( 
-gno nvarchar(5), 
-custno nvarchar(30), 
-cust nvarchar(30), 
-serial nvarchar(30), 
-datea nvarchar(30), 
-carno nvarchar(30), 
-tranno nvarchar(30), 
-product nvarchar(30), 
-straddr nvarchar(30), 
-endaddr nvarchar(30), 
-mount float, 
-weight float, 
-price float, 
-total float, 
-tranmoney float,
-m nvarchar(3),
-d nvarchar(3),
-yy nvarchar(3),
-mm nvarchar(3)
+	gno nvarchar(5),
+	tranno nvarchar(30),
+	custno nvarchar(30), 
+	cust nvarchar(30), 
+	serial nvarchar(30), 
+	datea nvarchar(30), 
+	carno nvarchar(30), 
+	product nvarchar(30), 
+	straddr nvarchar(30), 
+	endaddr nvarchar(30), 
+	mount float, 
+	weight float, 
+	price float, 
+	total float, 
+	[money] float, 
+	typea nvarchar(20),
+	TBL  nvarchar(10),
+	BL int,
+	BLP int,
+	BLM int,
+	memo nvarchar(300)
 ) 
-insert into @tmp(gno,tranno,custno,cust,serial,datea,carno,product,straddr,endaddr,mount,weight,price,total,m,d,yy,mm) 
-select '0',b.tranno,a.custno,a.comp,d.serial,a.datea,b.carno,b.product,b.straddr,b.endaddr,b.mount,c.weight,b.price,b.total,
-substring(a.datea,5,2),substring(a.datea,8,2),substring(a.datea,1,3),substring(a.datea,5,2)
+insert into @tmp(gno,tranno,custno,cust,serial,datea,carno,product,straddr,endaddr,mount,weight,price,total,TBL,BL,BLP,BLM,memo) 
+select '0',c.po,a.custno,a.comp,d.serial,a.datea,b.carno,b.product,c.straddr,c.endaddr,b.mount,c.weight,b.price,b.total
+,case when charindex('墊板',c.timea) > 0 and c.plus !=0 then ABS(c.plus)/20 else 0 end
+,case when charindex('墊板',c.timea) > 0 and c.plus !=0 then ABS(c.plus)/20 else 0 end
+,20
+,c.plus
+,a.memo
 from view_trd a 
-left join view_trds[1] b on a.noa=b.noa 
+left join view_trds107 b on a.noa=b.noa 
 left join cust d on a.custno = d.noa 
-left join view_trans[1] c on b.tranno = c.noa 
-where charindex('中油',a.comp)>0 and (a.mon = @t_mon or len(@t_mon)=0) and b.price>0 and c.weight>0
-update @tmp set total = round(weight * price,0) 
-update a set a.tranno = b.po from @tmp a 
-outer apply(select * from view_trans where a.tranno = noa)b 
+left join view_trans107 c on b.tranno = c.noa and b.trannoq = c.noq
+where charindex('中油',a.comp)>0 and (a.mon = @t_mon or len(@t_mon)=0) and b.price>0
 
-insert into @tmp (gno,custno,weight,price,total,yy,mm) 
-select '1',custno,SUM(weight),price,SUM(total),yy,mm
-from @tmp group by custno,price,yy,mm
+update @tmp set TBL=NULL,BL=NULL,BLP=NULL,BLM=NULL where BLM=0
+update @tmp set total = case when price>0 and weight>0 then round(weight * price,2) else 0 end
+update @tmp set [money] = case when BLM>0 then total-BLM
+							   when BLM<0 then total+BLM
+							   when BLM IS NULL then total end
+update @tmp set typea = case when custno ='007-001' then '北區'
+							 when custno ='007-002' then '中區'
+							 when custno ='007-003' then '嘉廠'
+							 when custno ='007-004' then '嘉義生產組'
+							 when custno ='007-005' then '南區'
+						end
+						
+insert into @tmp (gno,custno,weight,price,total,BLM,[money]) 
+select '1',custno,SUM(weight),price,SUM(total),SUM(BLM),SUM([money])
+from @tmp group by custno,price
 
-insert into @tmp (gno,price,custno,yy,mm) 
-select '2',MAX(price),MAX(custno),yy,mm
-from @tmp group by yy,mm
+insert into @tmp (gno,custno,weight,price,total,BLM,[money]) 
+select '2',custno,SUM(weight),MAX(price),SUM(total),SUM(BLM),SUM([money])
+from @tmp where gno='1' group by custno
 
-insert into @tmp (gno,custno,price,yy,mm) 
-select '3',custno,MAX(price),yy,mm
-from @tmp group by custno ,yy,mm
+insert into @tmp (gno,custno,weight,price,total,BLM,[money]) 
+select '3',custno,SUM(weight),MAX(price),SUM(total),SUM(BLM),SUM([money])
+from @tmp where gno='2' group by custno
 
-select * from @tmp a order by yy,mm,price,gno;
+insert into @tmp (gno,custno,price,total,money) 
+select '4',custno,price,round(total*0.05,0),[money]+round(total*0.05,0)
+from @tmp where gno='3'
+
+insert into @tmp (gno,price,custno) 
+select '5',MAX(price),custno
+from @tmp where custno is not null 
+group by custno
+
+select a.*,
+SUBSTRING(datea,1,3) as yy,SUBSTRING(datea,5,2) as mm,
+SUBSTRING(datea,5,2) as m,SUBSTRING(datea,8,2) as d
+from @tmp a order by custno,price,gno;
