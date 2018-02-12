@@ -20,7 +20,7 @@ boss nvarchar(100),
 tel nvarchar(100), 
 fax nvarchar(100), 
 serial nvarchar(100), 
-invoiceno nvarchar(100), 
+invoiceno nvarchar(300), 
 
 trandate nvarchar(100), 
 datea nvarchar(100), 
@@ -49,8 +49,7 @@ tax float,
 total6 float, 
 enda nvarchar(20) 
 ) 
-if([2]='#non') 
-begin 
+
 insert into @tmp 
 select '0',a.noa,'',b.trannoq,a.custno,a.comp,e.boss,e.tel,e.fax,e.serial, 
 a.vccano,c.trandate,c.datea,c.carno 
@@ -58,33 +57,15 @@ a.vccano,c.trandate,c.datea,c.carno
 ,c.endaddr,b.product,b.mount,d.uweight,c.weight,c.po 
 ,b.price,b.total,c.price2,b.total+c.price2,'',case when f.cartype='2' or f.cartype='6' then '自' else '外' end 
 ,d.tranno,d.typea,cast(g.rate as nvarchar(50))+'T~'+cast(g.rate2 as nvarchar(50))+'T','','',c.price3,'','','' 
-from view_trd a 
-left join view_trds b on a.noa = b.noa 
-left join view_trans c on b.tranno=c.noa and b.trannoq=c.noq 
-left join view_tranvcces106 d on c.ordeno=d.noa and c.so=d.noq 
+from view_trd[1] a 
+left join view_trds[1] b on a.noa = b.noa 
+left join view_trans[1] c on b.tranno=c.noa and b.trannoq=c.noq 
+left join view_tranvcces[1] d on c.ordeno=d.noa and c.so=d.noq 
 left join cust e on a.custno=e.noa 
 left join car2 f on c.carno=f.noa 
 left join addr2s g on c.straddrno=g.noa and c.price=g.value and d.typea=g.carno 
-where a.custno between @t_bcustno and @t_ecustno and a.noa between @t_bnoa and @t_enoa 
-end 
-else 
-begin 
-insert into @tmp 
-select '0',a.noa,'',b.trannoq,a.custno,a.comp,e.boss,e.tel,e.fax,e.serial, 
-a.vccano,c.trandate,c.datea,c.carno 
-,b.straddr,addr2 
-,c.endaddr,b.product,b.mount,d.uweight,c.weight,c.po 
-,b.price,b.total,c.price2,b.total+c.price2,'',case when f.cartype='2' or f.cartype='6' then '自' else '外' end 
-,d.tranno,d.typea,cast(g.rate as nvarchar(50))+'T~'+cast(g.rate2 as nvarchar(50))+'T','','',c.price3,'','','' 
-from view_trd a 
-left join view_trds b on a.noa = b.noa 
-left join view_trans c on b.tranno=c.noa and b.trannoq=c.noq 
-left join view_tranvcces106 d on c.ordeno=d.noa and c.so=d.noq 
-left join cust e on a.custno=e.noa 
-left join car2 f on c.carno=f.noa 
-left join addr2s g on c.straddrno=g.noa and c.price=g.value and d.typea=g.carno 
-where left(a.datea,6)=@t_mon and a.custno between @t_bcustno and @t_ecustno and a.noa between @t_bnoa and @t_enoa 
-end 
+where (left(a.datea,6)=@t_mon or len(@t_mon)=0)and a.custno between @t_bcustno and @t_ecustno and a.noa between @t_bnoa and @t_enoa 
+
 
 update @tmp 
 set total3=b.total2,total4=case when a.cartype='自' then a.total2 else '' end,total5=case when a.cartype='外' then a.total2 else '' end 
@@ -137,3 +118,270 @@ substring(datea,5,5) datea
 ,dbo.getComma(cost,0)cost 
 ,dbo.getComma(cost2,0)cost2 
 ,* from @tmp order by trdnoa,gno ;
+------------------------------------------------------------------ 
+z_trd_wj2:--z_trd_wj2
+declare @t_mon nvarchar(10)
+set @t_mon = case when '#non'=[2] then '' else [2] end
+declare @tmp table(
+	gno nvarchar(5),
+	noa nvarchar(30),
+	tranno nvarchar(30),
+	datea nvarchar(30),
+	carno nvarchar(30),
+	class nvarchar(30),
+	straddr nvarchar(30),
+	endaddr nvarchar(30),
+	custno nvarchar(30),
+	cust nvarchar(30),
+	product nvarchar(30),
+	mount float,
+	[weight] float,
+	price float,
+	pd float,
+	total float,
+	tm float,
+	des6 float,
+	serialno nvarchar(30)
+)
+insert into @tmp (gno,noa,tranno,datea,carno,product,mount,price,total)
+select '0',a.noa,b.tranno,a.datea,b.carno,b.product,b.mount,b.price,b.tranmoney
+from view_trd[1] a
+left join view_trds[1] b on a.noa = b.noa
+where (left(a.datea,6)=@t_mon or len(@t_mon)=0) and a.custno like '029%'
+
+update a set a.class = b.calctype,a.straddr=b.straddr,a.endaddr=b.endaddr,a.custno=b.custno,a.cust=b.comp,a.weight = b.weight,a.tranno = b.po
+from @tmp a outer apply(select * from view_trans where noa = a.tranno and mount = a.mount)b
+
+update a set a.serialno=b.serial from @tmp a
+outer apply (select * from cust where noa=a.custno) b
+
+update @tmp set total = round(price*weight,2)
+update @tmp set des6 = round(total*0.06,2)
+update @tmp set pd = round(price-(price*0.06),2)
+update @tmp set tm= round(total-des6,2)
+
+insert into @tmp(gno,custno)
+select '1',custno from @tmp group by custno
+
+select a.*,SUBSTRING(datea,1,3) as yy, SUBSTRING(datea,5,2) as mm,SUBSTRING(datea,5,5) as dateb
+from @tmp a order by custno,gno;
+------------------------------------------------------------------ 
+z_trd_wj3:--z_trd_wj3
+declare @t_mon nvarchar(10) 
+set @t_mon = case when '#non'=[2] then '' else [2] end
+declare @tmp table(
+	gno nvarchar(5),
+	noa nvarchar(30),
+	tranno nvarchar(30),
+	datea nvarchar(30),
+	carno nvarchar(30),
+	class nvarchar(30),
+	straddr nvarchar(30),
+	endaddr nvarchar(30),
+	custno nvarchar(30),
+	cust nvarchar(30),
+	product nvarchar(30),
+	mount float,
+	[weight] float,
+	price float,
+	pd float,
+	total float,
+	tm float,
+	des6 float,
+	serialno nvarchar(30)
+)
+insert into @tmp (gno,noa,tranno,datea,carno,product,mount,price,total)
+select '0',a.noa,b.tranno,a.datea,b.carno,b.product,b.mount,b.price,b.tranmoney
+from view_trd[1] a
+left join view_trds[1] b on a.noa = b.noa
+where (left(a.datea,6)=@t_mon or len(@t_mon)=0) and a.custno like '029%'
+
+update a set a.class = b.calctype,a.straddr=b.straddr,a.endaddr=b.endaddr,a.custno=b.custno,a.cust=b.comp,a.weight = b.weight,a.tranno = b.po
+from @tmp a outer apply(select * from view_trans where noa = a.tranno)b
+
+update a set a.serialno=b.serial from @tmp a
+outer apply (select * from cust where noa=a.custno) b
+
+update @tmp set total = round(price*weight,2)
+update @tmp set des6 = round(total*0.06,2)
+update @tmp set pd = round(price-(price*0.06),2)
+update @tmp set tm= round(total-des6,2)
+
+insert into @tmp(gno,custno)
+select '1',custno from @tmp group by custno
+
+select a.*,SUBSTRING(datea,1,3) as yy, SUBSTRING(datea,5,2) as mm,SUBSTRING(datea,5,5) as dateb
+from @tmp a order by custno,gno;
+------------------------------------------------------------------
+z_trd_wj4:--z_trd_wj4
+declare @t_mon nvarchar(10)
+set @t_mon = case when '#non'=[2] then '' else [2] end
+declare @tmp table(
+	gno nvarchar(5),
+	mon nvarchar(30),
+	[weight] float,
+	price float,
+	total float,
+	des6 float,
+	tax float,
+	noa nvarchar(30)
+)
+--北區
+insert into @tmp(gno,mon,weight,price,noa)
+select '11',max(a.mon),c.weight,d.price1,a.noa
+from view_trd a
+left join view_trds[1] b on a.noa=b.noa
+left join view_trans[1] c on c.noa = b.tranno
+left join oilbase d on a.mon=d.noa
+where a.custno='029-001' and (a.mon = @t_mon or len(@t_mon)=0)
+group by c.weight,d.price1,a.noa
+update @tmp set total = round(price * weight,0)
+
+insert into @tmp(gno,mon,weight,price,total)
+select '1',mon,SUM(weight),price,SUM(total)
+from @tmp where gno='11' group by mon,price
+--北區 END
+
+--中區
+insert into @tmp(gno,mon,weight,price,noa)
+select '22',max(a.mon),c.weight,d.price2,a.noa
+from view_trd a
+left join view_trds[1] b on a.noa=b.noa
+left join view_trans[1] c on c.noa = b.tranno
+left join oilbase d on a.mon=d.noa
+where c.custno='029-002' and (a.mon = @t_mon or len(@t_mon)=0)
+group by c.weight,d.price2,a.noa
+update @tmp set total = round(price * weight,0)
+
+insert into @tmp(gno,mon,weight,price,total)
+select '2',mon,SUM(weight),price,SUM(total)
+from @tmp where gno='22' group by mon,price
+--中區 END
+
+--中區
+insert into @tmp(gno,mon,weight,price,noa)
+select '33',max(a.mon),c.weight,d.price3,a.noa
+from view_trd a
+left join view_trds[1] b on a.noa=b.noa
+left join view_trans[1] c on c.noa = b.tranno
+left join oilbase d on a.mon=d.noa
+where c.custno='029-003' and (a.mon = @t_mon or len(@t_mon)=0)
+group by c.weight,d.price3,a.noa
+update @tmp set total = round(price * weight,0)
+
+insert into @tmp(gno,mon,weight,price,total)
+select '3',mon,SUM(weight),price,SUM(total)
+from @tmp where gno='33' group by mon,price
+--中區 END
+
+--移倉
+insert into @tmp(gno,mon,weight,price,noa)
+select '44',max(a.mon),c.weight,d.price4,a.noa
+from view_trd a
+left join view_trds[1] b on a.noa=b.noa
+left join view_trans[1] c on c.noa = b.tranno
+left join oilbase d on a.mon=d.noa
+where c.custno='029-004' and (a.mon = @t_mon or len(@t_mon)=0)
+group by c.weight,d.price4,a.noa
+update @tmp set total = round(price * weight,0)
+
+insert into @tmp(gno,mon,weight,price,total)
+select '4',mon,SUM(weight),price,SUM(total)
+from @tmp where gno='44' group by mon,price
+--移倉 END
+delete from @tmp where len(gno)>1
+
+insert into @tmp (gno,mon,total,des6)
+select '5',mon,round(SUM(total),0),round(SUM(total)*0.06,0) from @tmp group by mon
+
+insert into @tmp (gno,mon,total,tax)
+select '6',mon,round(total-des6,0),round((total-des6)*0.05,0)
+from @tmp where gno='5'
+
+insert into @tmp (gno,mon,total)
+select '7',mon,round(total+tax,0)
+from @tmp where gno='6'
+
+insert into @tmp (gno,mon)
+select '8',mon
+from @tmp group by mon
+
+select a.*,SUBSTRING(mon,1,3) as yy,SUBSTRING(mon,5,2) as mm 
+from @tmp a order by yy,mm,gno;
+------------------------------------------------------------------
+z_trd_wj5:--z_trd_wj5
+declare @t_mon nvarchar(10)
+set @t_mon = case when '#non'=[2] then '' else [2] end
+declare @tmp table( 
+	gno nvarchar(5),
+	tranno nvarchar(30),
+	custno nvarchar(30), 
+	cust nvarchar(30), 
+	serial nvarchar(30), 
+	datea nvarchar(30), 
+	carno nvarchar(30), 
+	product nvarchar(30), 
+	straddr nvarchar(30), 
+	endaddr nvarchar(30), 
+	mount float, 
+	weight float, 
+	price float, 
+	total float, 
+	[money] float, 
+	typea nvarchar(20),
+	TBL  nvarchar(10),
+	BL int,
+	BLP int,
+	BLM int,
+	memo nvarchar(300)
+) 
+insert into @tmp(gno,tranno,custno,cust,serial,datea,carno,product,straddr,endaddr,mount,weight,price,total,TBL,BL,BLP,BLM,memo) 
+select '0',c.po,a.custno,a.comp,d.serial,a.datea,b.carno,b.product,c.straddr,c.endaddr,b.mount,c.weight,b.price,b.total
+,case when charindex('墊板',c.timea) > 0 and c.plus !=0 then ABS(c.plus)/20 else 0 end
+,case when charindex('墊板',c.timea) > 0 and c.plus !=0 then ABS(c.plus)/20 else 0 end
+,20
+,c.plus
+,a.memo
+from view_trd a 
+left join view_trds107 b on a.noa=b.noa 
+left join cust d on a.custno = d.noa 
+left join view_trans107 c on b.tranno = c.noa and b.trannoq = c.noq
+where charindex('中油',a.comp)>0 and (a.mon = @t_mon or len(@t_mon)=0) and b.price>0
+
+update @tmp set TBL=NULL,BL=NULL,BLP=NULL,BLM=NULL where BLM=0
+update @tmp set total = case when price>0 and weight>0 then round(weight * price,2) else 0 end
+update @tmp set [money] = case when BLM>0 then total-BLM
+							   when BLM<0 then total+BLM
+							   when BLM IS NULL then total end
+update @tmp set typea = case when custno ='007-001' then '北區'
+							 when custno ='007-002' then '中區'
+							 when custno ='007-003' then '嘉廠'
+							 when custno ='007-004' then '嘉義生產組'
+							 when custno ='007-005' then '南區'
+						end
+						
+insert into @tmp (gno,custno,weight,price,total,BLM,[money]) 
+select '1',custno,SUM(weight),price,SUM(total),SUM(BLM),SUM([money])
+from @tmp group by custno,price
+
+insert into @tmp (gno,custno,weight,price,total,BLM,[money]) 
+select '2',custno,SUM(weight),MAX(price),SUM(total),SUM(BLM),SUM([money])
+from @tmp where gno='1' group by custno
+
+insert into @tmp (gno,custno,weight,price,total,BLM,[money]) 
+select '3',custno,SUM(weight),MAX(price),SUM(total),SUM(BLM),SUM([money])
+from @tmp where gno='2' group by custno
+
+insert into @tmp (gno,custno,price,total,money) 
+select '4',custno,price,round(total*0.05,0),[money]+round(total*0.05,0)
+from @tmp where gno='3'
+
+insert into @tmp (gno,price,custno) 
+select '5',MAX(price),custno
+from @tmp where custno is not null 
+group by custno
+
+select a.*,
+SUBSTRING(datea,1,3) as yy,SUBSTRING(datea,5,2) as mm,
+SUBSTRING(datea,5,2) as m,SUBSTRING(datea,8,2) as d
+from @tmp a order by custno,price,gno;

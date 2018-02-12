@@ -20,60 +20,29 @@
 				location.href = location.href + "?;;;;" + ((new Date()).getUTCFullYear() - 1911);
 			}
 			$(document).ready(function() {
-				q_gf('', 'z_trd_wj');
+				q_gf('', 'z_vccetran');
 				q_getId();
 			});
 			function q_gfPost() {
 				$('#q_report').q_report({
-					fileName : 'z_trd_wj',
+					fileName : 'z_vccetran',
 					options : [{//[1]
 						type : '0',
 						name : 'accy',
 						value : q_getId()[4]
 					}, {//[2]
-						type : '6',
-						name : 'Mon'
-					},{//[3][4]
-						type : '2',
-						name : 'cust',
-						dbf : 'cust',
-						index : 'noa,comp',
-						src : 'cust_b.aspx'
-					},
-					{//[5][6]
 						type : '1',
-						name : 'noa',
+						name : 'Datea'
 					}
 					]
 				});
 				q_getFormat();
 				q_langShow();
 				q_popAssign();
-				$('#txtMon').mask('999/99');
-
-				if(window.parent.q_name=='trd'){
-					var wParent = window.parent.document;
-					var t_Noa= wParent.getElementById("txtNoa").value
-					var t_Datea= wParent.getElementById("txtDatea").value
-					$('#txtMon').val(t_Datea.substr(0, 6));
-					$('#txtNoa1').val(t_Noa);
-					$('#txtNoa2').val(t_Noa);
-				}
-
-				/*$('#txtMon').mask('999/99');
-				$('#txtMon').datepicker();
-				var t_date,t_year,t_month;
-	                t_date = new Date();
-	                t_date.setDate(1);
-	                t_year = t_date.getUTCFullYear()-1911;
-	                t_year = t_year>99?t_year+'':'0'+t_year;
-	                t_month = t_date.getUTCMonth()+1;
-	                t_month = t_month>9?t_month+'':'0'+t_month;
-	                $('#txtMon').val(t_year+'/'+t_month);*/
-				
-				var t_noa=typeof(q_getId()[5])=='undefined'?'':q_getId()[5];
-                t_noa  =  t_noa.replace('noa=','');
-                $('#txtXnoa').val(t_noa);
+				$('#txtDatea1').datepicker();
+				$('#txtDatea1').mask('999/99/99');
+				$('#txtDatea2').datepicker();
+				$('#txtDatea2').mask('999/99/99');
 			}
 		</script>
 	</head>

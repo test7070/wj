@@ -1,0 +1,64 @@
+z_vccetran01:
+declare @t_bdate nvarchar(20)
+declare @t_edate nvarchar(20)
+set @t_bdate = case when '#non'=[2] then '' else [2] end
+set @t_edate = case when '#non'=[3] then char(255) else [3] end
+declare @tmp table(
+	gno nvarchar(3),
+	noa nvarchar(30),
+	vcceno nvarchar(30),
+	rr nvarchar(3),
+	datea nvarchar(30),
+	bdate nvarchar(30),
+	addrno  nvarchar(30),
+	addr nvarchar(30),
+	[address] nvarchar(30),
+	incar nvarchar(30),
+	indriver nvarchar(30),
+	edate  nvarchar(30),
+	addrno2  nvarchar(30),
+	addr2 nvarchar(30),
+	address2  nvarchar(30),
+	outdri nvarchar(30),
+	outcar nvarchar(30),
+	product nvarchar(30),
+	mount float,
+	unit nvarchar(30),
+	[weight]float,
+	price float,
+	total float,
+	[dec] float,
+	tranmoney float,
+	memo nvarchar(300)
+)
+insert into @tmp(gno,noa,vcceno,rr,datea,bdate,addrno,addr,[address],incar,indriver,
+edate,addrno2,addr2,address2,outcar,outdri,product,mount,unit,[weight],[dec],memo)
+select '0',a.noa,b.checkno,ROW_NUMBER()over(partition by a.datea order by b.noa),b.bdate
+,substring(b.bdate,5,5),b.addrno,b.addr,b.acc1,b.carno,m01
+,substring(b.edate,5,5),b.addrno2,b.addr2,b.acc2,b.cardealno,m02
+,b.addr3,b.n01,b.ef,b.n02,b.n03,b.memo
+from borr a
+left join borrs b on a.noa=b.noa
+where b.bdate between @t_bdate and @t_edate
+
+update a set a.price = b.value
+from @tmp a
+outer apply (select * from addr2s where addrno = a.addrno)b
+where CHARINDEX(b.carno,address2)>0
+
+update a set a.dec = case when charindex('墊板',b.timea)>0 then plus else 0 end
+from @tmp a 
+outer apply(select * from view_trans where a.vcceno = ordeno)b
+
+update @tmp set total = case when price>0 then price*[weight] else 0 end
+update @tmp set tranmoney = case when [dec] > 0 then total-[dec] else total+[dec] end
+
+insert into @tmp(gno,rr,bdate)
+select '1',MAX(rr),bdate
+from @tmp group by bdate
+
+select a.*,
+SUBSTRING(datea,1,3) as yy, 
+SUBSTRING(datea,5,2) as mm, 
+SUBSTRING(datea,8,2) as dd
+from @tmp a order by bdate,rr,gno;
