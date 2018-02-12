@@ -798,7 +798,7 @@
 					<td align="center" style="width:100px;"><a>承車日期</a></td>
 					<td align="center" style="width:100px;"><a>託運人</a></td>
 					<td align="center" style="width:100px;"><a>品名</a></td>
-					<td align="center" style="width:80px;"><a>單價</a></td>
+					<td align="center" style="width:80px;"><a>承載單價</a></td>
 					<td align="center" style="width:80px;"><a>件數</a></td>
 					<td align="center" style="width:80px;"><a>噸位</a></td>
 					<td align="center" style="width:50px;"><a>計價<br/>單位</a></td>

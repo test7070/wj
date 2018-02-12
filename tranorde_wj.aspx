@@ -742,19 +742,19 @@
                     <td align="center" style="width:200px"><a>提貨地點</a></td>
 					<td align="center" style="width:140px"><a>卸貨日期</a></td>
 					<td align="center" style="width:250px"><a>收貨人/地點</a></td>
+					<td align="center" style="width:70px"><a>計價單位</a></td>
                     <td align="center" style="width:70px"><a>危險等級</a></td>
                     <td align="center" style="width:150px"><a>品名</a></td>
-                    <td align="center" style="width:70px"><a>單位</a></td>
+                    <td align="center" style="width:70px"><a>承載單位</a></td>
                     <td align="center" style="width:80px"><a>單位毛<br/>重(KG)</a></td>
                     <td align="center" style="width:70px"><a>單位淨<br/>重(KG)</a></td>
                     <td align="center" style="width:100px"><a>毛重(KG)</a></td>
                     <td align="center" style="width:100px"><a>淨重(KG)</a></td>
                     <td align="center" style="width:70px"><a>數量</a></td>
                     <td align="center" style="width:70px"><a>單價</a></td>
-					<td align="center" style="width:70px"><a>計價單位</a></td>
                     <td align="center" style="width:80px"><a>運費</a></td>
-					<td align="center" style="width:120px"><a>加項品名</a></td>
-					<td align="center" style="width:70px;"><a>加項金額</a></td>
+					<td align="center" style="width:120px"><a>加減項品名</a></td>
+					<td align="center" style="width:80px;"><a>加減項金額</a></td>
                     <!--<td align="center" style="width:70px"><a>應付單價</a></td>
                     <td align="center" style="width:80px"><a>應付金額</a></td>
                     <td align="center" style="width:80px"><a>人工裝費</a></td>
@@ -805,6 +805,10 @@
                         <input type="text" id="txtConn.*" style="display:none;">
                         <input type="text" id="txtTel.*" style="display:none;">
                     </td>
+                    <td>
+                    <input type="text" id="txtUnit2.*" class="num" style="width:55%;" />
+                    <select id="combUnit2.*" class="txt" style="width: 20px;"> </select>
+                    </td>
                     <td><input type="text" id="txtTypea.*" style="width:95%;" /></td>
                     <td>
                         <input type="text" id="txtProductno.*" style="width:35%;" />
@@ -822,10 +826,6 @@
                     <td><input type="text" id="txtTvolume.*" class="num" style="width:95%;" /> </td>
                     <td><input type="text" id="txtMount.*" class="num" style="width:95%;" /></td>
                     <td><input type="text" id="txtPrice.*" class="num" style="width:95%;" /></td>
-					<td>
-					<input type="text" id="txtUnit2.*" class="num" style="width:55%;" />
-					<select id="combUnit2.*" class="txt" style="width: 20px;"> </select>
-					</td>
                     <td><input type="text" id="txtMoney.*" class="num" style="width:95%;" /></td>
                     <!--<td><input type="text" id="txtWidth.*" class="num" style="width:95%;" /> </td>-->
 					<td>
@@ -833,12 +833,11 @@
                         <input type="text" id="txtProduct2.*" type="text" class="txt c1" style="width: 75%;"/>
                         <select id="combProduct.*" class="txt" style="width: 20px;"> </select>
                     </td>
-                    <td><input type="text" id="txtTotal3.*" class="num" style="width:95%;" /></td>
+                    <td><input type="text" id="txtHeight.*" class="num" style="width:95%;" /> </td>
                     <td><input type="text" id="txtTotal.*" class="num" style="width:95%;" /> </td>
 					<!--
-                    <td><input type="text" id="txtHeight.*" class="num" style="width:95%;" /> </td>
                     <td><input type="text" id="txtTotal2.*" class="num" style="width:95%;" /></td>
-                    
+                    <td><input type="text" id="txtTotal3.*" class="num" style="width:95%;" /></td>
                     <td>
                         <input type="text" id="txtCarno.*" style="width:95%;"/>
                         <input type="button" id="btnCarno.*" style="display:none;"/>

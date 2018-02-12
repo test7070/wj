@@ -967,7 +967,7 @@
 					<td align="center" style="width:50px"><a>卸貨日期</a></td>
 					<td align="center" style="width:45px"><a>危險<br/>等級</a></td>
 					<td align="center" style="width:80px"><a>品名</a></td>
-					<td align="center" style="width:30px"><a>單位</a></td>
+					<td align="center" style="width:30px"><a>承載單位</a></td>
 					<td align="center" style="width:50px"><a>數量</a></td>
 					<td align="center" style="width:50px"><a>計價<br/>單位</a></td>
 					<td align="center" style="width:60px"><a>品重(KG)<br/>毛重(KG)</a></td>
@@ -976,8 +976,8 @@
                     <td align="center" id='hid_total' style="width:70px"><a>應收金額</a></td>
                     <td align="center" id='hid_price2' style="width:60px"><a>應付單價</a></td>
 					<td align="center" id='hid_total2' style="width:70px"><a>應付金額</a></td>
-					<td align="center" id='hid_plusitem' style="width:80px"><a>加項品名</a></td>
-                    <td align="center" id='hid_plusmoney' style="width:70px"><a>加項金額</a></td>
+					<td align="center" id='hid_plusitem' style="width:80px"><a>加減項品名</a></td>
+                    <td align="center" id='hid_plusmoney' style="width:70px"><a>加減項金額</a></td>
 					<td align="center" id='hid_price3' style="width:70px"><a>人工裝費</a></td>
                     <td align="center" id='hid_price4' style="width:70px"><a>管理收入</a></td>
 					<td align="center" style="width:60px"><a>車牌</a></td>
