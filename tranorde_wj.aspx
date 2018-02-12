@@ -735,9 +735,9 @@
                     <td align="center" style="width:70px"><a>單價</a></td>
                     <td align="center" style="width:80px"><a>運費</a></td>
 					<td align="center" style="width:120px"><a>加項品名</a></td>
+					<td align="center" style="width:70px;"><a>加項金額</a></td>
                     <!--<td align="center" style="width:70px"><a>應付單價</a></td>
                     <td align="center" style="width:80px"><a>應付金額</a></td>
-                    <td align="center" style="width:70px;"><a>加項金額</a></td>-
                     <td align="center" style="width:80px"><a>人工裝費</a></td>
                     <td align="center" style="width:80px"><a>管理收入</a></td>
                     <td align="center" style="width:80px"><a>車牌</a></td>
@@ -807,11 +807,12 @@
                         <input type="text" id="txtProduct2.*" type="text" class="txt c1" style="width: 75%;"/>
                         <select id="combProduct.*" class="txt" style="width: 20px;"> </select>
                     </td>
+                    <td><input type="text" id="txtTotal3.*" class="num" style="width:95%;" /></td>
                     <td><input type="text" id="txtTotal.*" class="num" style="width:95%;" /> </td>
 					<!--
                     <td><input type="text" id="txtHeight.*" class="num" style="width:95%;" /> </td>
                     <td><input type="text" id="txtTotal2.*" class="num" style="width:95%;" /></td>
-                    <td><input type="text" id="txtTotal3.*" class="num" style="width:95%;" /></td>
+                    
                     <td>
                         <input type="text" id="txtCarno.*" style="width:95%;"/>
                         <input type="button" id="btnCarno.*" style="display:none;"/>
