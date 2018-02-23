@@ -55,17 +55,19 @@
                 var cuft=0,t_mount,t_weight=0;
                 for(var i=0;i<q_bbsCount;i++){
                     $('#txtMount_'+i).val(round(q_div(q_float('txtTvolume_'+i), q_float('txtWeight_'+i)),0));
-                    $('#txtMoney_'+i).val(round(q_mul(q_div(q_float('txtTheight_'+i),1000),q_float('txtPrice_'+i)),0));
-                    $('#txtTotal_'+i).val(round(q_mul(q_div(q_float('txtTheight_'+i),1000),q_float('txtWidth_'+i)),0));
+					if($('#txtUnit_'+i).val()=='板'){
+						if($('#txtProduct2_'+i).val()=='墊板使用費')
+							$('#txtTotal3_'+i).val(q_mul(q_float('txtMount_'+i),20));
+					}
+					//$('#txtMoney_'+i).val(round(q_mul(q_div(q_float('txtTheight_'+i),1000),q_float('txtPrice_'+i)),0));
+                    //$('#txtTotal_'+i).val(round(q_mul(q_div(q_float('txtTheight_'+i),1000),q_float('txtWidth_'+i)),0));
                     $('#txtVolume_'+i).val(round(q_div(q_float('txtTheight_'+i), q_float('txtMount_'+i)),0));
+					$('#txtTotal_'+i).val(q_add(q_float('txtMoney_'+i),q_float('txtTotal3_'+i)));
                     if($('#txtDate1').val().length>0 && $('#txtDate1_'+i).val().length==0){
                         $('#txtDate1_'+i).val($('#txtDate1').val());
                         $('#txtTime1_'+i).val($('#txtTime1').val());
                     }
-                    /*if($('#txtDate2').val().length>0){
-                        $('#txtDate2_'+i).val($('#txtDate2').val());
-                        $('#txtTime2_'+i).val($('#txtTime2').val());
-                    }*/
+
                     if($('#txtCno').val().length>0){
                         $('#txtAddrno3_'+i).val($('#txtCno').val());
                         $('#txtAddr3_'+i).val($('#txtAcomp').val());
@@ -77,6 +79,7 @@
                         $('#txtConn_'+i).val($('#txtCustno').val());
                         $('#txtTel_'+i).val($('#txtComp').val());
                     }
+
                     t_weight=q_add(t_weight,q_float('txtTheight_'+i))  
                 }
                 $('#txtTweight2').val(t_weight);
@@ -99,11 +102,19 @@
                    if(q_cur == 1 || q_cur == 2){
                              var t_weight=dec(q_div($('#txtTweight2').val(),1000));
                              for (var i = 0; i < q_bbsCount; i++) {
-                                 var t_where = "where=^^ addrno='"+$('#txtAddrno_'+i).val()+"' and ('"+$('#txtContainerno1_'+i).val()+"' between lat and lng) and carno='"+$('#txtTypea_'+i).val()+"' and ('"+t_weight+"' between rate and rate2)^^ stop=999";
+                                 var where1 = "where=^^ addrno='"+$('#txtAddrno_'+i).val()+"'";
+								 var where2 = " and (carno='"+$('#txtTypea_'+i).val()+ "'" + ' or len(carno)=0)'
+								 var where3 = " and (charindex(addr,'"+$('#txtAddress_'+i).val()+ "')>0" + ' or len(addr)=0)'
+								 var where4 = " and (charindex(address,'"+$('#txtAddress2_'+i).val()+ "')>0" + ' or len(address)=0)'
+								 var where5 = " and (lng='"+$('#txtContainerno2_'+i).val()+ "'" + ' or len(lng)=0)'
+								 var where6 = " and (unit='"+$('#txtUnit2_'+i).val()+ "'" + ' or len(unit)=0)'
+								 var where7 = " and ('"+t_weight+"' between rate and rate2 or (rate=0 and rate2=0))"
+								 var where8 = "^^stop=999";
+								 var t_where = where1 + where2 + where3 + where4 + where5 + where6 + where7 + where8
+								 //alert(''+t_where)
                                  q_gt('addr2s', t_where, 0, 0, 0, "addr2s", r_accy, 1);
                              }
                              sum();
-                             
                    }
                 });
             }
@@ -209,11 +220,23 @@
                     $('#txtTvolume_' + i).change(function() {
                         sum();
                     });
+					$('#txtTotal3_' + i).change(function() {
+                        sum();
+                    });
                     
                     $('#txtTheight_' + i).change(function() {
                         sum();
                     });
+					
+					$('#txtProduct2_' + i).change(function() {
+                        sum();
+                    });
                     
+					
+					$('#txtUnit_' + i).change(function() {
+                        sum();
+                    });
+					
                     $('#combProduct_' + i).change(function() {
                             t_IdSeq = -1;
                             q_bodyId($(this).attr('id'));
@@ -422,13 +445,40 @@
                         q_cmbParse("combCalctype", t_calctype,'s');
                         break;
                     case 'addr2s':
+								alert('case addr2s')
                                 var addr2s = _q_appendData("addr2s", "", true);
-                                for (var j = 0; j< q_bbsCount; j++) {
-                                    for (var i = 0; i < addr2s.length; i++) {
-                                        $('#txtPrice_'+j).val(addr2s[0].value);
-                                        $('#txtMoney_'+j).val(round(dec(q_mul(q_div($('#txtTheight_'+j).val(),1000),addr2s[0].value)),0));
-                                    }
-                                }
+                                    for (var i = 0; i < q_bbsCount; i++) {
+                                        $('#txtPrice_'+i).val(addr2s[0].value);
+										if(addr2s[0].weight=='毛重'){
+											if(addr2s[0].unit=='噸'){
+												alert('1')
+												$('#txtMoney_'+i).val(round(dec(q_mul(q_div($('#txtTheight_'+i).val(),1000),addr2s[0].value)),0));
+											}
+											else{	//除了噸,以數量計算
+												$('#txtMoney_'+i).val(round(dec(q_mul(q_div($('#txtMount_'+i).val()),addr2s[0].value)),0));
+											}
+										}
+										else if(addr2s[0].weight=='淨重'){
+											if(addr2s[0].unit=='噸'){
+												alert('2')
+												$('#txtMoney_'+i).val(round(dec(q_mul(q_div($('#txtVolume_'+i).val(),1000),addr2s[0].value)),0));
+											}
+											else{	//除了噸,以數量計算
+												alert('3')
+												$('#txtMoney_'+i).val(round(dec(q_mul(q_div($('#txtMount_'+i).val()),addr2s[0].value)),0));
+											}
+										}
+										else{	//addr2s沒有輸入毛/淨時
+											if(addr2s[0].unit=='噸'){
+												alert('4')
+												$('#txtMoney_'+i).val(round(dec(q_mul(q_div($('#txtTheight_'+i).val(),1000),addr2s[0].value)),0));
+											}
+											else{	//除了噸,以數量計算
+												alert('5')
+												$('#txtMoney_'+i).val(round(dec(q_mul($('#txtMount_'+i).val(),addr2s[0].value)),0));
+											}
+										}
+									}
                             t_weight=0;
                             break;
                     case q_name:
@@ -736,6 +786,7 @@
                     <td align="center" style="width:25px"><input class="btn"  id="btnPlus" type="button" value='+' style="font-weight: bold;"  /></td>
                     <td align="center" style="width:20px;"> </td>
                     <td align="center" style="width:70px"><a>類別</a></td>
+					<td align="center" style="width:80px"><a>計價區域</a></td>
 					<td align="center" style="width:80px"><a>出單日期</a></td>
 					<td align="center" style="width:100px"><a>送(提)貨單號</a></td>
 					<td align="center" style="width:140px"><a>提貨日期</a></td>
@@ -754,13 +805,8 @@
                     <td align="center" style="width:70px"><a>單價</a></td>
                     <td align="center" style="width:80px"><a>運費</a></td>
 					<td align="center" style="width:120px"><a>加減項品名</a></td>
-					<td align="center" style="width:80px;"><a>加減項金額</a></td>
-                    <!--<td align="center" style="width:70px"><a>應付單價</a></td>
-                    <td align="center" style="width:80px"><a>應付金額</a></td>
-                    <td align="center" style="width:80px"><a>人工裝費</a></td>
-                    <td align="center" style="width:80px"><a>管理收入</a></td>
-                    <td align="center" style="width:80px"><a>車牌</a></td>
-                    <td align="center" style="width:140px"><a>司機</a></td>-->
+					<td align="center" style="width:150px;"><a>支付廠商</a></td>
+					<td align="center" style="width:120px"><a>加減項金額</a></td>
 					<td align="center" style="width:120px"><a>應收運費</a></td>
                     <td align="center" style="width:100px"><a>批號</a></td>
                     <td align="center" style="width:100px"><a>備註</a></td>
@@ -773,9 +819,10 @@
                     </td>
                     <td><a id="lblNo.*" style="font-weight: bold;text-align: center;display: block;"> </a></td>
                     <td>
-                        <input type="text" id="txtCalctype.*" type="text" class="txt c1" style="width: 69%;"/>
+                        <input type="text" id="txtCalctype.*" type="text" class="txt c1" style="width: 60%;"/>
                         <select id="combCalctype.*" class="txt" style="width: 17px;"> </select>
                     </td>
+					<td><input type="text" id="txtContainerno2.*" style="width:95%;" /></td>
 					<td><input type="text" id="txtTrandate.*" style="width:95%;" /></td>
 					<td><input type="text" id="txtTranno.*" style="width:95%;" /></td>
 					<td>
@@ -798,7 +845,6 @@
                         <input type="text" id="txtContainerno1.*" style="width:25%;" />
                         <input type="text" id="txtAddress2.*" style="width:68%;" />
                         <input type="button" id="btnAddr2.*" style="display:none;">
-                        <!--<input type="text" id="txtMemo2.*" style="display:none;">-->
                         <input type="text" id="txtCaseno.*" style="display:none;">
                         <input type="text" id="txtAddrno3.*" style="display:none;">
                         <input type="text" id="txtAddr3.*" style="display:none;">
@@ -819,7 +865,6 @@
 					<input type="text" id="txtUnit.*" class="num" style="width:55%;" /> 
 					<select id="combUnit.*" class="txt" style="width: 20px;"> </select>
 					</td>
-                    <!--<td><input type="text" id="txtLengthb.*" class="num" style="width:95%;" /> </td>-->
                     <td><input type="text" id="txtVolume.*" class="num" style="width:95%;" /> </td>
                     <td><input type="text" id="txtWeight.*" class="num" style="width:95%;" /> </td>
                     <td><input type="text" id="txtTheight.*" class="num" style="width:95%;" /> </td>
@@ -827,26 +872,19 @@
                     <td><input type="text" id="txtMount.*" class="num" style="width:95%;" /></td>
                     <td><input type="text" id="txtPrice.*" class="num" style="width:95%;" /></td>
                     <td><input type="text" id="txtMoney.*" class="num" style="width:95%;" /></td>
-                    <!--<td><input type="text" id="txtWidth.*" class="num" style="width:95%;" /> </td>-->
 					<td>
                         <input type="text" id="txtProductno2.*" style="display:none;" />
                         <input type="text" id="txtProduct2.*" type="text" class="txt c1" style="width: 75%;"/>
                         <select id="combProduct.*" class="txt" style="width: 20px;"> </select>
                     </td>
-                    <td><input type="text" id="txtHeight.*" class="num" style="width:95%;" /> </td>
+					<td>
+					<input type="text" id="txtDriverno.*" style="width:40%;"/>
+					<input type="text" id="txtCarno.*" style="width:50%;"/>
+					<input type="button" id="btnDriver_.*" style="display:none;">
+					</td>
+					<td><input type="text" id="txtTotal3.*" class="num" style="width:95%;" /> </td>
                     <td><input type="text" id="txtTotal.*" class="num" style="width:95%;" /> </td>
-					<!--
-                    <td><input type="text" id="txtTotal2.*" class="num" style="width:95%;" /></td>
-                    <td><input type="text" id="txtTotal3.*" class="num" style="width:95%;" /></td>
-                    <td>
-                        <input type="text" id="txtCarno.*" style="width:95%;"/>
-                        <input type="button" id="btnCarno.*" style="display:none;"/>
-                    </td>
-                    <td>
-                        <input type="text" id="txtDriverno.*" style="width:45%"/>
-                        <input type="text" id="txtDriver.*" style="width:45%"/>
-                        <input type="button" id="btnDriver.*" style="display:none;"/>
-                    </td>-->
+
                     <td><input type="text" id="txtUno.*" style="width:95%;" /></td>
                     <td><input type="text" id="txtMemo.*" style="width:95%;" /></td>
 					<td><input type="text" id="txtMemo2.*" style="width:95%;" /></td>

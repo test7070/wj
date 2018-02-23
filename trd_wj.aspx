@@ -470,7 +470,7 @@
             }
 
             function bbsSave(as) {
-                if (!as['tranno']) {
+                if (!as['tranno'] || !as['tranmoney']) {
                     as[bbsKey[1]] = '';
                     return;
                 }

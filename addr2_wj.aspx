@@ -446,17 +446,23 @@
 			</div>
 		</div>
 		<div class='dbbs'>
-			<table id="tbbs" class='tbbs'>
+			<table id="tbbs" class='tbbs' style="width:1100px;">
 				<tr style='color:white; background:#003366;' >
 					<td  align="center" style="width:30px;">
 					<input class="btn"  id="btnPlus" type="button" value='+' style="font-weight: bold;"  />
 					</td>
 					<td align="center" style="width:20px;"></td>
 					<td align="center" style="width:80px;"><a>危險種類</a></td>
-					<td align="center" style="width:150px;"><a>郵遞區號</a></td>
-					<td align="center" style="width:150px;"><a>噸數(mt)</a></td>
-					<td align="center" style="width:100px;"><a>價格</a></td>
-					<td align="center" style="width:150px;"><a>備註</a></td>
+					<td align="center" style="width:80px;"><a>去/回程</a></td>
+					<td align="center" style="width:80px;"><a>起點縣市</a></td>
+					<td align="center" style="width:80px;"><a>迄點縣市</a></td>
+					<td align="center" style="width:80px;"><a>計價區域</a></td>
+					<td align="center" style="width:80px;"><a>計價單位</a></td>
+					<td align="center" style="width:80px;"><a>計價單價</a></td>
+					<td align="center" style="width:100px;"><a>載重區間</a></td>
+					<td align="center" style="width:80px;"><a>毛/淨重</a></td>
+					<td align="center" style="width:80px;"><a>數量</a></td>
+					<td align="center" style="width:80px;"><a>備註</a></td>
 				</tr>
 				<tr  style='background:#cad3ff;'>
 					<td align="center">
@@ -468,17 +474,19 @@
                         <input type="text" id="txtCarno.*" style="float:left;width:95%;" />
                         <input type="text" id="txtAddrno.*"  style="display:none;"/>
                     </td>
-					<td>
-    					<input type="text" id="txtLat.*" style="float:left;width:42%;" />
-    					<span>~</span>
-    					<input type="text" id="txtLng.*" style="float:right;width:42%;" />
-					</td>
+					<td><input type="text" id="txtLat.*" style="float:left;width:95%;" /></td>
+					<td><input type="text" id="txtAddr.*" style="float:left;width:95%;" /></td>
+					<td><input type="text" id="txtAddress.*" style="float:left;width:95%;" /></td>
+					<td><input type="text" id="txtLng.*" style="float:left;width:95%;" /></td>
+					<td><input type="text" id="txtUnit.*" style="float:left;width:95%;" /></td>
+					<td><input type="text" id="txtValue.*" style="float:left;width:95%;" class="num"/></td>
 					<td>
                         <input type="text" id="txtRate.*" style="float:left;width:42%;" class="num"/>
                         <span>~</span>
                         <input type="text" id="txtRate2.*" style="float:right;width:42%;" class="num"/>
                     </td>
-                    <td><input type="text" id="txtValue.*" style="float:left;width:95%;" class="num"/></td>
+					<td><input type="text" id="txtWeight.*" style="float:left;width:95%;"/></td>
+					<td><input type="text" id="txtMount.*" style="float:left;width:95%;"/></td>
 					<td><input type="text" id="txtMemo.*" style="float:left;width:95%;"/></td>
 				</tr>
 			</table>
