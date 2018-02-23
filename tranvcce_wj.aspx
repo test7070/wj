@@ -17,7 +17,7 @@
             q_tables = 's';
             var q_name = "tranvcce";
             var q_readonly = ['txtNoa', 'txtWeight','txtTotal', 'txtWorker', 'txtWorker2','txtAddress'];
-            var q_readonlys = ['txtUnit', 'txtPaths'];
+            var q_readonlys = ['txtUnit', 'txtPaths','txtOrdeno', 'txtNo2'];
             var bbmNum = [];
             var bbsNum = [['txtWeight', 10, 0, 1],['txtUweight', 10, 2, 1],['txtMount', 10, 0, 1],['txtVolume', 10, 0, 1],['txtTvolume', 10, 0, 1],['txtTheight', 10, 0, 1],['txtTotal', 15, 0, 1],['txtTotal2', 10, 0, 1]];
             var bbmMask = [];
@@ -56,7 +56,7 @@
                 }
                 mainForm(0);
             }
-            var t_weight=0;
+            var t_weight=0,t_mount=0,t_weight2=0;
             function sum() {
                 for(var i=0;i<q_bbsCount;i++){
                     if($('#txtLat').val().length>0){
@@ -68,7 +68,9 @@
                     if($('#txtWeight_'+i).val().length>0 && $('#txtVolume_'+i).val().length>0){
                         $('#txtTotal_'+i).val(round(q_mul(q_div($('#txtWeight_'+i).val(),1000),$('#txtVolume_' + i).val()),0));
                     }
-                    t_weight=q_add(t_weight,q_float('txtWeight_'+i))  
+                    t_weight=q_add(t_weight,q_float('txtWeight_'+i));
+                    t_mount=q_add(t_weight,q_float('txtMount_'+i));
+                    t_weight2=q_add(t_weight,q_float('txtLengthb_'+i));
                 }
                 
             }
@@ -113,6 +115,7 @@
 
                 $('#btnShow').click(function() {
                     if ($('#btnShow').val()=="隱藏欄位") {
+                            $("#hid_Lengthb").hide();
                             $("#hid_po").hide();
                             $("#hid_price").hide();
                             $("#hid_total").hide();                 
@@ -126,6 +129,7 @@
                             $("#hid_trandate").hide();
                             $("#hid_ordeno").hide();
                             for (var j = 0; j < q_bbsCount; j++) {
+                                $("#hid_Lengthb_"+j).hide();
                                 $("#hid_po_"+ j).hide();
                                 $("#hid_price_"+ j).hide();
                                 $("#hid_total_"+ j).hide();                 
@@ -143,6 +147,7 @@
                         scroll("tbbs", "box", 1);
                         $("#btnShow").val("顯示欄位");
                     } else {
+                            $("#hid_Lengthb").show();
                             $("#hid_po").show();
                             $("#hid_price").show();
                             $("#hid_total").show();                 
@@ -156,6 +161,7 @@
                             $("#hid_trandate").show();
                             $("#hid_ordeno").show();
                             for (var j = 0; j < q_bbsCount; j++) {
+                                $("#hid_Lengthb_"+j).show();
                                 $("#hid_po_"+ j).show();
                                 $("#hid_price_"+ j).show();
                                 $("#hid_total_"+ j).show();                 
@@ -186,7 +192,7 @@
                                 if (!b_ret || b_ret.length == 0)
                                     return;
                                     ret = q_gridAddRow(bbsHtm, 'tbbs', 
-                                    'txtCalctype,txtConn,txtCustno,txtCust,txtBdate,txtTime1,txtEdate,txtTime2,txtTypea,txtProductno,txtProduct,txtUnit,txtWeight,txtMount,txtTvolume,txtTheight,txtCarno,txtDriverno,txtDriver,txtAddrno,txtAddr,txtAddress,txtAddrno2,txtAddr2,txtAddress2,txtTranno,txtOrdeno,txtNo2,txtMemo,txtUno,txtVolume,txtTotal,txtWidth,txtTotal2,txtProduct2,txtHeight,txtLat,txtPaths,txtLat2'
+                                    'txtCalctype,txtConn,txtCustno,txtCust,txtBdate,txtTime1,txtEdate,txtTime2,txtTypea,txtProductno,txtProduct,txtUnit,txtWeight,txtMount,txtTvolume,txtTheight,txtCarno,txtDriverno,txtDriver,txtAddrno,txtAddr,txtAddress,txtAddrno2,txtAddr2,txtAddress2,txtTranno,txtOrdeno,txtNo2,txtMemo,txtUno,txtVolume,txtTotal,txtWidth,txtTotal2,txtProduct2,txtHeight,txtLat,txtPaths,txtUnit2'
 									, b_ret.length, b_ret
 									,'calctype,caseno,conn,tel,date1,time1,date2,time2,typea,productno,product,unit,theight,mount,total2,total3,carno,driverno,driver,addrno,addr,address,addrno2,addr2,address2,tranno,noa,noq,memo,uno,price,money,width,total,product2,height,containerno1,unit2,containerno2'
 									,'txtCalctype,txtBdate,txtTime1,txtEdate,txtTime2,,txtCustno,txtAddrno,txtCarno');
@@ -219,19 +225,6 @@
                         }
                         q_cmbParse("combCalctype", t_calctype,'s');
                         break;
-                    case 'addr2s':
-                           case 'addr2s':
-                                var addr2s = _q_appendData("addr2s", "", true);
-                                for (var j = 0; j< q_bbsCount; j++) {
-                                    for (var i = 0; i < addr2s.length; i++) {
-                                        if(emp($('#txtVolume_'+j).val()) || q_cur == 1){
-                                             $('#txtVolume_'+j).val(addr2s[0].value);
-                                             $('#txtTotal_'+j).val(round(dec(q_mul(q_div($('#txtTheight_'+j).val(),1000),addr2s[0].value)),0));
-                                        } 
-                                    }
-                                }
-                            t_weight=0;
-                            break;
                     case 'view_tranvcces':
                             var as = _q_appendData("view_tranvcces", "", true);
                             if(as[0]!=undefined){
@@ -259,16 +252,6 @@
 
             function q_popPost(s1) {
                 switch (s1) {
-                    case 'txtAddrno_':
-                        sum();
-                        var t_where = "where=^^ addrno='"+$('#txtAddrno_'+b_seq).val()+"' and ('"+$('#txtLat_'+b_seq).val()+"' between lat and lng) and carno='"+$('#txtTypea_'+b_seq).val()+"' and ('"+t_weight+"' between rate and rate2)^^ stop=999";
-                        q_gt('addr2s', t_where, 0, 0, 0, "addr2s", r_accy, 1);
-                        break;
-                    case 'txtAddrno2_':
-                        sum();
-                        var t_where = "where=^^ addrno='"+$('#txtAddrno_'+b_seq).val()+"' and ('"+$('#txtLat_'+b_seq).val()+"' between lat and lng) and carno='"+$('#txtTypea_'+b_seq).val()+"' and ('"+t_weight+"' between rate and rate2)^^ stop=999";
-                        q_gt('addr2s', t_where, 0, 0, 0, "addr2s", r_accy, 1);
-                        break;
                 }
             }
 
@@ -350,38 +333,7 @@
                             var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
                             $('#btnCarplate_'+n).click();
                         });
-                        $('#txtTypea_'+i).change(function() {
-                            sum();
-                            t_IdSeq = -1;
-                            q_bodyId($(this).attr('id'));
-                            b_seq = t_IdSeq;
-                            var t_where = "where=^^ addrno='"+$('#txtAddrno_'+b_seq).val()+"' and ('"+$('#txtLat_'+b_seq).val()+"' between lat and lng) and carno='"+$('#txtTypea_'+b_seq).val()+"' and ('"+t_weight+"' between rate and rate2)^^ stop=999";
-                            q_gt('addr2s', t_where, 0, 0, 0, "addr2s", r_accy, 1);
-                        });
-                        $('#txtAddrno_'+i).change(function() {
-                           sum();
-                           t_IdSeq = -1;
-                           q_bodyId($(this).attr('id'));
-                           b_seq = t_IdSeq;
-                           var t_where = "where=^^ addrno='"+$('#txtAddrno_'+b_seq).val()+"' and ('"+$('#txtLat_'+b_seq).val()+"' between lat and lng) and carno='"+$('#txtTypea_'+b_seq).val()+"' and ('"+t_weight+"' between rate and rate2)^^ stop=999";
-                           q_gt('addr2s', t_where, 0, 0, 0, "addr2s", r_accy, 1);
-                        });
-                        $('#txtAddrno2_'+i).change(function() {
-                           sum();
-                           t_IdSeq = -1;
-                           q_bodyId($(this).attr('id'));
-                           b_seq = t_IdSeq;
-                           var t_where = "where=^^ addrno='"+$('#txtAddrno_'+b_seq).val()+"' and ('"+$('#txtLat_'+b_seq).val()+"' between lat and lng) and carno='"+$('#txtTypea_'+b_seq).val()+"' and ('"+t_weight+"' between rate and rate2)^^ stop=999";
-                           q_gt('addr2s', t_where, 0, 0, 0, "addr2s", r_accy, 1);
-                        });
-                        $('#txtWeight_' + i).change(function() {
-                            sum();
-                            t_IdSeq = -1;
-                            q_bodyId($(this).attr('id'));
-                            b_seq = t_IdSeq;
-                            var t_where = "where=^^ addrno='"+$('#txtAddrno_'+b_seq).val()+"' and ('"+$('#txtLat_'+b_seq).val()+"' between lat and lng) and carno='"+$('#txtTypea_'+b_seq).val()+"' and ('"+t_weight+"' between rate and rate2)^^ stop=999";
-                            q_gt('addr2s', t_where, 0, 0, 0, "addr2s", r_accy, 1);
-                        });
+                        
                         $('#txtMount_' + i).change(function() {
                             sum();
                         });
@@ -498,6 +450,7 @@
 				});
 				
 				if ($('#btnShow').val()=='顯示欄位'){
+				            $("#hid_Lengthb").hide();
                             $("#hid_po").hide();
                             $("#hid_price").hide();
                             $("#hid_total").hide();                 
@@ -511,6 +464,7 @@
                             $("#hid_trandate").hide();
                             $("#hid_ordeno").hide();
                             for (var j = 0; j < q_bbsCount; j++) {
+                                $("#hid_Lengthb_"+ j).hide();
                                 $("#hid_po_"+ j).hide();
                                 $("#hid_price_"+ j).hide();
                                 $("#hid_total_"+ j).hide();                 
@@ -574,6 +528,7 @@
                 t_where="where=^^ noa=(select ordeno from view_trans where ordeno='"+$('#txtNoa').val()+"' group by ordeno)^^ stop=999";
                 q_gt('view_tranvcces', t_where, 0, 0, 0, "view_tranvcces");
                      if ($('#btnShow').val()=='顯示欄位'){
+                            $("#hid_Lengthb").hide();
                             $("#hid_po").hide();
                             $("#hid_price").hide();
                             $("#hid_total").hide();                 
@@ -587,6 +542,7 @@
                             $("#hid_trandate").hide();
                             $("#hid_ordeno").hide();
                             for (var j = 0; j < q_bbsCount; j++) {
+                                $("#hid_Lengthb_"+ j).hide();
                                 $("#hid_po_"+ j).hide();
                                 $("#hid_price_"+ j).hide();
                                 $("#hid_total_"+ j).hide();                 
@@ -970,7 +926,7 @@
 			</div>
 		</div>
 		<div class='dbbs' >
-			<table id="tbbs" class='tbbs' style="width:1900px;">
+			<table id="tbbs" class='tbbs' style="width:2100px;">
 				<tr style='color:white; background:#003366;' >
 					<td align="center" style="width:25px"><input class="btn"  id="btnPlus" type="button" value='+' style="font-weight: bold;"  /></td>
 					<td align="center" style="width:20px;"> </td>
@@ -981,6 +937,7 @@
 					<td align="center" style="width:150px"><a>提貨地點</a></td>
 					<td align="center" style="width:70px"><a>中繼站</a></td>
 					<td align="center" style="width:180px"><a>收貨人/地點</a></td>
+					<td align="center" style="width:70px"><a>計價區域</a></td>
 					<td align="center" style="width:50px"><a>裝貨日期</a></td>
 					<td align="center" style="width:50px"><a>卸貨日期</a></td>
 					<td align="center" style="width:45px"><a>危險<br/>等級</a></td>
@@ -989,6 +946,7 @@
 					<td align="center" style="width:50px"><a>數量</a></td>
 					<td align="center" style="width:70px"><a>計價單位</a></td>
 					<td align="center" style="width:60px"><a>品重(KG)<br/>毛重(KG)</a></td>
+					<td align="center" id='hid_Lengthb' style="width:60px"><a>淨重(KG)</a></td>
 					<td align="center" id='hid_po' style="width:100px"><a>批號</a></td>
 					<td align="center" id='hid_price' style="width:60px"><a>應收單價</a></td>
                     <td align="center" id='hid_total' style="width:70px"><a>應收金額</a></td>
@@ -1043,11 +1001,13 @@
                     </td>
                     <td>
                         <input type="text" id="txtMemo2.*" style="display:none;" />
-                        <input type="text" id="txtAddrno2.*" style="width:35%;" />
-                        <input type="text" id="txtAddr2.*" style="width:59%;" />
-                        <input type="text" id="txtLat.*" style="width:25%;" />
-                        <input type="text" id="txtAddress2.*" style="width:69%;" />
+                        <input type="text" id="txtAddrno2.*" style="width:36%;" />
+                        <input type="text" id="txtAddr2.*" style="width:55%;" />
+                        <input type="text" id="txtAddress2.*" style="width:96%;" />
                         <input type="button" id="btnAddr2.*" style="display:none;">
+                    </td>
+                    <td>
+                        <input type="text" id="txtLat.*" style="width:95%;" />
                     </td>
 					<td>
                         <input type="text" id="txtBdate.*" style="width:95%;" />
@@ -1074,6 +1034,7 @@
 					</td>
 					<td><input type="text" id="txtUweight.*" class="num" style="width:95%;"/>
 					    <input type="text" id="txtWeight.*" class="num" style="width:95%;"/></td>
+                    <td id='hid_Lengthb.*'><input type="text" id="txtLengthb.*" class="num" style="width:95%;"/></td>
 					<td id='hid_po.*'><input type="text" id="txtUno.*" style="width:95%;"/></td>
 					<td id='hid_price.*'><input type="text" id="txtVolume.*" class="num" style="width:95%;"/></td>
 					<td id='hid_total.*'><input type="text" id="txtTotal.*" class="num" style="width:95%;"/></td>

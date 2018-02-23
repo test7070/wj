@@ -52,7 +52,7 @@
             function sum() {
                 if (!(q_cur == 1 || q_cur == 2))
                     return;
-                var cuft=0,t_mount,t_weight=0;
+                var cuft=0,t_mount=0,t_Price2=0,t_weight=0;
                 for(var i=0;i<q_bbsCount;i++){
                     $('#txtMount_'+i).val(round(q_div(q_float('txtTvolume_'+i), q_float('txtWeight_'+i)),0));
 					if($('#txtUnit_'+i).val()=='板'){
@@ -72,17 +72,23 @@
                         $('#txtAddrno3_'+i).val($('#txtCno').val());
                         $('#txtAddr3_'+i).val($('#txtAcomp').val());
                     }
+                    
                     if($('#txtPo').val().length>0){
                         $('#txtCaseno_'+i).val($('#txtPo').val());
                     }
+                    
                     if($('#txtCustno').val().length>0){
                         $('#txtConn_'+i).val($('#txtCustno').val());
                         $('#txtTel_'+i).val($('#txtComp').val());
                     }
-
+                    
+                    t_mount=q_add(t_mount,q_float('txtMount_'+i))  
                     t_weight=q_add(t_weight,q_float('txtTheight_'+i))  
+                    t_Price2=q_add(t_Price2,q_float('txtTvolume_'+i)) 
                 }
                 $('#txtTweight2').val(t_weight);
+                $('#txtMount').val(t_mount);
+                $('#txtPrice2').val(t_Price2);
             }
             function main() {
                 if (dataErr) {
@@ -95,23 +101,10 @@
                 q_mask(bbmMask);
                 var t_where = "where=^^ 1=1 ^^";
                 q_gt('chgitem', t_where, 0, 0, 0, "");
-                //q_cmbParse("combUnit", q_getPara('sys.unit'));
-				//q_cmbParse("combUnit2", q_getPara('sys.unit'));
-
                 $('#btnPrice').click(function(e) {
                    if(q_cur == 1 || q_cur == 2){
-                             var t_weight=dec(q_div($('#txtTweight2').val(),1000));
                              for (var i = 0; i < q_bbsCount; i++) {
-                                 var where1 = "where=^^ addrno='"+$('#txtAddrno_'+i).val()+"'";
-								 var where2 = " and (carno='"+$('#txtTypea_'+i).val()+ "'" + ' or len(carno)=0)'
-								 var where3 = " and (charindex(addr,'"+$('#txtAddress_'+i).val()+ "')>0" + ' or len(addr)=0)'
-								 var where4 = " and (charindex(address,'"+$('#txtAddress2_'+i).val()+ "')>0" + ' or len(address)=0)'
-								 var where5 = " and (lng='"+$('#txtContainerno2_'+i).val()+ "'" + ' or len(lng)=0)'
-								 var where6 = " and (unit='"+$('#txtUnit2_'+i).val()+ "'" + ' or len(unit)=0)'
-								 var where7 = " and ('"+t_weight+"' between rate and rate2 or (rate=0 and rate2=0))"
-								 var where8 = "^^stop=999";
-								 var t_where = where1 + where2 + where3 + where4 + where5 + where6 + where7 + where8
-								 //alert(''+t_where)
+                                 var t_where = "where=^^ addrno='"+$('#txtAddrno_'+i).val()+"' and (lng='"+$('#txtContainerno1_'+i).val()+"')  and (unit='"+$('#txtUnit2_'+i).val()+"') and carno='"+$('#txtTypea_'+i).val()+"' and lat='"+$('#txtContainerno2_'+i).val()+"' ^^ stop=999";
                                  q_gt('addr2s', t_where, 0, 0, 0, "addr2s", r_accy, 1);
                              }
                              sum();
@@ -220,6 +213,7 @@
                     $('#txtTvolume_' + i).change(function() {
                         sum();
                     });
+                    
 					$('#txtTotal3_' + i).change(function() {
                         sum();
                     });
@@ -445,70 +439,47 @@
                         q_cmbParse("combCalctype", t_calctype,'s');
                         break;
                     case 'addr2s':
-								//alert('case addr2s') //5
                                 var addr2s = _q_appendData("addr2s", "", true);
+                                if(addr2s[0]!=undefined){
                                     for (var i = 0; i < q_bbsCount; i++) {
-                                        $('#txtPrice_'+i).val(addr2s[0].value);
-										if(addr2s[0].weight=='毛重'){
-											if(addr2s[0].unit=='噸'){
-												//alert('1')
-												$('#txtMoney_'+i).val(round(dec(q_mul(q_div($('#txtTheight_'+i).val(),1000),addr2s[0].value)),0));
-											}
-											else{	//除了噸,以數量計算
-												$('#txtMoney_'+i).val(round(dec(q_mul(q_div($('#txtMount_'+i).val()),addr2s[0].value)),0));
-											}
+                                        var t_weight=dec(q_div($('#txtTweight2').val(),1000));
+                                        var t_weight2=dec(q_div($('#txtPrice2').val(),1000));
+                                        var t_Mount=dec($('#txtMount').val());
+										if($('#txtUnit2_'+i).val()=='噸' && addr2s[0].wname=='毛重'
+										&& addr2s[0].lat==$('#txtContainerno2_'+i).val() 
+										&& addr2s[0].lng==$('#txtContainerno1_'+i).val() 
+										&& addr2s[0].carno==$('#txtTypea_'+i).val()
+										&& t_weight<=addr2s[0].rate2 && t_weight>=addr2s[0].rate){
+										    $('#txtPrice_'+i).val(addr2s[0].value);
+											$('#txtMoney_'+i).val(round(dec(q_mul(q_div($('#txtTheight_'+i).val(),1000),addr2s[0].value)),0));
 										}
-										else if(addr2s[0].weight=='淨重'){
-											if(addr2s[0].unit=='噸'){
-												//alert('2')
+										else if($('#txtUnit2_'+i).val()=='噸' && addr2s[0].wname=='淨重' 
+                                        && addr2s[0].lat==$('#txtContainerno2_'+i).val() 
+                                        && addr2s[0].lng==$('#txtContainerno1_'+i).val() 
+                                        && addr2s[0].carno==$('#txtTypea_'+i).val()
+                                        && t_weight2<=addr2s[0].rate2 && t_weight2>=addr2s[0].rate){
+										        $('#txtPrice_'+i).val(addr2s[0].value);
 												$('#txtMoney_'+i).val(round(dec(q_mul(q_div($('#txtVolume_'+i).val(),1000),addr2s[0].value)),0));
-											}
-											else{	//除了噸,以數量計算
-												//alert('3')
-												$('#txtMoney_'+i).val(round(dec(q_mul(q_div($('#txtMount_'+i).val()),addr2s[0].value)),0));
-											}
 										}
-										else{	//addr2s沒有輸入毛/淨時
-											if(addr2s[0].unit=='噸'){
-												//alert('4')
-												$('#txtMoney_'+i).val(round(dec(q_mul(q_div($('#txtTheight_'+i).val(),1000),addr2s[0].value)),0));
-											}
-											else{	//除了噸,以數量計算
-												//alert('5')
-												$('#txtMoney_'+i).val(round(dec(q_mul($('#txtMount_'+i).val(),addr2s[0].value)),0));
-											}
+										else if($('#txtUnit2_'+i).val()!='噸' && addr2s[0].unit==$('#txtUnit2_'+i).val() 
+                                        && addr2s[0].lat==$('#txtContainerno2_'+i).val() 
+                                        && addr2s[0].lng==$('#txtContainerno1_'+i).val() 
+                                        && addr2s[0].carno==$('#txtTypea_'+i).val()
+                                        && t_mount<=addr2s[0].mount2 && t_mount>=addr2s[0].mount){
+										    $('#txtPrice_'+i).val(addr2s[0].value);
+											$('#txtMoney_'+i).val(round(dec(q_mul($('#txtMount_'+i).val(),addr2s[0].value)),0));
+										}else{
+										    $('#txtPrice_'+i).val($('#txtPrice_'+i).val());
 										}
 									}
+								}
                             t_weight=0;
+                            t_weight2=0;
+                            t_mount=0;
                             break;
                     case q_name:
                         if (q_cur == 4)
                             q_Seek_gtPost();
-                        break;
-                    /*default:
-                        try{
-                            var t_para = JSON.parse(t_name);
-                            if(t_para.action=="getUcc"){
-                                var n = t_para.n;
-                                as = _q_appendData("ucc", "", true);
-                                if(as[0]!=undefined){
-                                    $('#txtWeight_'+n).val(round(q_mul(q_float('txtMount_'+n),parseFloat(as[0].uweight)),3));
-                                    $('#txtVolume_'+n).val(round(q_mul(q_float('txtMount_'+n),parseFloat(as[0].stkmount)),0));
-                                    $('#txtTvolume_'+n).val(round(q_mul(q_float('txtMount_'+n),parseFloat(as[0].tvolume)),0));
-                                }else{
-                                    $('#txtWeight_'+n).val(0);
-                                    $('#txtVolume_'+n).val(0);
-                                    $('#txtTvolume_'+n).val(0);
-                                }
-                            }else {
-                                $('#txtWeight_'+n).val(0);
-                                $('#txtVolume_'+n).val(0);
-                                $('#txtTvolume_'+n).val(0);
-                            }
-                            sum();
-                        }catch(e){
-                            Unlock(1);
-                        }*/
                         break;
                 }
             }
@@ -765,6 +736,10 @@
                         <td><input id="btnPrice" type="button" value="單價計算" style="width:100%;"/></td>
                     </tr>
                     <tr>
+                        <td><span> </span><a id="lbl" class="lbl">總數量</a></td>
+                        <td colspan="2"><input id="txtMount" type="text"  class="txt c1 num"/></td>
+                    </tr>
+                    <tr>
                         <td><span> </span><a id="lblMemo" class="lbl"> </a></td>
                         <td colspan="6">
                             <textarea id="txtMemo" class="txt c1" style="height:75px;"> </textarea>
@@ -786,13 +761,14 @@
                     <td align="center" style="width:25px"><input class="btn"  id="btnPlus" type="button" value='+' style="font-weight: bold;"  /></td>
                     <td align="center" style="width:20px;"> </td>
                     <td align="center" style="width:70px"><a>類別</a></td>
-					<td align="center" style="width:80px"><a>計價區域</a></td>
 					<td align="center" style="width:80px"><a>出單日期</a></td>
 					<td align="center" style="width:100px"><a>送(提)貨單號</a></td>
 					<td align="center" style="width:140px"><a>提貨日期</a></td>
                     <td align="center" style="width:200px"><a>提貨地點</a></td>
 					<td align="center" style="width:140px"><a>卸貨日期</a></td>
 					<td align="center" style="width:250px"><a>收貨人/地點</a></td>
+					<td align="center" style="width:80px"><a>計價區域</a></td>
+					<td align="center" style="width:65px"><a>車趟<br/>(1去2回)</a></td>
 					<td align="center" style="width:70px"><a>計價單位</a></td>
                     <td align="center" style="width:70px"><a>危險等級</a></td>
                     <td align="center" style="width:150px"><a>品名</a></td>
@@ -822,7 +798,6 @@
                         <input type="text" id="txtCalctype.*" type="text" class="txt c1" style="width: 60%;"/>
                         <select id="combCalctype.*" class="txt" style="width: 17px;"> </select>
                     </td>
-					<td><input type="text" id="txtContainerno2.*" style="width:95%;" /></td>
 					<td><input type="text" id="txtTrandate.*" style="width:95%;" /></td>
 					<td><input type="text" id="txtTranno.*" style="width:95%;" /></td>
 					<td>
@@ -842,8 +817,7 @@
 					<td>
                         <input type="text" id="txtAddrno2.*" style="width:30%;" />
                         <input type="text" id="txtAddr2.*" style="width:63%;" />
-                        <input type="text" id="txtContainerno1.*" style="width:25%;" />
-                        <input type="text" id="txtAddress2.*" style="width:68%;" />
+                        <input type="text" id="txtAddress2.*" style="width:96%;" />
                         <input type="button" id="btnAddr2.*" style="display:none;">
                         <input type="text" id="txtCaseno.*" style="display:none;">
                         <input type="text" id="txtAddrno3.*" style="display:none;">
@@ -851,6 +825,8 @@
                         <input type="text" id="txtConn.*" style="display:none;">
                         <input type="text" id="txtTel.*" style="display:none;">
                     </td>
+                    <td><input type="text" id="txtContainerno1.*" style="width:95%;" /></td>
+                    <td><input type="text" id="txtContainerno2.*" style="width:95%;" /></td>
                     <td>
                     <input type="text" id="txtUnit2.*" class="num" style="width:55%;" />
                     <select id="combUnit2.*" class="txt" style="width: 20px;"> </select>
