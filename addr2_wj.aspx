@@ -404,7 +404,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td><span> </span><a class="lbl">郵遞區號</a></td>
+                        <td><span> </span><a class="lbl">計價區域</a></td>
                         <td>
                         <input id="txtSiteno" type="text"  class="txt c1"/>
                         </td>
@@ -454,8 +454,8 @@
 					<td align="center" style="width:20px;"></td>
 					<td align="center" style="width:80px;"><a>危險種類</a></td>
 					<td align="center" style="width:80px;"><a>去/回程</a></td>
-					<td align="center" style="width:80px;"><a>起點縣市</a></td>
-					<td align="center" style="width:80px;"><a>迄點縣市</a></td>
+					<!--<td align="center" style="width:80px;"><a>起點縣市</a></td>
+					<td align="center" style="width:80px;"><a>迄點縣市</a></td>-->
 					<td align="center" style="width:80px;"><a>計價區域</a></td>
 					<td align="center" style="width:80px;"><a>計價單位</a></td>
 					<td align="center" style="width:80px;"><a>計價單價</a></td>
@@ -475,8 +475,8 @@
                         <input type="text" id="txtAddrno.*"  style="display:none;"/>
                     </td>
 					<td><input type="text" id="txtLat.*" style="float:left;width:95%;" /></td>
-					<td><input type="text" id="txtAddr.*" style="float:left;width:95%;" /></td>
-					<td><input type="text" id="txtAddress.*" style="float:left;width:95%;" /></td>
+					<!--<td><input type="text" id="txtAddr.*" style="float:left;width:95%;" /></td>
+					<td><input type="text" id="txtAddress.*" style="float:left;width:95%;" /></td>-->
 					<td><input type="text" id="txtLng.*" style="float:left;width:95%;" /></td>
 					<td><input type="text" id="txtUnit.*" style="float:left;width:95%;" /></td>
 					<td><input type="text" id="txtValue.*" style="float:left;width:95%;" class="num"/></td>
