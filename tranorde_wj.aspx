@@ -445,13 +445,13 @@
                         q_cmbParse("combCalctype", t_calctype,'s');
                         break;
                     case 'addr2s':
-								alert('case addr2s')
+								//alert('case addr2s') //5
                                 var addr2s = _q_appendData("addr2s", "", true);
                                     for (var i = 0; i < q_bbsCount; i++) {
                                         $('#txtPrice_'+i).val(addr2s[0].value);
 										if(addr2s[0].weight=='毛重'){
 											if(addr2s[0].unit=='噸'){
-												alert('1')
+												//alert('1')
 												$('#txtMoney_'+i).val(round(dec(q_mul(q_div($('#txtTheight_'+i).val(),1000),addr2s[0].value)),0));
 											}
 											else{	//除了噸,以數量計算
@@ -460,21 +460,21 @@
 										}
 										else if(addr2s[0].weight=='淨重'){
 											if(addr2s[0].unit=='噸'){
-												alert('2')
+												//alert('2')
 												$('#txtMoney_'+i).val(round(dec(q_mul(q_div($('#txtVolume_'+i).val(),1000),addr2s[0].value)),0));
 											}
 											else{	//除了噸,以數量計算
-												alert('3')
+												//alert('3')
 												$('#txtMoney_'+i).val(round(dec(q_mul(q_div($('#txtMount_'+i).val()),addr2s[0].value)),0));
 											}
 										}
 										else{	//addr2s沒有輸入毛/淨時
 											if(addr2s[0].unit=='噸'){
-												alert('4')
+												//alert('4')
 												$('#txtMoney_'+i).val(round(dec(q_mul(q_div($('#txtTheight_'+i).val(),1000),addr2s[0].value)),0));
 											}
 											else{	//除了噸,以數量計算
-												alert('5')
+												//alert('5')
 												$('#txtMoney_'+i).val(round(dec(q_mul($('#txtMount_'+i).val(),addr2s[0].value)),0));
 											}
 										}
