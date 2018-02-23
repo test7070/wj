@@ -95,10 +95,10 @@
                                 if (!b_ret || b_ret.length == 0)
                                     return;
 									 ret = q_gridAddRow(bbsHtm, 'tbbs'
-									,'txtBdate,txtCheckno,txtAddrno,txtAddr,txtAcc1,txtCarno,txtM01,txtEdate,txtAddrno2,txtAddr2,txtAcc2,txtCardealno,txtM02,txtAddr3,txtN01,txtN02,txtEf,txtN03,txtMemo'
+									,'txtBdate,txtCheckno,txtAddrno,txtAddr,txtAcc1,txtCarno,txtVo,txtEdate,txtAddrno2,txtAddr2,txtAcc2,txtCardealno,txtPo,txtAddr3,txtN01,txtN02,txtEf,txtN03,txtMemo'
 									,b_ret.length, b_ret
 									,'bdate,noa,addrno,addr,address,carno,driver,edate,addrno2,addr2,address2,carno,driver,product,mount,weight,unit,,'
-								    ,'txtBdate,txtCheckno,txtAddrno,txtAddr,txtAcc1,txtCarno,txtM01,txtEdate,txtAddrno2,txtAddr2,txtAcc2,txtCardealno,txtM02,txtAddr3,txtN01,txtN02,txtEf,txtN03,txtMemo');	
+								    ,'txtBdate,txtCheckno,txtAddrno,txtAddr,txtAcc1,txtCarno,txtVo,txtEdate,txtAddrno2,txtAddr2,txtAcc2,txtCardealno,txtPo,txtAddr3,txtN01,txtN02,txtEf,txtN03,txtMemo');	
 									wtt(b_ret.length);
                              }
                         break;
@@ -215,6 +215,7 @@
             }
             function bbsAssign() {
                 for (var i = 0; i < q_bbsCount; i++) {
+				q_cmbParse("combUnit_"+i, q_getPara('sys.unit'));
                     $('#lblNo_' + i).text(i + 1);
                     if($('#btnMinus_' + i).hasClass('isAssign'))
                         continue;
@@ -242,6 +243,21 @@
                             var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
                             $('#btnCardealno_'+n).click();
                         });
+					//(單位不給KEY,下拉也拿掉)
+					$('#combUnit_' + i).change(function() {
+						t_IdSeq = -1;
+						q_bodyId($(this).attr('id'));
+						b_seq = t_IdSeq;
+						if(q_cur==1 || q_cur==2)
+							$('#txtUnit_'+b_seq).val($('#combUnit_'+b_seq).find("option:selected").text());
+                    });
+					$('#combUnit2_' + i).change(function() {
+						t_IdSeq = -1;
+						q_bodyId($(this).attr('id'));
+						b_seq = t_IdSeq;
+						if(q_cur==1 || q_cur==2)
+							$('#txtPaths_'+b_seq).val($('#combUnit2_'+b_seq).find("option:selected").text());
+                    });
 				}
 				_bbsAssign();
 				refreshBbs();
@@ -653,7 +669,7 @@
 			</div>
 		</div>
 		<div class='dbbs' >
-			<table id="tbbs" class='tbbs' style="width:1800px;">
+			<table id="tbbs" class='tbbs' style="width:1200px;">
 				<tr style='color:white; background:#003366;' >
 					<td align="center" style="width:25px;"><input class="btn"  id="btnPlus" type="button" value='+' style="font-weight: bold;"  /></td>
 					<td align="center" style="width:20px;"><a>項次</a></td>
@@ -668,8 +684,7 @@
 					<td align="center" style="width:30px;"><a>單位</a></td>
 					<td align="center" style="width:30px;"><a>載重量(噸)</a></td>
 					<td align="center" style="width:30px;"><a>備註</a></td>
-					<td align="center" style="width:30px;"><a>取消</a></td>
-					
+					<!--<td align="center" style="width:30px;"><a>取消</a></td>-->		
 				</tr>
 				<tr class="data" style='background:#cad3ff;'>
 					<td align="center">
@@ -682,7 +697,7 @@
 					<input type="text" id="txtCheckno.*" style="display:none;"/>
 					</td>
 					<td>
-                        <input type="text" id="txtAddrno.*" style="width:33%;" />
+                        <input type="text" id="txtAddrno.*" style="width:30%;" />
                         <input type="text" id="txtAddr.*" style="width:60%;" />
                         <input type="text" id="txtAcc1.*" style="width:97%;" />
                         <input type="button" id="btnAddr.*" style="display:none;">
@@ -690,28 +705,30 @@
 
 					<td>
 					<input type="text" id="txtCarno.*" style="width:42%;" />
-					<input type="text" id="txtM01.*" style="width:42%;" />
+					<input type="text" id="txtVo.*" style="width:42%;" />
 					<input type="button" id="btnCarno.*" style="display:none;">
 					</td>
-                    <td>
-					<input type="text" id="txtEdate.*" style="width: 95%;"/></td>
+                    <td><input type="text" id="txtEdate.*" style="width: 95%;"/></td>
 					<td>
-                        <input type="text" id="txtAddrno2.*" style="width:33%;" />
+                        <input type="text" id="txtAddrno2.*" style="width:30%;" />
                         <input type="text" id="txtAddr2.*" style="width:60%;" />
                         <input type="text" id="txtAcc2.*" style="width:97%;" />
                         <input type="button" id="btnAddr2.*" style="display:none;">
                     </td>
 					<td>
 					<input type="text" id="txtCardealno.*" style="width:42%;" />
-					<input type="text" id="txtM02.*" style="width:42%;" />
+					<input type="text" id="txtPo.*" style="width:42%;" />
 					<input type="button" id="btnCardealno.*" style="display:none;">
 					</td>
                     <td><input type="text" id="txtAddr3.*" style="width:95%;" /></td>
                     <td><input type="text" id="txtN01.*" style="width:95%;" /></td>
-					<td><input type="text" id="txtEf.*" style="width:95%;" /></td>
+					<td>
+					<input type="text" id="txtEf.*" style="width:60%;" />
+					<select id="combUnit.*" class="txt" style="width: 20px;"> </select>
+					</td>
 					<td><input type="text" id="txtN02.*" style="width:95%;"/></td>
 					<td><input type="text" id="txtMemo.*" style="width:95%;" /></td>
-					<td align="center"><input id="chkChk1.*" type="checkbox"/></td>
+					<!--<td align="center"><input id="chkChk1.*" type="checkbox"/></td>-->
 				</tr>
 			</table>
 		</div>

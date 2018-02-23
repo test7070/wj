@@ -19,7 +19,7 @@
 			q_tables = 's';
 			var q_name = "tran";
 			var q_readonly = ['txtNoa','txtWorker', 'txtWorker2','txtTotal','txtTotal2','txtTotal3','txtMount','txtVolume','txtWeight','txtPrice','txtBmiles','txtEmiles','txtVoyage'];
-			var q_readonlys = ['txtOrdeno','txtSo'];
+			var q_readonlys = ['txtOrdeno','txtSo','txtUnit','txtUnit2'];
 			var q_readonlyt = [];
 			var bbmNum = new Array();
 			var bbmMask = new Array(['txtDatea', '999/99/99'],['txtTrandate', '999/99/99']);
@@ -125,10 +125,10 @@
                 	  		t_where = "datea='" + $('#txtDatea').val() + "' and carno='" + $('#txtCarno').val() + "' and driverno='" + $('#txtDriverno').val() + "'";
 							q_box("etc.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";" + t_where, 'etc', "95%", "95%", q_getMsg('btnTick'));
                 	  });
-                	  $('#btnCarcost').click(function(e) {	//出車費用
+                	  /*$('#btnCarcost').click(function(e) {	//出車費用
                 	  		t_where = "datea='" + $('#txtDatea').val() + "' and carno='" + $('#txtCarno').val() + "' and driverno='" + $('#txtDriverno').val() + "'";
                 	  		q_box("carchg.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";" + t_where, 'carchg', "95%", "95%", q_getMsg('btnCarcost'));
-                	  });
+                	  });*/
                 	$('#txtEtime').change(function(e) {
                 		for (var i = 0; i < q_bbsCount; i++) {
                 			$('#txtCardeal_' + i).val($(this).val());
@@ -138,6 +138,8 @@
 			
 			function bbsAssign() {
 			for (var i = 0; i < q_bbsCount; i++) {
+				q_cmbParse("combUnit_"+i, q_getPara('sys.unit'));
+				q_cmbParse("combUnit2_"+i, q_getPara('sys.unit'));
 			  $('#lblNo_' + i).text(i + 1);
                    	if($('#btnMinus_' + i).hasClass('isAssign'))
                     		continue;
@@ -222,6 +224,22 @@
                             if(q_cur==1 || q_cur==2)
                                 $('#txtCalctype_'+b_seq).val($('#combCalctype_'+b_seq).find("option:selected").text());
                     }); 
+					/*(單位不給KEY,下拉也拿掉)
+					$('#combUnit_' + i).change(function() {
+						t_IdSeq = -1;
+						q_bodyId($(this).attr('id'));
+						b_seq = t_IdSeq;
+						if(q_cur==1 || q_cur==2)
+							$('#txtUnit_'+b_seq).val($('#combUnit_'+b_seq).find("option:selected").text());
+                    });
+					$('#combUnit2_' + i).change(function() {
+						t_IdSeq = -1;
+						q_bodyId($(this).attr('id'));
+						b_seq = t_IdSeq;
+						if(q_cur==1 || q_cur==2)
+							$('#txtPaths_'+b_seq).val($('#combUnit2_'+b_seq).find("option:selected").text());
+                    });
+					*/	
 				}
 				_bbsAssign();
 				$('#tbbs').find('tr.data').children().hover(function(e){
@@ -798,10 +816,11 @@
 					<td align="center" style="width:100px;"><a>承車日期</a></td>
 					<td align="center" style="width:100px;"><a>託運人</a></td>
 					<td align="center" style="width:100px;"><a>品名</a></td>
-					<td align="center" style="width:80px;"><a>承載單價</a></td>
+					<td align="center" style="width:70px;"><a>承載單位</a></td>
+					<td align="center" style="width:80px;"><a>單價</a></td>
 					<td align="center" style="width:80px;"><a>件數</a></td>
 					<td align="center" style="width:80px;"><a>噸位</a></td>
-					<td align="center" style="width:50px;"><a>計價<br/>單位</a></td>
+					<td align="center" style="width:70px;"><a>計價單位</a></td>
 					<td align="center" style="width:200px;"><a>起運地點</a></td>
 					<td align="center" style="width:100px;"><a>中繼站</a></td>
 					<td align="center" style="width:200px;"><a>卸貨地點</a></td>
@@ -819,8 +838,8 @@
 					<td align="center" style="width:80px;">出發時間</td>
 					<td align="center" style="width:80px;">回場時間</td>
 					<td align="center" style="width:80px;"><a>應收運費</a></td>
-					<td align="center" style="width:100px;"><a>客戶加項品名</a></td>
-					<td align="center" style="width:80px;"><a>客戶加項金額</a></td>
+					<td align="center" style="width:100px;"><a>客戶加減項</a></td>
+					<td align="center" style="width:80px;"><a>客戶加減項金額</a></td>
 					<td align="center" style="width:80px;"><a>人工裝費</a></td>
 					<td align="center" style="width:80px;"><a>管理收入</a></td>
 					<td align="center" style="width:80px;"><a>應付運費</a></td>
@@ -848,11 +867,17 @@
 						<input type="button" id="btnProduct.*" style="display:none;">
 						<input type="text" id="txtProduct.*" style="float:left;width:95%;"/>	
 					</td>
+						<td>
+						<input type="text" id="txtUnit.*" style="float:left;width:55%;"/>
+						<select id="combUnit.*" class="txt" style="width: 20px;"> </select>
+						</td>
 						<td><input type="text" id="txtPrice.*" class="num" style="float:left;width:95%;"/></td>
 						<td><input type="text" id="txtMount.*" class="num" style="float:left;width:95%;"/></td>
 						<td><input type="text" id="txtWeight.*" class="num" style="float:left;width:95%;"/></td>
-						<td><input type="text" id="txtUnit.*" style="float:left;width:95%;"/></td>
-					
+						<td>
+						<input type="text" id="txtUnit2.*" style="float:left;width:55%;"/>
+						<select id="combUnit2.*" class="txt" style="width: 20px;"> </select>
+						</td>
 					<td>
 						<input type="text" id="txtStraddrno.*" style="float:left;width:30%;"/>
 						<input type="text" id="txtStraddr.*" style="float:left;width:65%;"/>
@@ -888,6 +913,7 @@
 					<td align="center"><input id="chkChk1.*" type="checkbox"/></td>
                     <td align="center"><input id="chkChk2.*" type="checkbox"/></td>
                     <td align="center"><input id="chkChk3.*" type="checkbox"/></td>
+					<!--<td align="center"><input id="chkChk4.*" type="checkbox"/></td>-->
 					<td><input type="text" id="txtltime.*"  style="float:left;width:95%;"/></td>
 					<td><input type="text" id="txtStime.*"  style="float:left;width:95%;"/></td>
 					<td><input type="text" id="txtTotal.*" class="num" style="float:center;width:95%;"/></td>

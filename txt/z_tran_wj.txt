@@ -91,19 +91,23 @@ insert into @tmp (gno,recno,noa,datea,total,total2)
 select '2','9999',noa,datea,SUM(total),SUM(total2) from @tmp 
 where gno='0' group by noa,datea 
 --------------------------------------------------------------------------------------------------------- 
---加減
+--加減 
 insert into @tmp (gno,noa,datea,fixcarcost,t_carcost,g_fixcarcost,b_fixcarcost,other,o_fixcarcost) 
-select '4',a.noa,a.datea,
+select '4',a.noa,a.datea, 
 case when charindex(b.fill,'修車費')>0 then (b.minus) else 0 end, 
 case when charindex(b.fill,'旅費')>0 then (b.minus) else 0 end, 
 case when charindex(b.fill,'去裝卸車費')>0 then (b.minus) else 0 end, 
 case when charindex(b.fill,'回裝卸車費')>0 then (b.minus) else 0 end, 
-case when charindex(b.fill,'修車費')=0 or charindex(b.fill,'旅費')=0  or
-		  charindex(b.fill,'去裝卸車費')=0 or charindex(b.fill,'回裝卸車費')>0 or
-		  charindex(b.fill,'補胎費')=0 then (b.minus) else 0 end, 
+case when 
+charindex(b.fill,'修車費')=0 and 
+charindex(b.fill,'旅費')=0 and 
+charindex(b.fill,'去裝卸車費')=0 and 
+charindex(b.fill,'回裝卸車費')=0 and 
+charindex(b.fill,'補胎費')=0 
+then (b.minus) else 0 end, 
 case when charindex(b.fill,'補胎費')>0 then (b.minus) else 0 end 
 from view_tran a 
-left join view_trans b on a.noa = b.noa
+left join view_trans b on a.noa = b.noa 
 where a.datea between @t_bdate and @t_edate 
 and (a.carno BETWEEN @t_bcarno and @t_ecarno) 
 and (a.driverno BETWEEN @t_bdriverno and @t_edriverno) 

@@ -34,8 +34,8 @@ declare @tmp table(
 insert into @tmp(gno,noa,vcceno,rr,datea,bdate,addrno,addr,[address],incar,indriver,
 edate,addrno2,addr2,address2,outcar,outdri,product,mount,unit,[weight],[dec],memo)
 select '0',a.noa,b.checkno,ROW_NUMBER()over(partition by a.datea order by b.noa),b.bdate
-,substring(b.bdate,5,5),b.addrno,b.addr,b.acc1,b.carno,m01
-,substring(b.edate,5,5),b.addrno2,b.addr2,b.acc2,b.cardealno,m02
+,substring(b.bdate,5,5),b.addrno,b.addr,b.acc1,b.carno,Vo
+,substring(b.edate,5,5),b.addrno2,b.addr2,b.acc2,b.cardealno,Po
 ,b.addr3,b.n01,b.ef,b.n02,b.n03,b.memo
 from borr a
 left join borrs b on a.noa=b.noa

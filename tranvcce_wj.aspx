@@ -17,7 +17,7 @@
             q_tables = 's';
             var q_name = "tranvcce";
             var q_readonly = ['txtNoa', 'txtWeight','txtTotal', 'txtWorker', 'txtWorker2','txtAddress'];
-            var q_readonlys = ['txtOrdeno', 'txtNo2'];
+            var q_readonlys = ['txtUnit', 'txtPaths'];
             var bbmNum = [];
             var bbsNum = [['txtWeight', 10, 0, 1],['txtUweight', 10, 2, 1],['txtMount', 10, 0, 1],['txtVolume', 10, 0, 1],['txtTvolume', 10, 0, 1],['txtTheight', 10, 0, 1],['txtTotal', 15, 0, 1],['txtTotal2', 10, 0, 1]];
             var bbmMask = [];
@@ -186,9 +186,9 @@
                                 if (!b_ret || b_ret.length == 0)
                                     return;
                                     ret = q_gridAddRow(bbsHtm, 'tbbs', 
-                                    'txtCalctype,txtConn,txtCustno,txtCust,txtBdate,txtTime1,txtEdate,txtTime2,txtTypea,txtProductno,txtProduct,txtUnit,txtWeight,txtMount,txtTvolume,txtTheight,txtCarno,txtDriverno,txtDriver,txtAddrno,txtAddr,txtAddress,txtAddrno2,txtAddr2,txtAddress2,txtTranno,txtOrdeno,txtNo2,txtMemo,txtUno,txtVolume,txtTotal,txtWidth,txtTotal2,txtProduct2,txtHeight,txtLat,txtPaths'
+                                    'txtCalctype,txtConn,txtCustno,txtCust,txtBdate,txtTime1,txtEdate,txtTime2,txtTypea,txtProductno,txtProduct,txtUnit,txtWeight,txtMount,txtTvolume,txtTheight,txtCarno,txtDriverno,txtDriver,txtAddrno,txtAddr,txtAddress,txtAddrno2,txtAddr2,txtAddress2,txtTranno,txtOrdeno,txtNo2,txtMemo,txtUno,txtVolume,txtTotal,txtWidth,txtTotal2,txtProduct2,txtHeight,txtLat,txtPaths,txtLat2'
 									, b_ret.length, b_ret
-									,'calctype,caseno,conn,tel,date1,time1,date2,time2,typea,productno,product,unit,theight,mount,total2,total3,carno,driverno,driver,addrno,addr,address,addrno2,addr2,address2,tranno,noa,noq,memo,uno,price,money,width,total,product2,height,containerno1,unit2'
+									,'calctype,caseno,conn,tel,date1,time1,date2,time2,typea,productno,product,unit,theight,mount,total2,total3,carno,driverno,driver,addrno,addr,address,addrno2,addr2,address2,tranno,noa,noq,memo,uno,price,money,width,total,product2,height,containerno1,unit2,containerno2'
 									,'txtCalctype,txtBdate,txtTime1,txtEdate,txtTime2,,txtCustno,txtAddrno,txtCarno');
                              }
                         break;
@@ -297,6 +297,8 @@
 
             function bbsAssign() {
                 for (var i = 0; i < q_bbsCount; i++) {
+				q_cmbParse("combUnit_"+i, q_getPara('sys.unit'));
+				q_cmbParse("combUnit2_"+i, q_getPara('sys.unit'));
                     $('#lblNo_' + i).text(i + 1);
                     if($('#btnMinus_' + i).hasClass('isAssign'))
                         continue;
@@ -470,7 +472,23 @@
                             b_seq = t_IdSeq;
                             if(q_cur==1 || q_cur==2)
                                 $('#txtCalctype_'+b_seq).val($('#combCalctype_'+b_seq).find("option:selected").text());
-                         });           
+                         });
+					/*(單位不給KEY,下拉也拿掉)
+					$('#combUnit_' + i).change(function() {
+						t_IdSeq = -1;
+						q_bodyId($(this).attr('id'));
+						b_seq = t_IdSeq;
+						if(q_cur==1 || q_cur==2)
+							$('#txtUnit_'+b_seq).val($('#combUnit_'+b_seq).find("option:selected").text());
+                    });
+					$('#combUnit2_' + i).change(function() {
+						t_IdSeq = -1;
+						q_bodyId($(this).attr('id'));
+						b_seq = t_IdSeq;
+						if(q_cur==1 || q_cur==2)
+							$('#txtPaths_'+b_seq).val($('#combUnit2_'+b_seq).find("option:selected").text());
+                    });
+					*/			 
                 }
                 _bbsAssign();
                 $('#tbbs').find('tr.data').children().hover(function(e){
@@ -967,9 +985,9 @@
 					<td align="center" style="width:50px"><a>卸貨日期</a></td>
 					<td align="center" style="width:45px"><a>危險<br/>等級</a></td>
 					<td align="center" style="width:80px"><a>品名</a></td>
-					<td align="center" style="width:30px"><a>承載單位</a></td>
+					<td align="center" style="width:70px"><a>承載單位</a></td>
 					<td align="center" style="width:50px"><a>數量</a></td>
-					<td align="center" style="width:50px"><a>計價<br/>單位</a></td>
+					<td align="center" style="width:70px"><a>計價單位</a></td>
 					<td align="center" style="width:60px"><a>品重(KG)<br/>毛重(KG)</a></td>
 					<td align="center" id='hid_po' style="width:100px"><a>批號</a></td>
 					<td align="center" id='hid_price' style="width:60px"><a>應收單價</a></td>
@@ -1013,9 +1031,9 @@
                         <input type="button" id="btnCust.*" style="display:none;">
                     </td>
                     <td>
-                        <input type="text" id="txtAddrno.*" style="width:33%;" />
+                        <input type="text" id="txtAddrno.*" style="width:30%;" />
                         <input type="text" id="txtAddr.*" style="width:60%;" />
-                        <input type="text" id="txtAddress.*" style="width:97%;" />
+                        <input type="text" id="txtAddress.*" style="width:95%;" />
                         <input type="button" id="btnAddr1.*" style="display:none;">
                     </td>
                     <td>
@@ -1045,9 +1063,15 @@
                         <input type="text" id="txtProduct.*" style="width:95%;" />
                         <input type="button" id="btnProduct.*" style="display:none;">
                     </td>
-                    <td><input type="text" id="txtUnit.*" style="width:95%;"/></td>
+                    <td>
+					<input type="text" id="txtUnit.*" style="width:55%;"/>
+					<select id="combUnit.*" class="txt" style="width: 20px;"> </select>
+					</td>
                     <td><input type="text" id="txtMount.*" class="num" style="width:95%;"/></td>
-					<td><input type="text" id="txtPaths.*" class="num" style="width:95%;"/></td>
+					<td>
+					<input type="text" id="txtPaths.*" class="num" style="width:55%;"/>
+					<select id="combUnit2.*" class="txt" style="width: 20px;"> </select>
+					</td>
 					<td><input type="text" id="txtUweight.*" class="num" style="width:95%;"/>
 					    <input type="text" id="txtWeight.*" class="num" style="width:95%;"/></td>
 					<td id='hid_po.*'><input type="text" id="txtUno.*" style="width:95%;"/></td>
@@ -1082,6 +1106,7 @@
 					<td><input type="text" id="txtTel.*" style="width:31%;"/>
 					    <input type="text" id="txtAllowcar.*" style="width:60%;"/>
 					    <input type="text" id="txtMemo.*" style="width:95%;"/>
+						<input type="text" id="txtLat2.*" style="display:none;"/>
 					</td>
 					<td align="center"><input id="chkChk1.*" type="checkbox"/></td>
 					<td align="center"><input id="chkChk2.*" type="checkbox"/></td>
