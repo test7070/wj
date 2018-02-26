@@ -104,7 +104,7 @@
                 $('#btnPrice').click(function(e) {
                    if(q_cur == 1 || q_cur == 2){
                              for (var i = 0; i < q_bbsCount; i++) {
-                                 var t_where = "where=^^ addrno='"+$('#txtAddrno_'+i).val()+"' and (lng='"+$('#txtContainerno1_'+i).val()+"')  and (unit='"+$('#txtUnit2_'+i).val()+"') and carno='"+$('#txtTypea_'+i).val()+"' and lat='"+$('#txtContainerno2_'+i).val()+"' ^^ stop=999";
+                                 var t_where = "where=^^ addrno='"+$('#txtAddrno_'+i).val()+"' and (lng='"+$('#txtContainerno1_'+i).val()+"')  and (unit='"+$('#txtUnit2_'+i).val()+"') and carno='"+$('#txtTypea_'+i).val()+"' and lat='"+$('#txtContainerno2_'+i).val()+"' and addr='"+$('#txtOtype_'+i).val()+"' ^^ stop=999";
                                  q_gt('addr2s', t_where, 0, 0, 0, "addr2s", r_accy, 1);
                              }
                              sum();
@@ -115,6 +115,7 @@
                 for (var i = 0; i < q_bbsCount; i++) {
 				q_cmbParse("combUnit_"+i, q_getPara('sys.unit'));
 				q_cmbParse("combUnit2_"+i, q_getPara('sys.unit'));
+				q_cmbParse("combOtype_"+i,',板車,聯結車,大貨車');
                     $('#lblNo_' + i).text(i + 1);
                     if($('#btnMinus_' + i).hasClass('isAssign'))
                         continue;
@@ -252,6 +253,13 @@
 						if(q_cur==1 || q_cur==2)
 							$('#txtUnit2_'+b_seq).val($('#combUnit2_'+b_seq).find("option:selected").text());
                     });
+                    $('#combOtype_' + i).change(function() {
+                        t_IdSeq = -1;
+                        q_bodyId($(this).attr('id'));
+                        b_seq = t_IdSeq;
+                        if(q_cur==1 || q_cur==2)
+                            $('#txtOtype_'+b_seq).val($('#combOtype_'+b_seq).find("option:selected").text());
+                    });
                 }
                 _bbsAssign();
                 $('#tbbs').find('tr.data').children().hover(function(e){
@@ -307,6 +315,9 @@
                 $('#txtDatea').val(q_date());
                 $('#chkEnda').prop('checked',false);
                 $('#txtDatea').focus();
+                for (var i = 0; i < q_bbsCount; i++) {
+                    $('#txtOtype_'+i).val('板車');
+                }
             }
             function btnModi() {
                 if (emp($('#txtNoa').val()))
@@ -446,7 +457,8 @@
                                         var t_weight2=dec(q_div($('#txtPrice2').val(),1000));
                                         var t_Mount=dec($('#txtMount').val());
 										if($('#txtUnit2_'+i).val()=='噸' && addr2s[0].wname=='毛重'
-										&& addr2s[0].lat==$('#txtContainerno2_'+i).val() 
+										&& addr2s[0].lat==$('#txtContainerno2_'+i).val()
+										&& addr2s[0].addr==$('#txtOtype_'+i).val()  
 										&& addr2s[0].lng==$('#txtContainerno1_'+i).val() 
 										&& addr2s[0].carno==$('#txtTypea_'+i).val()
 										&& t_weight<=addr2s[0].rate2 && t_weight>=addr2s[0].rate){
@@ -454,7 +466,8 @@
 											$('#txtMoney_'+i).val(round(dec(q_mul(q_div($('#txtTheight_'+i).val(),1000),addr2s[0].value)),0));
 										}
 										else if($('#txtUnit2_'+i).val()=='噸' && addr2s[0].wname=='淨重' 
-                                        && addr2s[0].lat==$('#txtContainerno2_'+i).val() 
+                                        && addr2s[0].lat==$('#txtContainerno2_'+i).val()
+                                        && addr2s[0].addr==$('#txtOtype_'+i).val()
                                         && addr2s[0].lng==$('#txtContainerno1_'+i).val() 
                                         && addr2s[0].carno==$('#txtTypea_'+i).val()
                                         && t_weight2<=addr2s[0].rate2 && t_weight2>=addr2s[0].rate){
@@ -464,6 +477,7 @@
 										else if($('#txtUnit2_'+i).val()!='噸' && addr2s[0].unit==$('#txtUnit2_'+i).val() 
                                         && addr2s[0].lat==$('#txtContainerno2_'+i).val() 
                                         && addr2s[0].lng==$('#txtContainerno1_'+i).val() 
+                                        && addr2s[0].addr==$('#txtOtype_'+i).val()
                                         && addr2s[0].carno==$('#txtTypea_'+i).val()
                                         && t_mount<=addr2s[0].mount2 && t_mount>=addr2s[0].mount){
 										    $('#txtPrice_'+i).val(addr2s[0].value);
@@ -768,6 +782,7 @@
 					<td align="center" style="width:140px"><a>卸貨日期</a></td>
 					<td align="center" style="width:250px"><a>收貨人/地點</a></td>
 					<td align="center" style="width:80px"><a>計價區域</a></td>
+					<td align="center" style="width:80px"><a>計價車種</a></td>
 					<td align="center" style="width:65px"><a>車趟<br/>(1去2回)</a></td>
 					<td align="center" style="width:70px"><a>計價單位</a></td>
                     <td align="center" style="width:70px"><a>危險等級</a></td>
@@ -826,6 +841,9 @@
                         <input type="text" id="txtTel.*" style="display:none;">
                     </td>
                     <td><input type="text" id="txtContainerno1.*" style="width:95%;" /></td>
+                    <td><input type="text" id="txtOtype.*" style="width:65%;" />
+                        <select id="combOtype.*" class="txt" style="width: 15px;"> </select>
+                    </td>
                     <td><input type="text" id="txtContainerno2.*" style="width:95%;" /></td>
                     <td>
                     <input type="text" id="txtUnit2.*" class="num" style="width:55%;" />

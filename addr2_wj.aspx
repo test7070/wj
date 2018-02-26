@@ -454,9 +454,9 @@
 					<td align="center" style="width:20px;"></td>
 					<td align="center" style="width:80px;"><a>危險種類</a></td>
 					<td align="center" style="width:80px;"><a>車趟<br/>(1去2回)</a></td>
-					<!--<td align="center" style="width:80px;"><a>起點縣市</a></td>
-					<td align="center" style="width:80px;"><a>迄點縣市</a></td>-->
+					<!--<td align="center" style="width:80px;"><a>迄點縣市</a></td>-->
 					<td align="center" style="width:80px;"><a>計價區域</a></td>
+					<td align="center" style="width:80px;"><a>計價車種</a></td>
 					<td align="center" style="width:80px;"><a>計價單位</a></td>
 					<td align="center" style="width:80px;"><a>計價單價</a></td>
 					<td align="center" style="width:100px;"><a>載重區間</a></td>
@@ -475,9 +475,9 @@
                         <input type="text" id="txtAddrno.*"  style="display:none;"/>
                     </td>
 					<td><input type="text" id="txtLat.*" style="float:left;width:95%;" /></td>
-					<!--<td><input type="text" id="txtAddr.*" style="float:left;width:95%;" /></td>
-					<td><input type="text" id="txtAddress.*" style="float:left;width:95%;" /></td>-->
+					<!--<td><input type="text" id="txtAddress.*" style="float:left;width:95%;" /></td>-->
 					<td><input type="text" id="txtLng.*" style="float:left;width:95%;" /></td>
+					<td><input type="text" id="txtAddr.*" style="float:left;width:95%;" /></td>
 					<td><input type="text" id="txtUnit.*" style="float:left;width:95%;" /></td>
 					<td><input type="text" id="txtValue.*" style="float:left;width:95%;" class="num"/></td>
 					<td>

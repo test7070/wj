@@ -17,11 +17,11 @@
             q_tables = 's';
             var q_name = "tranvcce";
             var q_readonly = ['txtNoa', 'txtWeight','txtTotal', 'txtWorker', 'txtWorker2','txtAddress'];
-            var q_readonlys = ['txtUnit', 'txtPaths','txtOrdeno', 'txtNo2'];
+            var q_readonlys = ['txtLat','txtUnit', 'txtTime3', 'txtPaths','txtOrdeno', 'txtNo2'];
             var bbmNum = [];
             var bbsNum = [['txtWeight', 10, 0, 1],['txtUweight', 10, 2, 1],['txtMount', 10, 0, 1],['txtVolume', 10, 0, 1],['txtTvolume', 10, 0, 1],['txtTheight', 10, 0, 1],['txtTotal', 15, 0, 1],['txtTotal2', 10, 0, 1]];
             var bbmMask = [];
-            var bbsMask = [['txtTime3', '999/99/99'],['txtLng', '999/99/99'],['txtBdate', '999/99/99'],['txtEdate', '999/99/99'],['txtTime1', '99:99'],['txtTime2', '99:99']];
+            var bbsMask = [['txtLng', '999/99/99'],['txtBdate', '999/99/99'],['txtEdate', '999/99/99'],['txtTime1', '99:99'],['txtTime2', '99:99']];
             q_sqlCount = 6;
             brwCount = 6;
             brwList = [];
@@ -192,9 +192,9 @@
                                 if (!b_ret || b_ret.length == 0)
                                     return;
                                     ret = q_gridAddRow(bbsHtm, 'tbbs', 
-                                    'txtCalctype,txtConn,txtCustno,txtCust,txtBdate,txtTime1,txtEdate,txtTime2,txtTypea,txtProductno,txtProduct,txtUnit,txtWeight,txtMount,txtTvolume,txtTheight,txtCarno,txtDriverno,txtDriver,txtAddrno,txtAddr,txtAddress,txtAddrno2,txtAddr2,txtAddress2,txtTranno,txtOrdeno,txtNo2,txtMemo,txtUno,txtVolume,txtTotal,txtWidth,txtTotal2,txtProduct2,txtHeight,txtLat,txtPaths,txtUnit2'
+                                    'txtCalctype,txtConn,txtCustno,txtCust,txtBdate,txtTime1,txtEdate,txtTime2,txtTypea,txtProductno,txtProduct,txtUnit,txtWeight,txtMount,txtTvolume,txtTheight,txtCarno,txtDriverno,txtDriver,txtAddrno,txtAddr,txtAddress,txtAddrno2,txtAddr2,txtAddress2,txtTranno,txtOrdeno,txtNo2,txtMemo,txtUno,txtVolume,txtTotal,txtWidth,txtTotal2,txtProduct2,txtHeight,txtLat,txtPaths,txtUnit2,txtLengthb,txtTime3'
 									, b_ret.length, b_ret
-									,'calctype,caseno,conn,tel,date1,time1,date2,time2,typea,productno,product,unit,theight,mount,total2,total3,carno,driverno,driver,addrno,addr,address,addrno2,addr2,address2,tranno,noa,noq,memo,uno,price,money,width,total,product2,height,containerno1,unit2,containerno2'
+									,'calctype,caseno,conn,tel,date1,time1,date2,time2,typea,productno,product,unit,theight,mount,total2,total3,carno,driverno,driver,addrno,addr,address,addrno2,addr2,address2,tranno,noa,noq,memo,uno,price,money,width,total,product2,height,containerno1,unit2,containerno2,tvolume,otype'
 									,'txtCalctype,txtBdate,txtTime1,txtEdate,txtTime2,,txtCustno,txtAddrno,txtCarno');
                              }
                         break;
@@ -938,6 +938,7 @@
 					<td align="center" style="width:70px"><a>中繼站</a></td>
 					<td align="center" style="width:180px"><a>收貨人/地點</a></td>
 					<td align="center" style="width:70px"><a>計價區域</a></td>
+					<td align="center" style="width:70px"><a>計價車種</a></td>
 					<td align="center" style="width:50px"><a>裝貨日期</a></td>
 					<td align="center" style="width:50px"><a>卸貨日期</a></td>
 					<td align="center" style="width:45px"><a>危險<br/>等級</a></td>
@@ -1006,9 +1007,8 @@
                         <input type="text" id="txtAddress2.*" style="width:96%;" />
                         <input type="button" id="btnAddr2.*" style="display:none;">
                     </td>
-                    <td>
-                        <input type="text" id="txtLat.*" style="width:95%;" />
-                    </td>
+                    <td><input type="text" id="txtLat.*" style="width:95%;" /></td>
+                    <td><input type="text" id="txtTime3.*" style="width:95%;" /></td>
 					<td>
                         <input type="text" id="txtBdate.*" style="width:95%;" />
                         <input type="text" id="txtTime1.*" style="width:95%;" />
