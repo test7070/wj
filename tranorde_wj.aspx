@@ -799,6 +799,9 @@
 					<td align="center" style="width:150px;"><a>支付廠商</a></td>
 					<td align="center" style="width:120px"><a>加減項金額</a></td>
 					<td align="center" style="width:120px"><a>應收運費</a></td>
+					<td align="center" style="width:80px"><a>人工裝費</a></td>
+					<td align="center" style="width:80px"><a>管理收入</a></td>
+					<td align="center" style="width:120px"><a>應付運費</a></td>
                     <td align="center" style="width:100px"><a>批號</a></td>
                     <td align="center" style="width:100px"><a>備註</a></td>
 					<td align="center" style="width:100px"><a>注意事項</a></td>
@@ -878,7 +881,9 @@
 					</td>
 					<td><input type="text" id="txtTotal3.*" class="num" style="width:95%;" /> </td>
                     <td><input type="text" id="txtTotal.*" class="num" style="width:95%;" /> </td>
-
+                    <td><input type="text" id="txtWidth.*" class="num" style="width:95%;" /> </td>
+                    <td><input type="text" id="txtHeight.*" class="num" style="width:95%;" /> </td>
+                    <td><input type="text" id="txtTotal2.*" class="num" style="width:95%;" /> </td>
                     <td><input type="text" id="txtUno.*" style="width:95%;" /></td>
                     <td><input type="text" id="txtMemo.*" style="width:95%;" /></td>
 					<td><input type="text" id="txtMemo2.*" style="width:95%;" /></td>
