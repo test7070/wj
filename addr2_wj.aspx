@@ -404,7 +404,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td><span> </span><a class="lbl">計價區域(起點)</a></td>
+                        <td><span> </span><a class="lbl">計價區域</a></td>
                         <td>
                         <input id="txtSiteno" type="text"  class="txt c1"/>
                         </td>
@@ -446,7 +446,7 @@
 			</div>
 		</div>
 		<div class='dbbs'>
-			<table id="tbbs" class='tbbs' style="width:1100px;">
+			<table id="tbbs" class='tbbs' style="width:1200px;">
 				<tr style='color:white; background:#003366;' >
 					<td  align="center" style="width:30px;">
 					<input class="btn"  id="btnPlus" type="button" value='+' style="font-weight: bold;"  />
@@ -454,8 +454,8 @@
 					<td align="center" style="width:20px;"></td>
 					<td align="center" style="width:60px;"><a>危險種類</a></td>
 					<td align="center" style="width:80px;"><a>車趟<br/>(1去2回)</a></td>
-					<!--<td align="center" style="width:80px;"><a>迄點縣市</a></td>-->
-					<td align="center" style="width:100px;"><a>計價區域(迄點)</a></td>
+					<td align="center" style="width:100px;"><a>起點-計價區域</a></td>
+					<td align="center" style="width:100px;"><a>迄點-計價區域</a></td>
 					<td align="center" style="width:80px;"><a>計價車種</a></td>
 					<td align="center" style="width:60px;"><a>計價單位</a></td>
 					<td align="center" style="width:70px;"><a>計價單價</a></td>
@@ -475,7 +475,7 @@
                         <input type="text" id="txtAddrno.*"  style="display:none;"/>
                     </td>
 					<td><input type="text" id="txtLat.*" style="float:left;width:95%;" /></td>
-					<!--<td><input type="text" id="txtAddress.*" style="float:left;width:95%;" /></td>-->
+					<td><input type="text" id="txtAddress.*" style="float:left;width:95%;" /></td>
 					<td><input type="text" id="txtLng.*" style="float:left;width:95%;" /></td>
 					<td><input type="text" id="txtAddr.*" style="float:left;width:95%;" /></td>
 					<td><input type="text" id="txtUnit.*" style="float:left;width:95%;" /></td>
