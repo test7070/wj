@@ -87,11 +87,9 @@
                 q_gt('chgitem', t_where, 0, 0, 0, "");
                 $('#btnPrice').click(function(e) {
                    if(q_cur == 1 || q_cur == 2){
-                             for (var i = 0; i < q_bbsCount; i++) {
-                                 var t_where = "where=^^ addrno='"+$('#txtCustno').val()+"' and (lng='"+$('#txtContainerno1_'+i).val()+"')  and (unit='"+$('#txtUnit2_'+i).val()+"') and carno='"+$('#txtTypea_'+i).val()+"' and lat='"+$('#txtContainerno2_'+i).val()+"' and addr='"+$('#txtOtype_'+i).val()+"' ^^ stop=999";
-                                 q_gt('addr2s', t_where, 0, 0, 0, "addr2s", r_accy, 1);
-                             }
-                             sum();
+                        var t_where = "where=^^ addrno='"+$('#txtCustno').val()+"' ^^ stop=999";
+                        q_gt('addr2s', t_where, 0, 0, 0, "addr2s", r_accy, 1);
+                        sum();
                    }
                 });
             }
@@ -433,45 +431,43 @@
                         break;
                     case 'addr2s':
                                 var addr2s = _q_appendData("addr2s", "", true);
-                                if(addr2s[0]!=undefined){
-                                    for (var i = 0; i < q_bbsCount; i++) {
-                                        var t_weight=dec(q_div($('#txtTweight2').val(),1000));
-                                        var t_weight2=dec(q_div($('#txtPrice2').val(),1000));
-                                        var t_Mount=dec($('#txtMount').val());
-										if($('#txtUnit2_'+i).val()=='噸' && addr2s[0].wname=='毛重'
-										&& addr2s[0].lat==$('#txtContainerno2_'+i).val()
-										&& addr2s[0].addr==$('#txtOtype_'+i).val()  
-										&& addr2s[0].lng==$('#txtContainerno1_'+i).val() 
-										&& addr2s[0].carno==$('#txtTypea_'+i).val()
-										&& addr2s[0].address==$('#txtDriver_'+i).val()
-										&& t_weight<=addr2s[0].rate2 && t_weight>=addr2s[0].rate){
-										    $('#txtPrice_'+i).val(addr2s[0].value);
-											$('#txtMoney_'+i).val(round(dec(q_mul(q_div($('#txtTheight_'+i).val(),1000),addr2s[0].value)),0));
-										}
-										else if($('#txtUnit2_'+i).val()=='噸' && addr2s[0].wname=='淨重' 
-                                        && addr2s[0].lat==$('#txtContainerno2_'+i).val()
-                                        && addr2s[0].addr==$('#txtOtype_'+i).val()
-                                        && addr2s[0].lng==$('#txtContainerno1_'+i).val() 
-                                        && addr2s[0].carno==$('#txtTypea_'+i).val()
-                                        && addr2s[0].address==$('#txtDriver_'+i).val()
-                                        && t_weight2<=addr2s[0].rate2 && t_weight2>=addr2s[0].rate){
-										        $('#txtPrice_'+i).val(addr2s[0].value);
-												$('#txtMoney_'+i).val(round(dec(q_mul(q_div($('#txtVolume_'+i).val(),1000),addr2s[0].value)),0));
-										}
-										else if($('#txtUnit2_'+i).val()!='噸' && addr2s[0].unit==$('#txtUnit2_'+i).val() 
-                                        && addr2s[0].lat==$('#txtContainerno2_'+i).val() 
-                                        && addr2s[0].lng==$('#txtContainerno1_'+i).val() 
-                                        && addr2s[0].addr==$('#txtOtype_'+i).val()
-                                        && addr2s[0].carno==$('#txtTypea_'+i).val()
-                                        && addr2s[0].address==$('#txtDriver_'+i).val()
-                                        && t_mount<=addr2s[0].mount2 && t_mount>=addr2s[0].mount){
-										    $('#txtPrice_'+i).val(addr2s[0].value);
-											$('#txtMoney_'+i).val(round(dec(q_mul($('#txtMount_'+i).val(),addr2s[0].value)),0));
-										}else{
-										    $('#txtPrice_'+i).val(0);
-										}
-									}
-								}
+                                        for (var i = 0; i < q_bbsCount; i++) {
+                                            for (var j = 0; j < addr2s.length; j++) {
+                                                var t_weight=dec(q_div($('#txtTweight2').val(),1000));
+                                                var t_weight2=dec(q_div($('#txtPrice2').val(),1000));
+                                                var t_Mount=dec($('#txtMount').val());
+                                                if($('#txtUnit2_'+i).val()=='噸' && addr2s[j].wname=='毛重'
+                                                && addr2s[j].lat==$('#txtContainerno2_'+i).val()
+                                                && addr2s[j].addr==$('#txtOtype_'+i).val()  
+                                                && addr2s[j].lng==$('#txtContainerno1_'+i).val() 
+                                                && addr2s[j].carno==$('#txtTypea_'+i).val()
+                                                && addr2s[j].address==$('#txtDriver_'+i).val()
+                                                && t_weight<=addr2s[j].rate2 && t_weight>=addr2s[j].rate){
+                                                    $('#txtPrice_'+i).val(addr2s[j].value);
+                                                    $('#txtMoney_'+i).val(round(dec(q_mul(q_div($('#txtTheight_'+i).val(),1000),addr2s[j].value)),0));
+                                                }
+                                                else if($('#txtUnit2_'+i).val()=='噸' && addr2s[j].wname=='淨重' 
+                                                && addr2s[j].lat==$('#txtContainerno2_'+i).val()
+                                                && addr2s[j].addr==$('#txtOtype_'+i).val()
+                                                && addr2s[j].lng==$('#txtContainerno1_'+i).val() 
+                                                && addr2s[j].carno==$('#txtTypea_'+i).val()
+                                                && addr2s[j].address==$('#txtDriver_'+i).val()
+                                                && t_weight2<=addr2s[j].rate2 && t_weight2>=addr2s[j].rate){
+                                                        $('#txtPrice_'+i).val(addr2s[j].value);
+                                                        $('#txtMoney_'+i).val(round(dec(q_mul(q_div($('#txtVolume_'+i).val(),1000),addr2s[j].value)),0));
+                                                }
+                                                else if($('#txtUnit2_'+i).val()!='噸' && addr2s[j].unit==$('#txtUnit2_'+i).val() 
+                                                && addr2s[j].lat==$('#txtContainerno2_'+i).val() 
+                                                && addr2s[j].lng==$('#txtContainerno1_'+i).val() 
+                                                && addr2s[j].addr==$('#txtOtype_'+i).val()
+                                                && addr2s[j].carno==$('#txtTypea_'+i).val()
+                                                && addr2s[j].address==$('#txtDriver_'+i).val()
+                                                && t_mount<=addr2s[j].mount2 && t_mount>=addr2s[j].mount){
+                                                    $('#txtPrice_'+i).val(addr2s[j].value);
+                                                    $('#txtMoney_'+i).val(round(dec(q_mul($('#txtMount_'+i).val(),addr2s[j].value)),0));
+                                                }
+                                        }
+                                  }
                             t_weight=0;
                             t_weight2=0;
                             t_mount=0;
