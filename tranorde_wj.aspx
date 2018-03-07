@@ -36,7 +36,7 @@
                 ,['txtAddrno', 'lblAddr_js', 'addr2_wj', 'custno,cust,address', 'txtAddrno,txtAddr,txtBoat', 'addr2_b2.aspx']
                 ,['txtProductno_', 'btnProduct_', 'ucc', 'noa,product', 'txtProductno_,txtProduct_', 'ucc_b.aspx']
                 ,['txtAddrno_', 'btnAddr1_', 'addr2_wj', 'custno,addr,b.siteno,b.address', 'txtAddrno_,txtAddr_,txtDriver_,txtAddress_', 'addr2_b2.aspx']
-                ,['txtAddrno2_', 'btnAddr2_', 'addr2_wj', 'custno,addr,b.siteno,b.address,b.memo', 'txtAddrno2_,txtAddr2_,txtContainerno1_,txtAddress2_,txtMemo_', 'addr2_b2.aspx']
+                ,['txtAddrno2_', 'btnAddr2_', 'addr2_wj', 'custno,addr,b.address,b.memo,b.siteno', 'txtAddrno2_,txtAddr2_,txtAddress2_,txtMemo_,txtContainerno1_', 'addr2_b2.aspx']
                 ,['txtCno', 'lblCno', 'acomp', 'noa,acomp', 'txtCno,txtAcomp', 'acomp_b.aspx']
                 );
             $(document).ready(function() {
@@ -198,6 +198,28 @@
                                     $('#txtContainerno1_' + b_seq).val(s19);
                                     var s20 = $('#txtAddress2_' + i).val();
                                     $('#txtAddress2_' + b_seq).val(s20);
+                                    var s21 = $('#txtCalctype_' + i).val();
+                                    $('#txtCalctype_' + b_seq).val(s21);
+                                    var s22 = $('#txtDate1_' + i).val();
+                                    $('#txtDate1_' + b_seq).val(s22);
+                                    var s23 = $('#txtDate2_' + i).val();
+                                    $('#txtDate2_' + b_seq).val(s23);
+                                    var s24 = $('#txtTime1_' + i).val();
+                                    $('#txtTime1_' + b_seq).val(s24);
+                                    var s25 = $('#txtTime2_' + i).val();
+                                    $('#txtTime2_' + b_seq).val(s25);
+                                    var s26 = $('#txtContainerno2_' + i).val();
+                                    $('#txtContainerno2_' + b_seq).val(s26);
+                                    var s27 = $('#txtUnit_' + i).val();
+                                    $('#txtUnit_' + b_seq).val(s27);
+                                    var s28 = $('#txtUnit2_' + i).val();
+                                    $('#txtUnit2_' + b_seq).val(s28);
+                                    var s29 = $('#txtTranno_' + i).val();
+                                    $('#txtTranno_' + b_seq).val(s29);
+                                    var s30 = $('#txtOtype_' + i).val();
+                                    $('#txtOtype_' + b_seq).val(s30);
+                                    var s31 = $('#txtMount_' + i).val();
+                                    $('#txtMount_' + b_seq).val(s31);
                                 }
                             }
                     });
@@ -263,6 +285,14 @@
                         if(q_cur==1 || q_cur==2)
                             $('#txtOtype_'+b_seq).val($('#combOtype_'+b_seq).find("option:selected").text());
                     });
+                    
+                    $('#combCalctype_' + i).change(function() {
+                            t_IdSeq = -1;
+                            q_bodyId($(this).attr('id'));
+                            b_seq = t_IdSeq;
+                            if(q_cur==1 || q_cur==2)
+                                $('#txtCalctype_'+b_seq).val($('#combCalctype_'+b_seq).find("option:selected").text());
+                    });
                 }
                 _bbsAssign();
                 $('#tbbs').find('tr.data').children().hover(function(e){
@@ -276,13 +306,6 @@
                     $('#lblNo__' + i).text(i + 1);
                     if($('#btnMinus__' + i).hasClass('isAssign'))
                         continue;
-                    $('#combCalctype_' + i).change(function() {
-                            t_IdSeq = -1;
-                            q_bodyId($(this).attr('id'));
-                            b_seq = t_IdSeq;
-                            if(q_cur==1 || q_cur==2)
-                                $('#txtCalctype_'+b_seq).val($('#combCalctype_'+b_seq).find("option:selected").text());
-                    });
                 }
                 _bbtAssign();
             }
@@ -454,7 +477,7 @@
                                                 && addr2s[j].address==$('#txtDriver_'+i).val()
                                                 && t_weight2<=addr2s[j].rate2 && t_weight2>=addr2s[j].rate){
                                                         $('#txtPrice_'+i).val(addr2s[j].value);
-                                                        $('#txtMoney_'+i).val(round(dec(q_mul(q_div($('#txtVolume_'+i).val(),1000),addr2s[j].value)),0));
+                                                        $('#txtMoney_'+i).val(round(dec(q_mul(q_div($('#txtTvolume_'+i).val(),1000),addr2s[j].value)),0));
                                                 }
                                                 else if($('#txtUnit2_'+i).val()!='噸' && addr2s[j].unit==$('#txtUnit2_'+i).val() 
                                                 && addr2s[j].lat==$('#txtContainerno2_'+i).val() 
