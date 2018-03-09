@@ -486,11 +486,6 @@
                 for ( i = 0; i < q_bbsCount; i++) {
                     t_money = t_money.add(q_float('txtTranmoney_' + i));
                     t_mount = t_mount.add(q_float('txtMount_' + i));
-                    if($('#textCaseend_'+i).val()='2' && ($('#txtCustno').val()=='029-001' || $('#txtCustno').val()=='029-002' || $('#txtCustno').val()=='029-003')){
-                        t_count+=1
-                        t_volume=t_money.add(q_float('txtTranmoney_' + i));
-                        $('#txtPrice_').val(t_count.div( t_volume));
-                    }
                 }
                 t_mount = t_mount.round(3);
 				var t_plusmoney = q_float('txtPlusmoney');
