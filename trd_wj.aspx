@@ -270,8 +270,8 @@
                         break;
                     case 'trd_tran':
                         var as = _q_appendData("view_trans", "", true);
-                        q_gridAddRow(bbsHtm, 'tbbs', 'txtTrandate,txtTranno,txtTrannoq,txtCarno,txtStraddr,txtTranmoney,txtCaseno,txtMount,txtPrice,txtTotal,txtCustorde,txtProduct,textCaseend'
-                        , as.length, as, 'trandate,noa,noq,carno,straddr,total,caseno,mount,price,total,custorde,product,caseend', '','');
+                        q_gridAddRow(bbsHtm, 'tbbs', 'txtTrandate,txtTranno,txtTrannoq,txtCarno,txtStraddr,txtTranmoney,txtCaseno,txtMount,txtPrice,txtTotal,txtCustorde,txtProduct'
+                        , as.length, as, 'trandate,noa,noq,carno,straddr,total,caseno,mount,price,total,custorde,product', '','');
                         for ( i = 0; i < q_bbsCount; i++) {
                             if (i < as.length) {
                             }else{
@@ -482,9 +482,10 @@
                 if (!(q_cur == 1 || q_cur == 2))
                     return;
                	//小數 可能會有問題需注意
-                var t_money = 0,t_mount = 0,t_count = 0,t_volume = 0,t_price = 0;
+                var t_money = 0,t_mount = 0;
                 for ( i = 0; i < q_bbsCount; i++) {
                     t_money = t_money.add(q_float('txtTranmoney_' + i));
+                    
                     t_mount = t_mount.add(q_float('txtMount_' + i));
                 }
                 t_mount = t_mount.round(3);
@@ -962,7 +963,6 @@
 					<td>
 						<input type="text" id="txtTranno.*" style="float:left; width: 90%;"/>
 						<input type="text" id="txtTrannoq.*" style="float:left;visibility: hidden; width:1%"/>
-						<input type="text" id="textCaseend.*" style="float:left;visibility: hidden; width:1%"/>
 					</td>
 					<td >
 					<input type="text" id="txtTranmoney.*" style="width:95%;text-align: right;" />
