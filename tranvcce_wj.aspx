@@ -59,9 +59,6 @@
             var t_weight=0,t_mount=0,t_weight2=0;
             function sum() {
                 for(var i=0;i<q_bbsCount;i++){
-                    if($('#txtLat').val().length>0){
-                        $('#txtConn_'+i).val($('#txtLat').val());
-                    }
                     if($('#txtWeight_'+i).val().length>0 && $('#txtMount_'+i).val().length>0){
                         $('#txtUweight_'+i).val(q_div($('#txtWeight_'+i).val(),$('#txtMount_'+i).val()));
                     }
