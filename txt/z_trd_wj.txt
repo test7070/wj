@@ -160,7 +160,6 @@ from @tmp a outer apply(select * from cust where a.custno=noa)b
 update a set a.serialno=b.serial from @tmp a
 outer apply (select * from cust where noa=a.custno) b
 
-update @tmp set total = round(price*weight,2)
 update @tmp set des6 = round(total*0.06,2)
 update @tmp set pd = round(price-(price*0.06),2)
 update @tmp set tm= round(total-des6,2)
@@ -207,11 +206,6 @@ from @tmp a outer apply(select * from view_trans where noa = a.tranno)b
 
 update a set a.serialno=b.serial
 from @tmp a outer apply(select * from cust where a.custno=noa)b
-
-update @tmp set total = round(price*weight,2)
-update @tmp set des6 = round(total*0.06,2)
-update @tmp set pd = round(price-(price*0.06),2)
-update @tmp set tm= round(total-des6,2)
 
 insert into @tmp(gno,custno)
 select '1',custno from @tmp group by custno
