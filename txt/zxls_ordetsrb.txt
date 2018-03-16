@@ -7,13 +7,15 @@ declare @tmp table(
 	typea nvarchar(10),
 	productno nvarchar(30),
 	product nvarchar(30),
+	addrno nvarchar(max),
+	addr nvarchar(max),
+	address nvarchar(max),
+	addrno2	nvarchar(30),
 	addr2 nvarchar(max),
 	address2 nvarchar(max),
 	uno nvarchar(30),
 	[weight] float,
 	mount float,
-	addrno nvarchar(max),
-	addr nvarchar(max),
 	memo nvarchar(max),
 	memo2 nvarchar(max),
 	addrno3 nvarchar(max),
@@ -21,10 +23,12 @@ declare @tmp table(
 	caseno nvarchar(30),
 	date1 nvarchar(30),
 	date2 nvarchar(30),
-	addrno2	nvarchar(30),
 	custno nvarchar(30),
 	road nvarchar(30),
-	postno nvarchar(10)
+	area nvarchar(30),
+	area2 nvarchar(30),
+	price float,
+	total float
 )
 declare @tmpp table(
 	noa nvarchar(30),
@@ -39,6 +43,7 @@ declare @tmpp table(
 	mount float,
 	addrno nvarchar(max),
 	addr nvarchar(max),
+	address nvarchar(max),
 	memo nvarchar(max),
 	addrno3 nvarchar(max),
 	addr3 nvarchar(max),
@@ -51,7 +56,7 @@ declare @tmpp table(
 	nick nvarchar(30),
 	price2 float
 )
-insert into @tmp (noa,noq,typea,productno,product,addr2,address2,uno,weight,mount,memo,addrno3,addr3,caseno,date1,date2,road)
+insert into @tmp (noa,noq,typea,productno,product,addr2,address2,uno,weight,mount,memo,addrno3,addr3,caseno,date1,date2,road,addrno)
 select 'B'+c,ROW_NUMBER()over(partition by c order by noa),
 case when CHARINDEX('北區',o)>0 then '內銷(北)'
 	 when CHARINDEX('中區',o)>0 then '內銷(中)'
@@ -69,10 +74,10 @@ case when len(r) >0 and len(s) >0 and len(t) >0 and len(u) >0 and len(v) >0 and 
 	 when len(r) >0 and len(s) >0 then '1.'+r+'chr(10)'+'2.'+s
 	 when len(r) >0 then '1.'+r
 	 end
-,'01','文揚通運股份有限公司',c,d,d,o
+,'01','文揚通運股份有限公司',c,d,d,o,'029'
 from ztmpxls where c!='出貨單號' and c!=''
 
-insert into @tmpp (noa,date1,custno,cust,nick,price2)
+insert into @tmpp (noa,date1,custno,cust,nick,price2,mount)
 select a.noa,a.date1,
 case when CHARINDEX('北區',a.road)>0 then '029-001'
 	 when CHARINDEX('中區',a.road)>0 then '029-002'
@@ -81,48 +86,63 @@ case when CHARINDEX('北區',a.road)>0 then '029-001'
 case when CHARINDEX('北區',a.road)>0 then '世捷-北區'
 	 when CHARINDEX('中區',a.road)>0 then '世捷-中區'
 	 when CHARINDEX('南區',a.road)>0 then '世捷-南區' end,
-a.weight
+a.weight,a.mount
 from
-(select count(1) a,noa,date1,road,sum(weight) weight from @tmp group by noa,date1,road)a
+(select count(1) a,noa,date1,road,sum(weight) weight,SUM(mount) mount from @tmp group by noa,date1,road)a
 
 update @tmp set noq = RIGHT('000'+noq,3)
 
-update a set a.addrno2=b.custno,a.address2 = b.address,a.postno=b.siteno
-from @tmp a
-outer apply(select * from addr2) b
-where left(a.addr2,4) = left(b.cust,4)
+update a set a.addrno2=b.custno,a.address2 = b.address,a.area2=b.siteno
+from @tmp a outer apply(select * from addr2) b
+where left(a.addr2,4) = left(b.cust,4) and b.custno like '029%'
+
+update a set a.addr=b.cust,a.address=b.address,area=b.siteno from @tmp a 
+outer apply (select * from addr2 where custno=a.addrno)b
+
 update @tmp set memo2 = case when CHARINDEX('回收',memo)>0 then '回收空箱' else '' end
+update @tmp set date1=REPLACE(date1,' 上午 12:00:00',''),date2=REPLACE(date2,' 上午 12:00:00','')
+update @tmpp set date1=REPLACE(date1,' 上午 12:00:00',''),date2=REPLACE(date2,' 上午 12:00:00','')
+update @tmp set date1=convert(nvarchar,cast(date1 as datetime),111),date2=convert(nvarchar,cast(date2 as datetime),111)
+update @tmpp set date1=convert(nvarchar,cast(date1 as datetime),111),date2=convert(nvarchar,cast(date2 as datetime),111)
+
+
+update a set a.price=b.value
+from @tmp a
+outer apply(select * from addr2s where addrno='029' and a.area=address and a.area2=lng)b
+update @tmp set total = case when [weight]>0 then price*([weight]/1000) else 0 end
+
+
 DECLARE MyCursor Cursor FOR
 select noa from @tmp
-Open MyCursor 
+Open MyCursor
 
 declare @ordenoa nvarchar(25) 
 --如有相同noa 刪除後再insert
 Fetch NEXT FROM MyCursor INTO @ordenoa
 While (@@FETCH_STATUS <> -1)
 BEGIN
-	if exists(select * from tranorde106 where noa = @ordenoa) 
+	if exists(select * from tranorde107 where noa = @ordenoa) 
 	begin
-		delete from tranorde106 where noa=@ordenoa
+		delete from tranorde107 where noa=@ordenoa
 	end
-	if exists(select * from tranordes106 where noa = @ordenoa) 
+	if exists(select * from tranordes107 where noa = @ordenoa) 
 	begin
-		delete from tranordes106 where noa=@ordenoa
+		delete from tranordes107 where noa=@ordenoa
 	end
 Fetch NEXT FROM MyCursor INTO @ordenoa
 END
 CLOSE MyCursor
 DEALLOCATE MyCursor
 
-insert into tranorde106(noa,datea,cno,acomp,custno,comp,po,date1,nick,price2)
+insert into tranorde107(noa,datea,cno,acomp,custno,comp,po,date1,nick,price2,mount)
 select noa,cast(cast(substring(@curdate,1,4) as int)-1911 as nvarchar) + '/' + substring(@curdate,6,2) +'/'+ substring(@curdate,9,2)
 ,'01','文揚通運股份有限公司',custno,cust,substring(noa,2,len(noa)),
-case when charindex('#',date1)=0 then cast(cast(substring(date1,7,4) as int)-1911 as nvarchar) + '/' + substring(date1,1,2) +'/'+ substring(date1,4,2) else date1 end,nick,price2
+case when charindex('#',date1)>0 then date1 else cast(cast(substring(date1,1,4) as int)-1911 as nvarchar) + '/' + substring(date1,6,10) end,nick,price2,mount
 from @tmpp
 
-insert into tranordes106(noa,noq,calctype,productno,product,addr2,address2,uno,weight,mount,addrno,addr,memo,addrno3,addr3,caseno,date1,date2,addrno2,containerno1)
-select noa,noq,typea,productno,product,addr2,address2,uno,weight,mount,addrno,addr,memo,addrno3,addr3,caseno,
-case when charindex('#',date1)=0 then cast(cast(substring(date1,7,4) as int)-1911 as nvarchar) + '/' + substring(date1,1,2) +'/'+ substring(date1,4,2) else date1 end,
-case when charindex('#',date1)=0 then cast(cast(substring(date1,7,4) as int)-1911 as nvarchar) + '/' + substring(date1,1,2) +'/'+ substring(date1,4,2) else date1 end,
-addrno2,postno
+insert into tranordes107(noa,noq,calctype,productno,product,addrno,addr,address,addrno2,addr2,address2,uno,tvolume,mount,memo,addrno3,addr3,caseno,date1,date2,containerno1,containerno2,unit2,otype,typea,driver,price,total,money,tranno)
+select noa,noq,typea,productno,product,addrno,addr,address,addrno2,addr2,address2,uno,weight,mount,memo,addrno3,addr3,caseno,
+case when charindex('#',date1)>0 then date1 else cast(cast(substring(date1,1,4) as int)-1911 as nvarchar) + '/' + substring(date1,6,10) end,
+case when charindex('#',date1)>0 then date1 else cast(cast(substring(date1,1,4) as int)-1911 as nvarchar) + '/' + substring(date1,6,10) end
+,area2,'1','噸','','',area,price,total,total,SUBSTRING(noa,2,10)
 from @tmp;

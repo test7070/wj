@@ -13,7 +13,8 @@ tweight2 float,
 price2 float,
 addr nvarchar(100),
 addr2 nvarchar(100),
-page nvarchar(10)
+page nvarchar(10),
+mount float
 )
 declare @tmps table(
 noa nvarchar(30),
@@ -24,8 +25,10 @@ date2 nvarchar(30),
 product nvarchar(30),
 addrno nvarchar(300),
 addr nvarchar(300),
+address nvarchar(300),
 addrno2 nvarchar(300),
 addr2 nvarchar(300),
+address2 nvarchar(300),
 [weight] float,
 tvolume float,
 mount float,
@@ -35,7 +38,39 @@ addrno3 nvarchar(10),
 addr3 nvarchar(50),
 page nvarchar(10),
 tel nvarchar(30),
-conn nvarchar(30)
+conn nvarchar(30),
+area1 nvarchar(30),
+area2 nvarchar(30),
+price float,
+total float
+)
+declare @tmpss table(
+noa nvarchar(30),
+noq nvarchar(10),
+calctype nvarchar(10),
+date1 nvarchar(30),
+date2 nvarchar(30),
+product nvarchar(30),
+addrno nvarchar(300),
+addr nvarchar(300),
+address nvarchar(300),
+addrno2 nvarchar(300),
+addr2 nvarchar(300),
+address2 nvarchar(300),
+[weight] float,
+tvolume float,
+mount float,
+uno nvarchar(30),
+caseno nvarchar(50),
+addrno3 nvarchar(10),
+addr3 nvarchar(50),
+page nvarchar(10),
+tel nvarchar(30),
+conn nvarchar(30),
+area1 nvarchar(30),
+area2 nvarchar(30),
+price float,
+total float
 )
 declare @tmpz table(
 a nvarchar(100),
@@ -168,6 +203,7 @@ begin
 	begin
 		update @tmp set tweight2 = replace(@f,',','') where page=@page
 		update @tmp set price2 = replace(@c,',','') where page=@page
+		update @tmp set mount = replace(@h,',','') where page=@page
 	end
 	if(CHARINDEX('倉庫',@b)>0)
 		update @tmps set addrno = @c,addr=@c,addrno2=@f,addr2=@f where page=@page
@@ -180,7 +216,24 @@ end
 close cursor_table
 deallocate cursor_table
 update @tmps set conn='029-004',tel='世捷-移倉'
+
+update a set a.addrno=b.custno,area1=b.siteno,a.address=b.address,a.addr=b.addr
+from @tmps a outer apply(select * from addr2 where CHARINDEX(a.addr,addr)>0)b
+
+update a set a.addrno2=b.custno,a.area2=b.siteno,a.address2=b.address,a.addr2=b.addr
+from @tmps a outer apply(select * from addr2 where CHARINDEX(a.addr2,addr)>0 and custno like '029%')b
+
+
+update a set a.price=b.value
+from @tmps a
+outer apply(select * from addr2s where addrno='029' and a.area1=address and a.area2=lng)b
+update @tmps set total = case when [tvolume]>0 then price*([tvolume]/1000) else 0 end
 ----------------------------------------------------------------------------------------------------
+insert into @tmpss (noa,noq,calctype,date1,date2,product,addrno,addr,address,addrno2,addr2,address2,weight,tvolume,mount,caseno,addrno3,addr3,tel,conn,area1,area2,price,total)
+select noa,'001',calctype,date1,date2,product,addrno,addr,address,addrno2,addr2,address2,weight,sum(tvolume),sum(mount),caseno,addrno3,addr3,tel,conn,area1,area2,price,sum(total)
+from @tmps group by noa,calctype,date1,date2,product,addrno,addr,address,addrno2,addr2,address2,weight,caseno,addrno3,addr3,tel,conn,area1,area2,price
+
+select * from @tmpss
 DECLARE MyCursor Cursor FOR
 select noa from @tmp
 Open MyCursor 
@@ -189,22 +242,23 @@ declare @ordenoa nvarchar(25)
 Fetch NEXT FROM MyCursor INTO @ordenoa
 While (@@FETCH_STATUS <> -1)
 BEGIN
-	if exists(select * from tranorde106 where noa = @ordenoa) 
+	if exists(select * from tranorde107 where noa = @ordenoa) 
 	begin
-		delete from tranorde106 where noa=@ordenoa
+		delete from tranorde107 where noa=@ordenoa
 	end
-	if exists(select * from tranordes106 where noa = @ordenoa) 
+	if exists(select * from tranordes107 where noa = @ordenoa) 
 	begin
-		delete from tranordes106 where noa=@ordenoa
+		delete from tranordes107 where noa=@ordenoa
 	end
 Fetch NEXT FROM MyCursor INTO @ordenoa
 END
 CLOSE MyCursor
 DEALLOCATE MyCursor
-----------------------------------------------------------------------------------------------------
-insert into tranorde106 (custno,comp,nick,noa,datea,date1,po,tweight2,price2,cno,acomp)
-select DISTINCT custno,comp,nick,noa,datea,date1,po,tweight2,price2,'01','文揚通運股份有限公司' from @tmp
 
-insert into tranordes106 (noa,noq,calctype,date1,date2,product,addrno,addr,addrno2,addr2,tvolume,weight,mount,uno,caseno,addrno3,addr3,conn,tel)
-select DISTINCT noa,noq,calctype,date1,date2,product,addrno,addr,addrno2,addr2,tvolume,weight,mount,uno,caseno,addrno3,addr3,conn,tel
-from @tmps;
+----------------------------------------------------------------------------------------------------
+insert into tranorde107 (custno,comp,nick,noa,datea,date1,po,tweight2,price2,cno,acomp,mount)
+select DISTINCT custno,comp,nick,noa,datea,date1,po,tweight2,price2,'01','文揚通運股份有限公司',mount from @tmp
+
+insert into tranordes107 (noa,noq,calctype,date1,date2,product,addrno,addr,address,addrno2,addr2,address2,tvolume,weight,mount,caseno,addrno3,addr3,conn,tel,containerno1,containerno2,otype,unit2,typea,driver,tranno,price,total,money)
+select DISTINCT noa,noq,calctype,date1,date2,product,addrno,addr,address,addrno2,addr2,address2,tvolume,weight,mount,caseno,addrno3,addr3,conn,tel,area2,'1','','噸','',area1,SUBSTRING(noa,2,10),price,total,total
+from @tmpss;

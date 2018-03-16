@@ -1,4 +1,4 @@
-﻿zxls_ordewj:--zxls_ordewj
+﻿zxls_ordewj:--zxls_ordewj 
 	SET QUOTED_IDENTIFIER OFF
 	declare @cmd nvarchar(max)
 	declare @curdate nvarchar(max) = replace(substring(convert(nvarchar,getDate(),120),1,10),'-','/')
@@ -155,7 +155,8 @@
 		total float,
 		addrno2 nvarchar(100),
 		addr2 nvarchar(300),
-		containerno nvarchar(10),
+		area nvarchar(30),
+		area2 nvarchar(30),
 		address2 nvarchar(max),
 		date1 nvarchar(100),
 		date2 nvarchar(100),
@@ -448,13 +449,6 @@
 			set @straddr = @straddr + @b
 		else if(@c!=''  and (CHARINDEX('弄',@c)>0 or CHARINDEX('縣',@c)>0 or CHARINDEX('市',@c)>0 and CHARINDEX('路',@c)>0 or CHARINDEX('街',@c)>0 or CHARINDEX('鄉',@c)>0 and CHARINDEX('鎮',@c)>0 or CHARINDEX('號',@c)>0 or CHARINDEX('巷',@c)>0 or CHARINDEX('村',@c)>0 or CHARINDEX('區',@c)>0))
 			set @straddr = @straddr + @c
-		--郵遞區號
-		if(isnumeric(SUBSTRING(@a,1,1))=1)
-			update @tmps set @strpost = SUBSTRING(@a,1,3)
-		if(isnumeric(SUBSTRING(@b,1,1))=1)
-			update @tmps set @strpost = SUBSTRING(@b,1,3)
-		if(isnumeric(SUBSTRING(@c,1,1))=1)
-			update @tmps set @strpost = SUBSTRING(@c,1,3)
 		end
 		end
 		
@@ -629,8 +623,8 @@
 		update @tmps set product = @strproduct where left(page2,3) = left(@x,3)
 		update @tmps set [weight] = case when charindex('KG',@strweight)>0 then @strweight else '0KG' END where left(page,3) = left(@y,3)
 		update @tmps set [address] = replace(@strtranaddr+@strtranaddr2,' ','') where cast(left(page,1) as float)+1 = left(@y,1)
-		update a set addrno=b.custno,addr=b.cust from @tmps a outer apply(select * from addr2) b
-		where cast(left(page,1) as float)+1 = left(@y,1) and charindex(SUBSTRING(@strtranaddr2,1,charindex('號',@strtranaddr2)),b.address) >0
+		--update a set addrno=b.custno,addr=b.cust from @tmps a outer apply(select * from addr2) b
+		--where cast(left(page,1) as float)+1 = left(@y,1) and charindex(SUBSTRING(@strtranaddr2,1,charindex('號',@strtranaddr2)),b.address) >0
 		update @tmps set unit = substring(@strunit,1,1) where substring(@strunit,2,3) = left(page2,3)
 		update @tmps set memo2 = @strmemo where cast(left(page,1) as float)+1 = left(@y,1)
 		end try
@@ -651,8 +645,8 @@
 	
 	delete from @tmps where mount is null --無數量，抓到的不是品名
 	
-	insert into @tmpss (noa,noq,productno,product,weight,Theight,Tvolume,mount,addrno,addr,addr2,addrno2,[address],date1,date2,tranno,uno,memo,caseno,addrno3,addr3,page,page2,address2,unit,typea,containerno,memo2)
-	select noa,ROW_NUMBER()over(partition by noa order by productno),productno,product,[weight],Theight,Tvolume,mount,addrno,addr,addr2,addrno2,[address],date1,date2,tranno,uno,memo,caseno,addrno3,addr3,page,page2,address2,unit,typea,containerno,memo2
+	insert into @tmpss (noa,noq,productno,product,weight,Theight,Tvolume,mount,addrno,addr,addr2,addrno2,[address],date1,date2,tranno,uno,memo,caseno,addrno3,addr3,page,page2,address2,unit,typea,memo2)
+	select noa,ROW_NUMBER()over(partition by noa order by productno),productno,product,[weight],Theight,Tvolume,mount,addrno,addr,addr2,addrno2,[address],date1,date2,tranno,uno,memo,caseno,addrno3,addr3,page,page2,address2,unit,typea,memo2
 	from @tmps
 	
 	update @tmpss set noq = RIGHT('000' + noq,3)
@@ -665,32 +659,31 @@
 	update a set a.addrno2 =b.addrno2,a.addr2=b.addr2,a.address2=b.address2 from @tmpss a outer apply (select TOP 1 * from @tmpss) b
 	update a set a.memo = b.memo from @tmpss a outer apply(select * from addr2 where custno = a.addrno2)b
 	update a set a.tweight2 = b.a from @tmp a outer apply (select sum(cast(replace(Theight,',','') as float)) a from @tmpss)b
-	update @tmpss set containerno = @strpost
+
 	update @tmpss set mount = case when cast(replace([weight],',','') as float)>0 then cast(replace(Tvolume,',','') as float)/cast(replace([weight],',','') as float)end
 	update @tmpss set address2 = case when isnumeric(substring(address2,1,1))=1 then substring(address2,4,len(address2)) else address2 end
 	update @tmpss set volume = case when ROUND(mount,0)>0 then cast(replace(Theight,',','') as float)/cast(replace(mount,',','') as float) else 0 end
 	
-	update a set a.price=c.value from @tmpss a --單價(依郵遞區號&噸數&危險等級)
-	outer apply(select * from @tmp)b
-	outer apply(select * from addr2s where noa=b.custno)c
-	outer apply(select sum(cast(replace(Theight,',','') as float)/1000) a from @tmpss)d
-	where d.a between c.rate and c.rate2 and containerno between c.lat and c.lng and a.typea = c.carno
-	
 	update @tmpss set [money] = cast(replace(Theight,',','') as float)/1000 * cast(replace(price,',','') as float)
 	update a set a.conn = b.custno,a.tel = b.nick from @tmpss a outer apply(select * from @tmp)b
 	update @tmpss set Theight = ROUND(cast(replace(Theight,',','') as float),0),volume = ROUND(cast(replace(volume,',','') as float),0),[money] = ROUND(cast(replace([money],',','') as float),0)
-	declare @ordenoa nvarchar(100) = (select noa from @tmp)
+	update a set a.area2 = b.siteno
+	from @tmpss a outer apply(select * from addr2 where a.addrno2 = custno)b
 	
+	update a set a.addrno=b.custno,area=b.siteno from @tmpss a
+	outer apply(select * from addr2 where left(a.addr,4)=LEFT(cust,4))b
+	declare @ordenoa nvarchar(100) = (select noa from @tmp)
+
 	if exists(select * from @tmp where noa = @ordenoa) --如有相同noa 刪除後再insert
 	begin
-		delete from tranorde106 where noa=@ordenoa
-		delete from tranordes106 where noa=@ordenoa
+		delete from tranorde107 where noa=@ordenoa
+		delete from tranordes107 where noa=@ordenoa
 	end
-	insert into tranorde106 (noa,datea,cno,acomp,custno,comp,date1,po,memo,tweight2,nick)
+	insert into tranorde107 (noa,datea,cno,acomp,custno,comp,date1,po,memo,tweight2,nick)
 	select noa,datea,cno,acomp,custno,comp,date1,po,memo,tweight2,nick
 	from @tmp
 	
-	insert into tranordes106 (noa,noq,product,productno,[weight],theight,tvolume,mount,addr2,addrno2,[address],date1,date2,tranno,uno,memo,caseno,addrno3,addr3,addrno,addr,volume,address2,price,[money],containerno1,typea,unit,conn,tel,memo2)
-	select noa,noq,product,productno,cast(replace([weight],',','') as float),cast(replace(theight,',','') as float),cast(replace(tvolume,',','') as float),cast(replace(mount,',','') as float),addr2,addrno2,[address],date1,date2,tranno,uno,memo,caseno,addrno3,addr3,addrno,addr,volume,address2,price,[money],containerno,typea,unit,conn,tel,memo2
+	insert into tranordes107 (noa,noq,product,productno,[weight],theight,tvolume,mount,addr2,addrno2,[address],date1,date2,tranno,uno,memo,caseno,addrno3,addr3,addrno,addr,volume,address2,price,[money],containerno1,containerno2,otype,typea,unit,unit2,conn,tel,memo2,driver)
+	select noa,noq,product,productno,cast(replace([weight],',','') as float),cast(replace(theight,',','') as float),cast(replace(tvolume,',','') as float),cast(replace(mount,',','') as float),addr2,addrno2,[address],date1,date2,tranno,uno,memo,caseno,addrno3,addr3,addrno,addr,volume,address2,price,[money],area2,'','',typea,unit,'',conn,tel,memo2,area
 	from @tmpss
 	;
