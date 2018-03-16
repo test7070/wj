@@ -1,5 +1,5 @@
 ﻿z_trd_wj1:--z_trd_wj1
-declare @t_mon nvarchar(10)
+declare @t_mon nvarchar(10) 
 declare @t_bcustno nvarchar(20)
 declare @t_ecustno nvarchar(20)
 declare @t_bnoa nvarchar(20) 
@@ -122,7 +122,7 @@ substring(datea,5,5) datea
 ,* from @tmp order by trdnoa,gno ;
 ------------------------------------------------------------------ 
 z_trd_wj2:--z_trd_wj2
-declare @t_mon nvarchar(10)
+declare @t_mon nvarchar(10) 
 set @t_mon = case when '#non'=[2] then '' else [2] end
 declare @tmp table(
 	gno nvarchar(5),
@@ -130,6 +130,8 @@ declare @tmp table(
 	tranno nvarchar(30),
 	datea nvarchar(30),
 	carno nvarchar(30),
+	car nvarchar(30),
+	tgg nvarchar(30),
 	class nvarchar(30),
 	straddr nvarchar(30),
 	endaddr nvarchar(30),
@@ -161,8 +163,15 @@ update a set a.serialno=b.serial from @tmp a
 outer apply (select * from cust where noa=a.custno) b
 
 update @tmp set des6 = round(total*0.06,2)
-update @tmp set pd = round(price-(price*0.06),2)
 update @tmp set tm= round(total-des6,2)
+update a set a.car=case when b.cartype='2' or b.cartype='6' then '自' else '外' end
+from @tmp a
+left join car2 b on a.carno=b.noa
+
+update a set a.tgg= case when a.car='外' then c.namea end
+from @tmp a
+left join car2 b on a.carno=b.noa
+left join driver c on b.driverno = c.noa
 
 insert into @tmp(gno,custno)
 select '1',custno from @tmp group by custno
