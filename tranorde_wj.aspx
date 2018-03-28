@@ -34,7 +34,7 @@
             brwCount2 = 9;
             aPop = new Array(['txtCustno', 'lblCust', 'cust', 'noa,comp,nick,memo2', 'txtCustno,txtComp,txtNick,txtMemo', 'cust_b.aspx'] 
                 ,['txtAddrno', 'lblAddr_js', 'addr2_wj', 'custno,cust,address', 'txtAddrno,txtAddr,txtBoat', 'addr2_b2.aspx']
-                ,['txtProductno_', 'btnProduct_', 'ucc', 'noa,product,unit,typea,namea,uweight', 'txtProductno_,txtProduct_,txtUnit_,txtTypea_,txtProductno2_,txtVolume_', 'ucc_b.aspx']
+                ,['txtProductno_', 'btnProduct_', 'ucc', 'noa,product,unit,typea,namea,uweight,price2', 'txtProductno_,txtProduct_,txtUnit_,txtTypea_,txtProductno2_,txtVolume_,txtWeight_', 'ucc_b.aspx']
                 ,['txtAddrno_', 'btnAddr1_', 'addr2_wj', 'custno,addr,b.siteno,b.address', 'txtAddrno_,txtAddr_,txtDriver_,txtAddress_', 'addr2_b2.aspx']
                 ,['txtAddrno2_', 'btnAddr2_', 'addr2_wj', 'custno,addr,b.address,b.memo,b.siteno', 'txtAddrno2_,txtAddr2_,txtAddress2_,txtMemo_,txtContainerno1_', 'addr2_b2.aspx']
                 ,['txtCno', 'lblCno', 'acomp', 'noa,acomp', 'txtCno,txtAcomp', 'acomp_b.aspx']
@@ -54,14 +54,20 @@
                     return;
                 var cuft=0,t_mount=0,t_Price2=0,t_weight=0;
                 for(var i=0;i<q_bbsCount;i++){
-                    $('#txtMount_'+i).val(round(q_div(q_float('txtTvolume_'+i), q_float('txtWeight_'+i)),0));
+                    if($('#txtComp').val().indexOf('科思創')>-1){//科思創   淨重/單位淨重=數量 毛重/數量=單位毛
+                        $('#txtMount_'+i).val(round(q_div(q_float('txtTvolume_'+i), q_float('txtWeight_'+i)),0));
+                        $('#txtVolume_'+i).val(round(q_div(q_float('txtTheight_'+i), q_float('txtMount_'+i)),0));
+                    }else{//單位淨重*數量=淨重   單位毛重*數量=毛重
+                        $('#txtTheight_'+i).val(round(q_mul(q_float('txtVolume_'+i), q_float('txtMount_'+i)),0));
+                        $('#txtTvolume_'+i).val(round(q_mul(q_float('txtWeight_'+i), q_float('txtMount_'+i)),0));
+                    }
+                    
 					if($('#txtUnit_'+i).val()=='板'){
 						if($('#txtProduct2_'+i).val()=='墊板使用費')
 							$('#txtTotal3_'+i).val(-q_mul(q_float('txtMount_'+i),20));
 					}
 					//$('#txtMoney_'+i).val(round(q_mul(q_div(q_float('txtTheight_'+i),1000),q_float('txtPrice_'+i)),0));
                     //$('#txtTotal_'+i).val(round(q_mul(q_div(q_float('txtTheight_'+i),1000),q_float('txtWidth_'+i)),0));
-                    $('#txtVolume_'+i).val(round(q_div(q_float('txtTheight_'+i), q_float('txtMount_'+i)),0));
 					$('#txtTotal_'+i).val(q_add(q_float('txtMoney_'+i),q_float('txtTotal3_'+i)));
                     if($('#txtDate1').val().length>0 && $('#txtDate1_'+i).val().length==0){
                         $('#txtDate1_'+i).val($('#txtDate1').val());
@@ -93,6 +99,8 @@
                         sum();
                    }
                 });
+                
+                $('#txtCustno').change(function(e){sum();});
             }
             
             function q_boxClose(s2) {
@@ -146,10 +154,6 @@
 							$('#btnDoc_'+n).click();
                     });
                     $('#txtPrice_'+i).change(function(e){sum();});
-                    $('#txtMount_'+i).change(function(e){
-                        var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
-                        refreshWV(n);
-                    });
                     $('#txtLengthb_'+i).change(function(e){sum();});
                     $('#txtWidth_'+i).change(function(e){sum();});
                     $('#txtHeight_'+i).change(function(e){sum();});
@@ -235,6 +239,10 @@
                         sum();
                     });
                     
+                    $('#txtVolume_' + i).change(function() {
+                        sum();
+                    });
+                    
                     $('#txtWidth_' + i).change(function() {
                         sum();
                     });
@@ -255,6 +263,9 @@
                         sum();
                     });
                     
+                    $('#txtMount_' + i).change(function() {
+                        sum();
+                    });
 					
 					$('#txtUnit_' + i).change(function() {
                         sum();
