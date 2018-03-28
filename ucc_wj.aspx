@@ -465,6 +465,10 @@
 						</td>
 					</tr>
 					<tr>
+						<td><span> </span><a id='lblUweight2' class="lbl"> 單位淨重(KG) </a></td>
+						<td><input id="txtPrice2" type="text"  class="txt c1 num"/></td>
+					</tr>
+					<tr>
 						<td><span> </span><a id="lblMemo2" class="lbl"> 品名注意事項 </a></td>
 						<td colspan="3"><input id="txtMemo"  type="text" class="txt c1" /></td>
 					</tr>
