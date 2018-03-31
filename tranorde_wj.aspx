@@ -783,8 +783,8 @@
 					<td align="center" style="width:80px"><a>計價車種</a></td>
 					<td align="center" style="width:65px"><a>車趟<br/>(1去2回)</a></td>
 					<td align="center" style="width:80px"><a>計價單位</a></td>
+					<td align="center" style="width:250px"><a>品名<br>承載單位</a></a></td>
                     <td align="center" style="width:120px"><a>危險等級<br>攜帶文件</a></td>
-                    <td align="center" style="width:250px"><a>品名<br>承載單位</a></a></td>
                     <td align="center" style="width:80px"><a>單位毛<br/>重(KG)</a></td>
                     <td align="center" style="width:70px"><a>單位淨<br/>重(KG)</a></td>
                     <td align="center" style="width:100px"><a>毛重(KG)</a></td>
@@ -851,16 +851,16 @@
                     <select id="combUnit2.*" class="txt" style="width: 20px;"> </select>
                     </td>
                     <td>
-					<input type="text" id="txtTypea.*" style="width:95%;" />
-					<input id="chkChk1.*" type="checkbox"/>
-					<input type="text" id="txtProductno2.*" style="width:70%;" />
-					</td>
-                    <td>
                         <input type="text" id="txtProductno.*" style="width:30%;" />
                         <input type="text" id="txtProduct.*" style="width:63%;" />
-						<input type="text" id="txtUnit.*" style="width:96%;" />
+                        <input type="text" id="txtUnit.*" style="width:96%;" />
                         <input type="button" id="btnProduct.*" style="display:none;">
                     </td>
+                    <td>
+    					<input type="text" id="txtTypea.*" style="width:95%;" />
+    					<input id="chkChk1.*" type="checkbox"/>
+    					<input type="text" id="txtProductno2.*" style="width:70%;" />
+					</td>
                     <td><input type="text" id="txtVolume.*" class="num" style="width:95%;" /> </td>
                     <td><input type="text" id="txtWeight.*" class="num" style="width:95%;" /> </td>
                     <td><input type="text" id="txtTheight.*" class="num" style="width:95%;" /> </td>

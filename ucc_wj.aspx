@@ -44,11 +44,10 @@
 
             function mainPost() {
                 q_mask(bbmMask);
-                $('#txtNoa').change(function(e){
-                	$(this).val($.trim($(this).val()).toUpperCase());    	
-					if($(this).val().length>0){
-						t_where="where=^^ noa='"+$(this).val()+"'^^";
-                		q_gt('ucc', t_where, 0, 0, 0, "checkUccno_change", r_accy);
+                $('#txtNoa').change(function(e){   	
+					if($('#txtNoa').val().length>0){
+						var t_where = "where=^^ noa in(select MAX(noa) from ucc where noa like '"+ $('#txtNoa').val() +"%')^^"
+                        q_gt('ucc', t_where, 0, 0, 0, "uccno");
 					}
                 });
 				$('#txtVccacc1').change(function(e) {
@@ -88,6 +87,15 @@
 
             function q_gtPost(t_name) {
                 switch (t_name) {
+                    case "uccno":
+                        var as = _q_appendData("ucc", "", true);
+                        if (as.length > 0 && as[0].noa.indexOf("-")>=0){
+                            var cno = as[0].noa.substr(as[0].noa.indexOf("-")+1,as[0].noa.length - as[0].noa.indexOf("-"));
+                            $('#txtNoa').val($('#txtNoa').val() + '-' + right('000' +(parseInt(cno)+1).toString(),3));
+                        }
+                        t_where="where=^^ noa='"+$('#txtNoa').val().toUpperCase()+"'^^";
+                        q_gt('ucc', t_where, 0, 0, 0, "checkUccno_change", r_accy);
+                        break;
                 	case 'checkUccno_change':
                 		var as = _q_appendData("ucc", "", true);
                         if (as[0] != undefined){
