@@ -279,7 +279,7 @@ from (select ROW_NUMBER()over(partition by gno order by custno,datea )ra,rx from
 select
 dbo.getComma(uweight,2)uweight
 ,dbo.getComma(weight,2)weight
-,dbo.getComma(tweight,2)tweight
+,dbo.getComma(tweight,0)tweight
 ,dbo.getComma(mount,0)mount
 ,dbo.getComma(price1,0)price1
 ,dbo.getComma(price2,0)price2     
@@ -808,11 +808,12 @@ noq nvarchar(3),
 cust nvarchar(30), 
 productno nvarchar(30), 
 weight float, 
-memo nvarchar(300) 
+memo nvarchar(300),
+driver nvarchar(30)
 ) 
-insert into @tmp (gno,carno,noa,ordeno,noq,cust,productno,weight,memo,y,m,d) 
+insert into @tmp (gno,carno,noa,ordeno,noq,cust,productno,weight,memo,y,m,d,driver) 
 select '0',a.carno,b.po,c.ordeno,b.noq,b.comp,b.product,b.weight,'', 
-SUBSTRING(b.trandate,1,3),SUBSTRING(b.trandate,5,2),SUBSTRING(b.trandate,8,2) 
+SUBSTRING(b.trandate,1,3),SUBSTRING(b.trandate,5,2),SUBSTRING(b.trandate,8,2),a.driver
 from tran[1] a 
 left join trans[1] b on a.noa=b.noa 
 left join tranvcces[1] c on b.ordeno=c.noa and b.so=c.noq 
@@ -847,6 +848,17 @@ DEALLOCATE MyCursor
 
 insert into @tmp(gno,y,m,d,weight,carno,noa) 
 select '2',y,m,d,SUM(weight),carno,noa from @tmp 
-group by carno,noa,y,m,d
+where gno='0'
+group by carno,noa,y,m,d 
+
+update a set a.driver = b.driver
+from @tmp a
+outer apply (select noa,driver from @tmp where gno='0')b
+where a.noa=b.noa and gno='2'
+
+insert into @tmp(gno,y,m,d,weight,carno,noa) 
+select '3',y,m,d,SUM(weight),carno,noa from @tmp 
+where gno='0'
+group by carno,noa,y,m,d 
 
 select * from @tmp order by y desc,m desc,d desc,carno,noa,gno;
