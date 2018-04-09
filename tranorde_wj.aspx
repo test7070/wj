@@ -101,6 +101,27 @@
                 });
                 
                 $('#txtCustno').change(function(e){sum();});
+                
+                $('#btnApv').click(function() {
+                    if ($("#chkIsapv").prop("checked")) {
+                        alert('已核准!!');
+                        return;
+                    }
+                    if (!emp($('#txtNoa').val())) {
+                        var t_noa=$('#txtNoa').val();
+                        
+                        q_func('qtxt.query.tranorde_apv', 'tranorde_wj.txt,tranorde_apv,' 
+                            + encodeURI(t_noa)+';'+encodeURI(r_userno)+';'+encodeURI(r_name)+';'+encodeURI(r_accy),r_accy,1);
+                            
+                        var as = _q_appendData("tmp0", "", true, true);
+                        if (as[0] != undefined) {
+                            if($('#txtNoa').val()==as[0].noa){
+                                $('#txtApv').val(as[0].apv);
+                            }
+                        }
+                    }
+                    $('#chkEnda').prop('checked', true);
+                });
             }
             
             function q_boxClose(s2) {
@@ -707,8 +728,11 @@
                         <td colspan="2"><input type="text" id="txtNoa" class="txt c1"/></td>
                         <td><span> </span><a id="lblDatea" class="lbl"> </a></td>
                         <td><input type="text" id="txtDatea" class="txt c1"/></td>
-                        <td><span> </span><a class="lbl">結案</a></td>
-                        <td><input type="checkbox" id="chkEnda" class="txt c1"/></td>
+                        <td> </td>
+                        <td><input id="chkEnda" type="checkbox"/>
+                            <span> </span><a id='lblEnda_wj'>結案</a>
+                        </td>
+                        <td><input id="btnApv" type="button" value="結案"/></td></td>
                     </tr>
                     <tr>
                         <td><span> </span><a id="lblCno" class="lbl btn">運輸公司</a></td>

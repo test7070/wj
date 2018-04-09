@@ -1,0 +1,11 @@
+﻿tranorde_apv:--tranorde_apv 訂單結案
+SET QUOTED_IDENTIFIER OFF
+declare @t_noa nvarchar(max)= case when '#non'=[1] then '' else [1] end
+declare @t_userno nvarchar(max)= case when '#non'=[2] then '' else [2] end
+declare @t_name nvarchar(max)= case when '#non'=[3] then '' else [3] end
+declare @r_accy nvarchar(max)= (select accy from view_tranorde where noa=@t_noa)
+
+exec("update tranorde"+@r_accy+" set worker2='"+@t_name+"',enda='1' where noa='"+@t_noa+"'")
+
+select noa,enda from view_tranorde where noa=@t_noa
+;
