@@ -122,6 +122,15 @@
                     }
                     $('#chkEnda').prop('checked', true);
                 });
+                
+                for (var i = 0; i <q_sqlCount; i++) {
+                    if(emp($('#vtenda_'+i).val())){
+                        $('#vtnoa_'+i).css("color","red");
+                        $('#vtnick_'+i).css("color","red");
+                        $('#vtdatea_'+i).css("color","red");
+                        $('#vtenda_'+i).css("color","red");
+                    }
+                }
             }
             
             function q_boxClose(s2) {
@@ -418,6 +427,7 @@
             }
             function refresh(recno) {
                 _refresh(recno);
+                
             }
             function readonly(t_para, empty) {
                 _readonly(t_para, empty);
@@ -700,12 +710,14 @@
                         <td align="center" style="width:120px; color:black;"><a>單號</a></td>
                         <td align="center" style="width:130px; color:black;"><a>客戶</a></td>
                         <td align="center" style="width:95px; color:black;"><a>日期</a></td>
+                        <td align="center" style="width:50px; color:black;"><a>結案</a></td>
                     </tr>
                     <tr>
                         <td><input id="chkBrow.*" type="checkbox"/></td>
                         <td id='noa' style="text-align: center;">~noa</td>
                         <td id='nick' style="text-align: center;">~nick</td>
                         <td id='datea' style="text-align: center;">~datea</td>
+                        <td id='enda' style="text-align: center;">~enda</td>
                     </tr>
                 </table>
             </div>
