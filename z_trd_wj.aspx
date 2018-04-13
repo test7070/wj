@@ -1,5 +1,4 @@
-﻿
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" >
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -39,12 +38,15 @@
 						dbf : 'cust',
 						index : 'noa,comp',
 						src : 'cust_b.aspx'
-					},
-					{//[5][6]
+					},{//[5][6]
 						type : '1',
 						name : 'noa',
-					}
-					]
+					},{//[7]
+						type : '5', 
+						name : 'type',
+						value:'#non@全部,北區@北區,中區@中區,南區@南區,移倉@移倉'.split(',')
+
+					}]
 				});
 				q_getFormat();
 				q_langShow();
