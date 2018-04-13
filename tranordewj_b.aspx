@@ -10,8 +10,7 @@
 		<script src="../script/qbox.js" type="text/javascript"></script>
 		<link href="../qbox.css" rel="stylesheet" type="text/css" />
 		<script type="text/javascript">
-            var q_name = 'view_tranordes', t_bbsTag = 'tbbs', t_content = " ", afilter = [], bbsKey = ['noa'], as;
-            var t_sqlname = '';
+            var q_name = 'tranorde_tranvcce', t_bbsTag = 'tbbs', t_content = "where=^^['','','','','')", afilter = [], bbsKey = ['noa'], as;
             t_postname = q_name;
             var isBott = false;
             var txtfield = [], afield, t_data, t_htm;
@@ -34,7 +33,14 @@
                     dataErr = false;
                     return;
                 }
-                mainBrow(6, t_content, t_sqlname, t_postname, r_accy);
+                var t_para = new Array();
+                try{
+                    t_para = JSON.parse(decodeURIComponent(q_getId()[5]));
+                    t_content = t_content = "where=^^['"+t_para.project+"','"+t_para.trandate+"','"+t_para.custno+"','"+t_para.cno+"','"+t_para.po+"')^^";
+                }catch(e){
+                }    
+                brwCount = -1;
+                mainBrow(0, t_content);
             }
 
 			function mainPost(){
