@@ -21,9 +21,9 @@
             q_tables = 's';
             var q_name = "trd";
             var q_readonly = ['txtTax', 'txtNoa', 'txtMoney', 'txtTotal','txtWorker2','txtWorker', 'txtMount', 'txtStraddr', 'txtEndaddr', 'txtPlusmoney', 'txtMinusmoney', 'txtVccano', 'txtCustchgno','txtAccno','txtAccno2','txtYear2','txtYear1'];
-            var q_readonlys = [ 'txtTranno','txtTrannoq','txtTrandate','txtStraddr','txtProduct','txtCarno','txtCustorde','txtCaseno','txtMount','txtPrice','txtTotal','txtTranmoney'];
+            var q_readonlys = [ 'txtTranno','txtTrannoq','txtTrandate','txtStraddr','txtProduct','txtCarno','txtCustorde','txtCaseno','txtMount','txtPrice','txtTotal','txtTranmoney','txtFill','txtOthercost','txtEndaddr'];
             var bbmNum = [['txtPlus', 10, 0,1],['txtDiscount', 10, 0,1],['txtMoney', 10, 0,1], ['txtTax', 10, 0,1], ['txtTotal', 10, 0,1], ['txtMount', 10, 3,1], ['txtPlusmoney', 10, 0,1], ['txtMinusmoney', 10, 0,1]];
-            var bbsNum = [['txtTranmoney', 10, 0,1], ['txtOverweightcost', 10, 0,1], ['txtOthercost', 10, 0,1], ['txtMount', 10, 3,1], ['txtPrice', 10, 3,1], ['txtTotal', 10, 0,1]];
+            var bbsNum = [['txtTranmoney', 10, 0,1], ['txtOverweightcost', 10, 0,1], ['txtOthercost', 10, 0,1], ['txtMount', 10, 3,1], ['txtPrice', 10, 3,1], ['txtTotal', 10, 0,1], ['txtOthercost', 10, 0,1]];
             var bbmMask = [];
             var bbsMask = [];
             q_sqlCount = 6;
@@ -270,8 +270,8 @@
                         break;
                     case 'trd_tran':
                         var as = _q_appendData("view_trans", "", true);
-                        q_gridAddRow(bbsHtm, 'tbbs', 'txtTrandate,txtTranno,txtTrannoq,txtCarno,txtStraddr,txtTranmoney,txtCaseno,txtMount,txtPrice,txtTotal,txtCustorde,txtProduct'
-                        , as.length, as, 'trandate,noa,noq,carno,straddr,total,caseno,mount,price,total,custorde,product', '','');
+                        q_gridAddRow(bbsHtm, 'tbbs', 'txtTrandate,txtTranno,txtTrannoq,txtCarno,txtStraddr,txtTranmoney,txtCaseno,txtMount,txtPrice,txtTotal,txtCustorde,txtProduct,txtFill,txtOthercost,txtEndaddr'
+                        , as.length, as, 'trandate,noa,noq,carno,straddr,total,caseno,mount,price,total,po,product,timea,plus,endaddr', '','');
                         for ( i = 0; i < q_bbsCount; i++) {
                             if($('#txtCustno').val()=='029-001'){
                                 if(!emp($('#txtPrice_'+i).val()))
@@ -747,7 +747,7 @@
                 margin: -1px;
             }
             .dbbs {
-                width: 100%;
+                width: 1450px;
             }
             .tbbs a {
                 font-size: medium;
@@ -936,17 +936,20 @@
 					<input class="btn"  id="btnPlus" type="button" value='+' style="font-weight: bold;"  />
 					</td>
 					<td align="center" style="width:20px;"> </td>
-					<td align="center" style="width:100px;"><a id='lblTrandate_s'> </a></td>
-					<td align="center" style="width:200px;"><a id='lblStraddr_s'> </a></td>
-					<td align="center" style="width:80px;"><a id='lblProduct_s'> </a></td>
+					<td align="center" style="width:85px;"><a id='lblTrandate_s'> </a></td>
+					<td align="center" style="width:100px;"><a id='lblStraddr_wj'>起運地點</a></td>
+					<td align="center" style="width:100px;"><a id='lblEndaddr_wj'>卸貨地點</a></td>
+					<td align="center" style="width:120px;"><a id='lblProduct_s'> </a></td>
 					<td align="center" style="width:80px;"><a id='lblMount_s'> </a></td>
 					<td align="center" style="width:80px;"><a id='lblPrice_s'> </a></td>
 					<td align="center" style="width:80px;"><a id='lblTotal_s'> </a></td>
 					<td align="center" style="width:80px;"><a id='lblCarno_s'> </a></td>
-					<td align="center" style="width:150px;"><a id='lblCustorde_s'> </a></td>
-					<td align="center" style="width:150px;"><a id='lblCaseno_s'> </a></td>
-					<td align="center" style="width:150px;"><a id='lblTranno_s'> </a></td>
+					<td align="center" style="width:100px;"><a id='lblCustorde_wj'>運輸單號</a></td>
+					<!--<td align="center" style="width:100px;"><a id='lblCaseno_s'> </a></td>-->
+					<td align="center" style="width:100px;"><a id='lblTranno_s'> </a></td>
 					<td align="center" style="width:80px;"><a id='lblTranmoney_s'> </a></td>
+					<td align="center" style="width:80px;"><a id='lblFill_wj'> </a>加減項</td>
+					<td align="center" style="width:80px;"><a id='lblOthercost_wj'>加減項金額</a></td>
 				</tr>
 				<tr  style='background:#cad3ff;'>
 					<td align="center">
@@ -955,32 +958,35 @@
 					</td>
 					<td><a id="lblNo.*" style="font-weight: bold;text-align: center;display: block;"> </a></td>
 					<td >
-					<input type="text" id="txtTrandate.*" style="width:95%;" />
+					   <input type="text" id="txtTrandate.*" style="width:95%;" />
 					</td>
 					<td >
-					<input type="text" id="txtStraddr.*" style="width:95%;" />
+					   <input type="text" id="txtStraddr.*" style="width:95%;" />
 					</td>
 					<td >
-					<input type="text" id="txtProduct.*" style="width:95%;" />
+                       <input type="text" id="txtEndaddr.*" style="width:95%;" />
+                    </td>
+					<td >
+					   <input type="text" id="txtProduct.*" style="width:95%;" />
 					</td>
 					<td >
-					<input type="text" id="txtMount.*" style="width:95%;text-align: right;" />
+					   <input type="text" id="txtMount.*" style="width:95%;text-align: right;" />
 					</td>
 					<td >
-					<input type="text" id="txtPrice.*" style="width:95%;text-align: right;" />
+					   <input type="text" id="txtPrice.*" style="width:95%;text-align: right;" />
 					</td>
 					<td >
-					<input type="text" id="txtTotal.*" style="width:95%;text-align: right;" />
+					   <input type="text" id="txtTotal.*" style="width:95%;text-align: right;" />
 					</td>
 					<td >
-					<input type="text" id="txtCarno.*" style="width:95%;" />
+					   <input type="text" id="txtCarno.*" style="width:95%;" />
 					</td>
 					<td >
-					<input type="text" id="txtCustorde.*" style="width:95%;" />
+					   <input type="text" id="txtCustorde.*" style="width:95%;" />
 					</td>
-					<td >
-					<input type="text" id="txtCaseno.*" style="width:95%;" />
-					</td>
+					<!--<td >
+					   <input type="text" id="txtCaseno.*" style="width:95%;" />
+					</td>-->
 					<td>
 						<input type="text" id="txtTranno.*" style="float:left; width: 90%;"/>
 						<input type="text" id="txtTrannoq.*" style="float:left;visibility: hidden; width:1%"/>
@@ -988,6 +994,12 @@
 					<td >
 					<input type="text" id="txtTranmoney.*" style="width:95%;text-align: right;" />
 					</td>
+					<td >
+                        <input type="text" id="txtFill.*" style="width:95%;" />
+                    </td>
+                    <td >
+                        <input type="text" id="txtOthercost.*" style="width:95%;text-align: right;" />
+                    </td>
 				</tr>
 			</table>
 		</div>
