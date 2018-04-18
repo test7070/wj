@@ -46,8 +46,19 @@
 						name : 'type',
 						value:'#non@全部,北區@北區,中區@中區,南區@南區,移倉@移倉'.split(',')
 
+					},{//[8][9]
+						type : '1', 
+						name : 'date'
+					},{//[10][11]
+						type : '6', 
+						name : 'xcarno'
+					},{//[12]
+						type : '5', 
+						name : 'cartype',
+						value:'#non@全部,自運@自運,外車@外車'.split(',')
 					}]
 				});
+
 				q_getFormat();
 				q_langShow();
 				q_popAssign();
@@ -72,7 +83,8 @@
 	                t_month = t_date.getUTCMonth()+1;
 	                t_month = t_month>9?t_month+'':'0'+t_month;
 	                $('#txtMon').val(t_year+'/'+t_month);*/
-				
+				$('#lblXcarno').parent().parent().width(610).find('input[type="text"]').width(240);
+
 				var t_noa=typeof(q_getId()[5])=='undefined'?'':q_getId()[5];
                 t_noa  =  t_noa.replace('noa=','');
                 $('#txtXnoa').val(t_noa);
