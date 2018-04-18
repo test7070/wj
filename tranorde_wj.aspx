@@ -378,9 +378,9 @@
                 $('#txtDatea').val(q_date());
                 $('#chkEnda').prop('checked',false);
                 $('#txtDatea').focus();
-                for (var i = 0; i < q_bbsCount; i++) {
+                /*for (var i = 0; i < q_bbsCount; i++) {
                     $('#txtOtype_'+i).val('板車');
-                }
+                }*/
             }
             function btnModi() {
                 if (emp($('#txtNoa').val()))
