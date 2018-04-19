@@ -62,9 +62,10 @@
                     if($('#txtWeight_'+i).val().length>0 && $('#txtMount_'+i).val().length>0){
                         $('#txtUweight_'+i).val(q_div($('#txtWeight_'+i).val(),$('#txtMount_'+i).val()));
                     }
-                    if($('#txtWeight_'+i).val().length>0 && $('#txtVolume_'+i).val().length>0){
-                        $('#txtTotal_'+i).val(round(q_mul(q_div($('#txtWeight_'+i).val(),1000),$('#txtVolume_' + i).val()),0));
-                    }
+					//運費直接抓訂單運費
+                    //if($('#txtWeight_'+i).val().length>0 && $('#txtVolume_'+i).val().length>0){
+                    //    $('#txtTotal_'+i).val(round(q_mul(q_div($('#txtWeight_'+i).val(),1000),$('#txtVolume_' + i).val()),0));
+                    //}
                     t_weight=q_add(t_weight,q_float('txtWeight_'+i));
                     t_mount=q_add(t_weight,q_float('txtMount_'+i));
                     t_weight2=q_add(t_weight,q_float('txtLengthb_'+i));
