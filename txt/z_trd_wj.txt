@@ -190,10 +190,12 @@ from @tmp a where (CHARINDEX(car,@t_cartype)>0 or len(@t_cartype)=0)
 order by class,gno;
 ------------------------------------------------------------------ 
 z_trd_wj3:--z_trd_wj3
-declare @t_mon nvarchar(10) 
+declare @t_bdate nvarchar(10) 
+declare @t_edate nvarchar(10) 
 declare @typea nvarchar(10) 
-set @t_mon = case when '#non'=[2] then '' else [2] end
 set @typea = case when '#non'=[7] then '' else [7] end
+set @t_bdate = case when '#non'=[8] then '' else [8] end
+set @t_edate = case when '#non'=[9] then '' else [9] end
 declare @tmp table( 
 gno nvarchar(5), 
 noa nvarchar(30), 
@@ -217,21 +219,23 @@ des6 float,
 serialno nvarchar(30) 
 ) 
 insert into @tmp (gno,noa,tranno,custno,cust,datea,carno,product,mount,price,total,class,straddr,endaddr,ender,weight) 
-select '0',a.noa,c.po,a.custno,a.comp,a.datea,b.carno,b.product,b.mount,b.price,b.tranmoney,c.calctype,c.straddr,c.aaddr,c.endaddr,c.weight
+select '0',a.noa,c.po,a.custno,a.comp,a.datea,b.carno,b.product,b.mount,b.price,b.tranmoney,c.calctype,c.straddr,c.aaddr,c.endaddr,c.weight 
 from view_trd[1] a 
-left join view_trds[1] b on a.noa = b.noa
-left join view_trans c on b.tranno = c.noa and b.trannoq = c.noq
-where (left(a.datea,6)=@t_mon or len(@t_mon)=0) and a.custno like '029%' and (charindex(substring(@typea,1,1),c.calctype)>0 or len(@typea)=0)
+left join view_trds[1] b on a.noa = b.noa 
+left join view_trans c on b.tranno = c.noa and b.trannoq = c.noq and b.custorde = c.po
+where a.datea between @t_bdate and @t_edate and a.custno like '029%' and (charindex(substring(@typea,1,1),c.calctype)>0 or len(@typea)=0)-- and 
 
 update a set a.serialno=b.serial 
 from @tmp a outer apply(select * from cust where a.custno=noa)b 
 
-insert into @tmp(gno,custno,class,mount,weight,price,total) 
-select '1',custno,class,SUM(mount),SUM(weight),price,SUM(total) 
-from @tmp group by custno,price,class
+update @tmp set total = case when weight>0 and price>0 then weight*price else 0 end 
+
+insert into @tmp(gno,class,mount,weight,price,total) 
+select '1',class,SUM(mount),SUM(weight),price,SUM(total) 
+from @tmp group by price,class 
 
 select a.*,SUBSTRING(datea,1,3) as yy, SUBSTRING(datea,5,2) as mm,SUBSTRING(datea,5,5) as dateb 
-from @tmp a order by class,gno ;
+from @tmp a order by price,class,gno;
 ------------------------------------------------------------------
 z_trd_wj4:--z_trd_wj4
 declare @t_mon nvarchar(10)
@@ -319,7 +323,7 @@ select '7',mon,round(total+tax,0)
 from @tmp where gno='6' 
 
 insert into @tmp (gno,mon) 
-select '8',mon 
+select '8',mon
 from @tmp group by mon 
 
 select a.*,SUBSTRING(mon,1,3) as yy,SUBSTRING(mon,5,2) as mm 

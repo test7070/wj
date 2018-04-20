@@ -1,188 +1,188 @@
-﻿z_tran_wj1:
-declare @t_bdate nvarchar(10)
-declare @t_edate nvarchar(10)
-declare @t_bcarno nvarchar(10)
-declare @t_ecarno nvarchar(10)
-declare @t_bdriverno nvarchar(10)
-declare @t_edriverno nvarchar(10)
-set @t_bdate = case when '#non'=[2] then '' else [2] end
-set @t_edate = case when '#non'=[3] then char(255) else [3] end
-set @t_bcarno = case when '#non'=[5] then '' else [5] end
-set @t_ecarno = case when '#non'=[6] then char(255) else [6] end
-set @t_bdriverno = case when '#non'=[7] then '' else [7] end
-set @t_edriverno = case when '#non'=[8] then char(255) else [8] end
-declare @tmp table( 
-gno nvarchar(10), 
-noa nvarchar(200), 
-datea nvarchar(50), 
-roc nvarchar(10), 
-mon nvarchar(10), 
-day nvarchar(10),
-comp nvarchar(100),
-driverno nvarchar(100), 
-recno int, 
+﻿z_tran_wj1:--z_tran_wj1
+	declare @t_bdate nvarchar(10)
+	declare @t_edate nvarchar(10)
+	declare @t_bcarno nvarchar(10)
+	declare @t_ecarno nvarchar(10)
+	declare @t_bdriverno nvarchar(10)
+	declare @t_edriverno nvarchar(10)
+	set @t_bdate = case when '#non'=[2] then '' else [2] end
+	set @t_edate = case when '#non'=[3] then char(255) else [3] end
+	set @t_bcarno = case when '#non'=[5] then '' else [5] end
+	set @t_ecarno = case when '#non'=[6] then char(255) else [6] end
+	set @t_bdriverno = case when '#non'=[7] then '' else [7] end
+	set @t_edriverno = case when '#non'=[8] then char(255) else [8] end
+	declare @tmp table( 
+	gno nvarchar(10), 
+	noa nvarchar(200), 
+	datea nvarchar(50), 
+	roc nvarchar(10), 
+	mon nvarchar(10), 
+	day nvarchar(10),
+	comp nvarchar(100),
+	driverno nvarchar(100), 
+	recno int, 
 
-carno nvarchar(100), 
-carplateno nvarchar(50), 
-driver nvarchar(100), 
-fcar nvarchar(100), 
+	carno nvarchar(100), 
+	carplateno nvarchar(50), 
+	driver nvarchar(100), 
+	fcar nvarchar(100), 
 
-trandate nvarchar(50), 
-cust nvarchar(50), 
-product nvarchar(50), 
-price float, 
-mount float, 
-mount2 float, 
-weight nvarchar(50), 
-straddr nvarchar(max), 
-endaddr nvarchar(max), 
-plateno nvarchar(50), 
-ltime nvarchar(50), 
-stime nvarchar(50), 
-iCar float, 
-vCar float, 
-miles float, 
-total float, 
-total2 float, 
---油量與旅程 
-oilproduct nvarchar(50), 
-t_oiladd float, 
-bmiles float, 
-emiles float, 
-rate float, 
---回數票 
-etccost float, 
---出車費用 
-fixcarcost float, 
-t_carcost float, 
-g_fixcarcost float, 
-b_fixcarcost float, 
-total3 float, 
-other float, 
-o_fixcarcost float , 
-addp nvarchar(50), 
-decp nvarchar(50) 
-) 
+	trandate nvarchar(50), 
+	cust nvarchar(50), 
+	product nvarchar(50), 
+	price float, 
+	mount float, 
+	mount2 float, 
+	weight float, 
+	straddr nvarchar(max), 
+	endaddr nvarchar(max), 
+	plateno nvarchar(50), 
+	ltime nvarchar(50), 
+	stime nvarchar(50), 
+	iCar float, 
+	vCar float, 
+	miles float, 
+	total float, 
+	total2 float, 
+	--油量與旅程 
+	oilproduct nvarchar(50), 
+	t_oiladd float, 
+	bmiles float, 
+	emiles float, 
+	rate float, 
+	--回數票 
+	etccost float, 
+	--出車費用 
+	fixcarcost float, 
+	t_carcost float, 
+	g_fixcarcost float, 
+	b_fixcarcost float, 
+	total3 float, 
+	other float, 
+	o_fixcarcost float , 
+	addp nvarchar(50), 
+	decp nvarchar(50) 
+	) 
 
-insert into @tmp (gno,noa,roc,mon,day,comp,
-datea,trandate,cust,product,price,mount,weight,straddr,endaddr,plateno,iCar,vCar,miles,total,ltime,stime,total2, 
-driverno,driver,carno,carplateno,fcar) 
-select '0',a.noa,''+SUBSTRING(a.datea,1,3),''+SUBSTRING(a.datea,5,2),''+SUBSTRING(a.datea,8,2),a.acomp,a.datea 
-,b.trandate,b.comp,b.product,b.price,b.mount,b.weight,b.straddr,b.endaddr 
-,b.cardeal,b.bmile,b.emile,b.miles,b.reserve,b.ltime,b.stime,b.total 
-,a.driverno,a.driver,a.carno,a.etime,a.btime 
-from view_tran a 
-left join view_trans b on a.noa = b.noa 
-where a.datea between @t_bdate and @t_edate 
-and (a.carno BETWEEN @t_bcarno and @t_ecarno) 
-and (a.driverno BETWEEN @t_bdriverno and @t_edriverno)
---------------------------------------------------------------------------------------------------------------------
-insert into @tmp (gno,noa,roc,mon,day,recno,
-datea,trandate,cust,product,price,mount,weight,straddr,endaddr,plateno,iCar,vCar,miles,total,ltime,stime,total2, 
-driverno,driver,carno,carplateno,fcar) 
-select '0',noa,roc,mon,day,ROW_NUMBER()over(partition by noa order by roc desc),
-datea,trandate,cust,product,price,mount,weight,straddr,endaddr,plateno,iCar,vCar,miles,total,ltime,stime,total2, 
-driverno,driver,carno,carplateno,fcar
-from @tmp 
+	insert into @tmp (gno,noa,roc,mon,day,comp,
+	datea,trandate,cust,product,price,mount,weight,straddr,endaddr,plateno,iCar,vCar,miles,total,ltime,stime,total2, 
+	driverno,driver,carno,carplateno,fcar) 
+	select '0',a.noa,''+SUBSTRING(a.datea,1,3),''+SUBSTRING(a.datea,5,2),''+SUBSTRING(a.datea,8,2),a.acomp,a.datea 
+	,b.trandate,b.comp,b.product,b.price,b.mount,b.weight,b.straddr,b.endaddr 
+	,b.cardeal,b.bmile,b.emile,b.miles,b.reserve,b.ltime,b.stime,b.total 
+	,a.driverno,a.driver,a.carno,a.etime,a.btime 
+	from view_tran a 
+	left join view_trans b on a.noa = b.noa 
+	where a.datea between @t_bdate and @t_edate 
+	and (a.carno BETWEEN @t_bcarno and @t_ecarno) 
+	and (a.driverno BETWEEN @t_bdriverno and @t_edriverno)
+	--------------------------------------------------------------------------------------------------------------------
+	insert into @tmp (gno,noa,roc,mon,day,recno,
+	datea,trandate,cust,product,price,mount,weight,straddr,endaddr,plateno,iCar,vCar,miles,total,ltime,stime,total2, 
+	driverno,driver,carno,carplateno,fcar) 
+	select '0',noa,roc,mon,day,ROW_NUMBER()over(partition by noa order by roc desc),
+	datea,trandate,cust,product,price,mount,weight,straddr,endaddr,plateno,iCar,vCar,miles,total,ltime,stime,total2, 
+	driverno,driver,carno,carplateno,fcar
+	from @tmp 
 
-delete from @tmp where recno is null and gno='0' --recno合併，刪除重複的
+	delete from @tmp where recno is null and gno='0' --recno合併，刪除重複的
 
-insert into @tmp (gno,recno,noa,datea,total,total2) 
-select '2','9999',noa,datea,SUM(total),SUM(total2) from @tmp 
-where gno='0' group by noa,datea 
---------------------------------------------------------------------------------------------------------- 
---加減 
-insert into @tmp (gno,noa,datea,fixcarcost,t_carcost,g_fixcarcost,b_fixcarcost,other,o_fixcarcost) 
-select '4',a.noa,a.datea, 
-case when charindex(b.fill,'修車費')>0 then (b.minus) else 0 end, 
-case when charindex(b.fill,'旅費')>0 then (b.minus) else 0 end, 
-case when charindex(b.fill,'去裝卸車費')>0 then (b.minus) else 0 end, 
-case when charindex(b.fill,'回裝卸車費')>0 then (b.minus) else 0 end, 
-case when 
-charindex(b.fill,'修車費')=0 and 
-charindex(b.fill,'旅費')=0 and 
-charindex(b.fill,'去裝卸車費')=0 and 
-charindex(b.fill,'回裝卸車費')=0 and 
-charindex(b.fill,'補胎費')=0 
-then (b.minus) else 0 end, 
-case when charindex(b.fill,'補胎費')>0 then (b.minus) else 0 end 
-from view_tran a 
-left join view_trans b on a.noa = b.noa 
-where a.datea between @t_bdate and @t_edate 
-and (a.carno BETWEEN @t_bcarno and @t_ecarno) 
-and (a.driverno BETWEEN @t_bdriverno and @t_edriverno) 
+	insert into @tmp (gno,recno,noa,datea,total,total2,weight) 
+	select '2','9999',noa,datea,SUM(total),SUM(total2),SUM(weight) from @tmp 
+	where gno='0' group by noa,datea 
+	--------------------------------------------------------------------------------------------------------- 
+	--加減 
+	insert into @tmp (gno,noa,datea,fixcarcost,t_carcost,g_fixcarcost,b_fixcarcost,other,o_fixcarcost) 
+	select '4',a.noa,a.datea, 
+	case when charindex(b.fill,'修車費')>0 then (b.minus) else 0 end, 
+	case when charindex(b.fill,'旅費')>0 then (b.minus) else 0 end, 
+	case when charindex(b.fill,'去裝卸車費')>0 then (b.minus) else 0 end, 
+	case when charindex(b.fill,'回裝卸車費')>0 then (b.minus) else 0 end, 
+	case when 
+	charindex(b.fill,'修車費')=0 and 
+	charindex(b.fill,'旅費')=0 and 
+	charindex(b.fill,'去裝卸車費')=0 and 
+	charindex(b.fill,'回裝卸車費')=0 and 
+	charindex(b.fill,'補胎費')=0 
+	then (b.minus) else 0 end, 
+	case when charindex(b.fill,'補胎費')>0 then (b.minus) else 0 end 
+	from view_tran a 
+	left join view_trans b on a.noa = b.noa 
+	where a.datea between @t_bdate and @t_edate 
+	and (a.carno BETWEEN @t_bcarno and @t_ecarno) 
+	and (a.driverno BETWEEN @t_bdriverno and @t_edriverno) 
 
-insert into @tmp (gno,noa,datea,etccost) 
-select '4',a.noa,a.datea,c.money 
-from view_tran a 
-left join etc c on (a.trandate = c.datea) and (a.carno = c.carno) 
-where a.datea between @t_bdate and @t_edate 
-and (a.carno BETWEEN @t_bcarno and @t_ecarno) 
-and (a.driverno BETWEEN @t_bdriverno and @t_edriverno)
+	insert into @tmp (gno,noa,datea,etccost) 
+	select '4',a.noa,a.datea,c.money 
+	from view_tran a 
+	left join etc c on (a.trandate = c.datea) and (a.carno = c.carno) 
+	where a.datea between @t_bdate and @t_edate 
+	and (a.carno BETWEEN @t_bcarno and @t_ecarno) 
+	and (a.driverno BETWEEN @t_bdriverno and @t_edriverno)
 
-insert into @tmp (gno,noa,datea,oilproduct,t_oiladd,bmiles,emiles,miles,rate) 
-select '4',a.noa,a.datea,b.product,b.mount,b.bmiles,b.emiles,b.miles,b.miles/b.mount 
-from view_tran a 
-left join oil b on (a.trandate = b.oildate) and (a.carno = b.carno) 
-where a.datea between @t_bdate and @t_edate 
-and (a.carno BETWEEN @t_bcarno and @t_ecarno) 
-and (a.driverno BETWEEN @t_bdriverno and @t_edriverno)
-------------------------------------------------------------------------------------------------------- 
-insert into @tmp (gno,noa,datea,oilproduct,t_oiladd,bmiles,emiles,miles,rate,etccost,fixcarcost,t_carcost,g_fixcarcost,b_fixcarcost,other,o_fixcarcost,total3) 
-select '5',noa,datea,oilproduct,sum(t_oiladd),min(bmiles),max(emiles),sum(miles),sum(rate),etccost,SUM(fixcarcost),SUM(t_carcost),SUM(g_fixcarcost),SUM(b_fixcarcost),SUM(other),SUM(o_fixcarcost), 
-SUM(fixcarcost)+SUM(t_carcost)+SUM(g_fixcarcost)+SUM(b_fixcarcost)+SUM(o_fixcarcost)+SUM(other) 
-from @tmp where gno='4' 
-group by noa,datea,etccost,oilproduct 
+	insert into @tmp (gno,noa,datea,oilproduct,t_oiladd,bmiles,emiles,miles,rate) 
+	select '4',a.noa,a.datea,b.product,b.mount,b.bmiles,b.emiles,b.miles,b.miles/b.mount 
+	from view_tran a 
+	left join oil b on (a.trandate = b.oildate) and (a.carno = b.carno) 
+	where a.datea between @t_bdate and @t_edate 
+	and (a.carno BETWEEN @t_bcarno and @t_ecarno) 
+	and (a.driverno BETWEEN @t_bdriverno and @t_edriverno)
+	------------------------------------------------------------------------------------------------------- 
+	insert into @tmp (gno,noa,datea,oilproduct,t_oiladd,bmiles,emiles,miles,rate,etccost,fixcarcost,t_carcost,g_fixcarcost,b_fixcarcost,other,o_fixcarcost,total3) 
+	select '5',noa,datea,oilproduct,sum(t_oiladd),min(bmiles),max(emiles),sum(miles),sum(rate),etccost,SUM(fixcarcost),SUM(t_carcost),SUM(g_fixcarcost),SUM(b_fixcarcost),SUM(other),SUM(o_fixcarcost), 
+	SUM(fixcarcost)+SUM(t_carcost)+SUM(g_fixcarcost)+SUM(b_fixcarcost)+SUM(o_fixcarcost)+SUM(other) 
+	from @tmp where gno='4' 
+	group by noa,datea,etccost,oilproduct 
 
-insert into @tmp (gno,recno,noa,datea,oilproduct,t_oiladd,bmiles,emiles,miles,rate,etccost,fixcarcost,t_carcost,g_fixcarcost,b_fixcarcost,total3,other,o_fixcarcost) 
-select '3','9999',noa,datea,min(oilproduct),sum(t_oiladd),min(bmiles),max(emiles),sum(miles),sum(rate),sum(etccost),SUM(fixcarcost),SUM(t_carcost),SUM(g_fixcarcost),SUM(b_fixcarcost),SUM(total3),SUM(other),SUM(o_fixcarcost)
-from @tmp where gno='5' 
-group by noa,datea 
+	insert into @tmp (gno,recno,noa,datea,oilproduct,t_oiladd,bmiles,emiles,miles,rate,etccost,fixcarcost,t_carcost,g_fixcarcost,b_fixcarcost,total3,other,o_fixcarcost) 
+	select '3','9999',noa,datea,min(oilproduct),sum(t_oiladd),min(bmiles),max(emiles),sum(miles),sum(rate),sum(etccost),SUM(fixcarcost),SUM(t_carcost),SUM(g_fixcarcost),SUM(b_fixcarcost),SUM(total3),SUM(other),SUM(o_fixcarcost)
+	from @tmp where gno='5' 
+	group by noa,datea 
 
-delete from @tmp where gno='4' 
-delete from @tmp where gno='5' 
---------------------------------------------------------------------------------------------------------- 
-declare @t_pageline int = 8
-declare @noa nvarchar(100) 
-declare @count int
-declare @page int
-declare cursor_table cursor for 
-select noa,MAX(recno) count from @tmp where noa is not null and gno='0' group by noa
-open cursor_table 
-fetch next from cursor_table 
-into @noa,@count
-while(@@FETCH_STATUS <> -1) 
-begin 
-set @page = @count % @t_pageline
-while @page < 8
-begin
-set @count = @count +1
-insert into @tmp (gno,recno,noa) values('1',@count,@noa)
-set @page = @page +1
-end
+	delete from @tmp where gno='4' 
+	delete from @tmp where gno='5' 
+	--------------------------------------------------------------------------------------------------------- 
+	declare @t_pageline int = 8
+	declare @noa nvarchar(100) 
+	declare @count int
+	declare @page int
+	declare cursor_table cursor for 
+	select noa,MAX(recno) count from @tmp where noa is not null and gno='0' group by noa
+	open cursor_table 
+	fetch next from cursor_table 
+	into @noa,@count
+	while(@@FETCH_STATUS <> -1) 
+	begin 
+	set @page = @count % @t_pageline
+	while @page < 8
+	begin
+	set @count = @count +1
+	insert into @tmp (gno,recno,noa) values('1',@count,@noa)
+	set @page = @page +1
+	end
 
-while @page = 8
-begin
-if(@count>8)
-insert into @tmp (gno,recno,noa) values('3',@count,@noa)
-set @page = @page +1
-end
+	while @page = 8
+	begin
+	if(@count>8)
+	insert into @tmp (gno,recno,noa) values('3',@count,@noa)
+	set @page = @page +1
+	end
 
-fetch next from cursor_table 
-into @noa,@count
-end 
-close cursor_table 
-deallocate cursor_table
+	fetch next from cursor_table 
+	into @noa,@count
+	end 
+	close cursor_table 
+	deallocate cursor_table
 
-update @tmp set recno = 8 where gno='3' and recno!=9999
-delete from @tmp where product=''
---------------------------------------------------------------------------------------------------------- 
-select recno rr,gno,a.noa,roc,mon,day,a.carno,fcar,a.driver,a.driverno,a.datea,a.trandate,cust,product,price,a.mount,a.weight,straddr,endaddr,carplateno,plateno, 
-ltime,stime,iCar,vCar,miles,a.total,a.total2,oilproduct,t_oiladd,bmiles,emiles,dbo.getcomma(rate,2) rate,etccost,fixcarcost,t_carcost,g_fixcarcost,b_fixcarcost, 
-a.total3,o_fixcarcost,other,'tran_wj?noa=$noa?' ghref,b.acomp comp
-from @tmp a
-left join view_tran b on a.noa=b.noa
-order by a.noa,recno,gno;
+	update @tmp set recno = 8 where gno='3' and recno!=9999
+	delete from @tmp where product=''
+	--------------------------------------------------------------------------------------------------------- 
+	select recno rr,gno,a.noa,roc,mon,day,a.carno,fcar,a.driver,a.driverno,a.datea,a.trandate,cust,product,price,a.mount,a.weight,straddr,endaddr,carplateno,plateno, 
+	ltime,stime,iCar,vCar,miles,a.total,a.total2,oilproduct,t_oiladd,bmiles,emiles,dbo.getcomma(rate,2) rate,etccost,fixcarcost,t_carcost,g_fixcarcost,b_fixcarcost, 
+	a.total3,o_fixcarcost,other,'tran_wj?noa=$noa?' ghref,b.acomp comp
+	from @tmp a
+	left join view_tran b on a.noa=b.noa
+	order by a.noa,recno,gno;
 -------------------------------------------------------------------------------------------------------------
 z_tran_wj3:--z_tran_wj3
 SET QUOTED_IDENTIFIER OFF
