@@ -79,8 +79,10 @@
                 $('#textBdate').datepicker();
                 $('#textEdate').datepicker();
                 
-                var t_where = "where=^^ 1=1 ^^";
-                q_gt('chgitem', t_where, 0, 0, 0, "");
+                var t_where;
+                q_gt('chgitem', t_where = "where=^^ 1=1 ^^", 0, 0, 0, "");
+                q_cmbParse("combWhere",'@,1@裝貨(壓台),2@自裝自卸,3@卸貨,4@駁貨');
+                q_cmbParse("combWhere2",'@,1@提貨地(北-南),2@提貨地(南-北),3@卸貨地(北-南),4@卸貨地(南-北)');
                 
                 
                 $('#btnOrde').click(function(e){
@@ -92,8 +94,43 @@
                     t_datea=$('#txtDatea').val();
                     var t_where = "";
                     q_box("tranordewj_b.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";" + t_where+";"+";"+JSON.stringify({project:t_proj,cno:t_cno,custno:t_custno,trandate:t_datea,po:t_po,where2:0,where3:0,page:'tranvcce_wj'}), "tranorde_tranvcce", "95%", "95%", '');
-                    //var t_where = "(date2 between '"+q_cdn(t_date,-1)+"' and '"+q_cdn(t_date,1)+"') and (addrno3='"+t_cno+"' or len('"+t_cno+"')=0) and (conn='"+t_custno+"' or len('"+t_custno+"')=0) and (caseno='"+t_po+"' or len('"+t_po+"')=0) and noa in (select noa from view_tranorde where isnull(enda,0)='1')";
+                    //var t_where = "(date2 between '"+q_cdn(t_date,-1)+"' and '"+q_cdn(t_date,1)+"') and (addrno3='"+t_cno+"' or len('"+t_cno+"')=0) and (conn='"+t_custno+"' or len('"+t_custno+"')=0) and (caseno='"+t_po+"' or len('"+t_po+"')=0) and noa in (select noa from view_tranorde where isnull(enda,0)='1') ^^";
                     //q_box("tranordewj_b.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";" + t_where, 'tranorde_tranvcce', "100%", "100%", "");
+                });
+                
+                $('#btnWhere').click(function(e){
+                    t_proj=q_getPara('sys.project').toUpperCase();
+                    t_custno=$('#txtAddrno').val();
+                    t_cno=$('#txtCno').val();
+                    t_po=$('#txtLat').val();
+                    t_date=$('#txtDatea').val();
+                    var t_where = "where=^^ (cno='' or len('')=0) and (custno='' or len('')=0) and (po='' or len('')=0) and enda='1' ^^";
+                    var t_where2,t_where3;
+                    if($('#combWhere').val()=='1'){
+                        t_where2='and date1!=date2'
+                    }else if($('#combWhere').val()=='2'){
+                        t_where2='and date1=date2'
+                    }else if($('#combWhere').val()=='3'){
+                        t_where2=''
+                    }else if($('#combWhere').val()=='4'){
+                        t_where2='and date1=date2'
+                    }else{
+                        t_where2=''
+                    }
+                    
+                    if($('#combWhere2').val()=='1'){
+                        t_where3=' order by address,addr'
+                    }else if($('#combWhere').val()=='2'){
+                        t_where3=' order by address desc,addr'
+                    }else if($('#combWhere').val()=='3'){
+                        t_where3=' order by address2 desc,addr2'
+                    }else if($('#combWhere').val()=='4'){
+                        t_where3=' order by address2 desc,addr2'
+                    }else{
+                        t_where3=''
+                    }
+                    t_where=t_where+t_where2+t_where3,
+                    q_gt('tranorde', t_where, 0, 0, 0, "", r_accy);
                 });
 
                 $('#btnImport').click(function() {
@@ -209,6 +246,15 @@
 
             function q_gtPost(t_name) {
                 switch (t_name) {
+                    case 'tranorde':
+                        var am = _q_appendData("tranorde", "", true);
+                        var as = _q_appendData("tranordes", "", true);
+                        q_gridAddRow(bbsHtm, 'tbbs', 
+                                    'txtCalctype,txtConn,txtCustno,txtCust,txtBdate,txtTime1,txtEdate,txtTime2,txtTypea,txtProductno,txtProduct,txtUnit,txtWeight,txtMount,txtTvolume,txtTheight,txtAddrno,txtAddr,txtAddress,txtAddrno2,txtAddr2,txtAddress2,txtTranno,txtOrdeno,txtNo2,txtMemo,txtUno,txtVolume,txtTotal,txtWidth,txtTotal2,txtProduct2,txtHeight,txtLat,txtPaths,txtUnit2,txtLengthb,txtTime3,txtTvolume,txtTheight,txtTotal2'
+                                    , as.length,as
+                                    ,'calctype,caseno,conn,tel,date1,time1,date2,time2,typea,productno,product,unit,theight,mount,total2,total3,addrno,addr,address,addrno2,addr2,address2,tranno,noa,noq,memo,uno,price,money,width,total,product2,height,containerno1,unit2,containerno2,tvolume,otype,width,height,total2'
+                                    ,'txtCalctype,txtBdate,txtTime1,txtEdate,txtTime2,,txtCustno,txtAddrno,txtCarno');
+                        break;
                     case 'chgitem':
                         var as = _q_appendData("chgitem", "", true);
                         var t_chgitem='@';
@@ -567,10 +613,12 @@
                 if(t_para){
                     $('#txtDatea').datepicker('destroy');
                     $('#btnOrde').attr('disabled','disabled');
+                    $('#btnWhere').attr('disabled','disabled');
                     $('#btnImport_trans').removeAttr('disabled');
                 }else{
                     $('#txtDatea').datepicker();
                     $('#btnOrde').removeAttr('disabled');
+                    $('#btnWhere').removeAttr('disabled');
                     $('#btnImport_trans').attr('disabled','disabled');
                 }
             }
@@ -871,8 +919,6 @@
 						<td></td>
 						<td></td>
 						<td></td>
-						<td></td>
-						<td></td>
 						<td class="tdZ"></td>
 					</tr>
 					<tr>
@@ -907,6 +953,14 @@
                         <td><span> </span><a id="lblPo" class="lbl">運輸單號</a></td>
                         <td colspan="2"><input type="text" id="txtLat" class="c1 txt"/></td>
                     </tr>
+                    <tr>
+                        <td><span> </span><a id="lblW1" class="lbl">條件</a></td>
+                        <td><select id="combWhere" class="txt c1"> </select></td>
+                        <td><span> </span><a id="lblW2" class="lbl">排序</a></td>
+                        <td><select id="combWhere2" class="txt c1"> </select></td>
+                        <td><input id="btnWhere" type="button" value="快速匯入" style="width:100%;"/></td>
+                        <td><input id="btnOrde" type="button" value="訂單匯入" style="width:100%;"/></td>
+                    </tr>
 					<tr>
 						<td><span> </span><a id="lblMemo" class="lbl" > </a></td>
 						<td colspan="5"><textarea id="txtMemo" style="height:40px;" class="txt c1"> </textarea></td>
@@ -920,7 +974,6 @@
 						<td>
 						<input id="txtWorker2" type="text" class="txt c1" />
 						</td>
-						<td><input id="btnOrde" type="button" value="訂單匯入" style="width:100%;"/></td>
                         <td><input id="btnImport" type="button" value="匯至出車" style="width:100%;"/></td>
                         <td><input id="btnShow" type="button" value="顯示欄位" style="width:100%;"/></td>
 					</tr>
