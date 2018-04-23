@@ -124,11 +124,11 @@
                     
                     if($('#combWhere2').val()=='1'){
                         t_where3='1'
-                    }else if($('#combWhere').val()=='2'){
+                    }else if($('#combWhere2').val()=='2'){
                         t_where3='2'
-                    }else if($('#combWhere').val()=='3'){
+                    }else if($('#combWhere2').val()=='3'){
                         t_where3='3'
-                    }else if($('#combWhere').val()=='4'){
+                    }else if($('#combWhere2').val()=='4'){
                         t_where3='4'
                     }else{
                         t_where3='0'
