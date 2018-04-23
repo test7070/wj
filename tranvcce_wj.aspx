@@ -29,6 +29,7 @@
             brwKey = 'noa';
             q_alias = '';
             q_desc = 1;
+            brwCount2 = 7;
             aPop = new Array(['txtCno', 'lblCno', 'acomp', 'noa,acomp', 'txtCno,txtAcomp', 'acomp_b.aspx']
             ,['txtAddrno', 'lblAddr_js', 'cust', 'noa,nick', 'txtAddrno,txtAddr', 'cust_b.aspx']
             , ['txtCustno', 'btnCust', 'cust', 'noa,nick', 'txtCustno,txtComp', 'cust_b.aspx']
@@ -39,12 +40,15 @@
             , ['txtAddrno2_', 'btnAddr2_', 'addr2_wj', 'custno,addr,b.siteno,b.address,b.memo', 'txtAddrno2_,txtAddr2_,txtLat_,txtAddress2_,txtMemo_', 'addr2_b2.aspx']
             , ['txtAddrno3_', 'btnAddr3_', 'addr2_wj', 'custno,addr', 'txtAddrno3_,txtAddr3_', 'addr2_b2.aspx']
             , ['txtDriverno_', 'btnDriver_', 'driver', 'noa,namea', 'txtDriverno_,txtDriver_', 'driver_b.aspx']
-            , ['txtLng2_', 'btnCarplate_', 'carplate', 'noa', 'txtLng2_', 'carplate_b.aspx']);
+            , ['txtLng2_', 'btnCarplate_', 'carplate', 'noa', 'txtLng2_', 'carplate_b.aspx']
+            , ['textCustno', '', 'cust', 'noa,nick', 'textCustno,textCust', 'cust_b.aspx']
+            , ['textCano', '', 'car2', 'a.noa,driverno,driver', 'textCano,textDriverno,textDriver', 'car2_b.aspx']
+            , ['textLng2', '', 'carplate', 'noa', 'textLng2', 'carplate_b.aspx']);
 
             $(document).ready(function() {
                 bbmKey = ['noa'];
                 bbsKey = ['noa', 'noq'];
-                q_brwCount();
+                q_brwCount();          
                 q_gt(q_name, q_content, q_sqlCount, 1, 0, '', r_accy);
 
             });
@@ -103,34 +107,34 @@
                     t_custno=$('#txtAddrno').val();
                     t_cno=$('#txtCno').val();
                     t_po=$('#txtLat').val();
-                    t_date=$('#txtDatea').val();
-                    var t_where = "where=^^ (cno='' or len('')=0) and (custno='' or len('')=0) and (po='' or len('')=0) and enda='1' ^^";
+                    t_datea=$('#txtDatea').val();
                     var t_where2,t_where3;
+                    t_where="('','','','','','')";
                     if($('#combWhere').val()=='1'){
-                        t_where2='and date1!=date2'
+                        t_where2="a where a.date1!=a.date2";
                     }else if($('#combWhere').val()=='2'){
-                        t_where2='and date1=date2'
+                        t_where2="a where a.date1=a.date2";
                     }else if($('#combWhere').val()=='3'){
-                        t_where2=''
+                        t_where2="a where a.date1=a.date2 and noa in (select noa from view_tranvcces where ordeno=a.noa and no2=a.noq and (chk1='1' and chk3='1' and chk2='0'))";
                     }else if($('#combWhere').val()=='4'){
-                        t_where2='and date1=date2'
+                        t_where2="a where noa in (select noa from view_tranvcces where ordeno=a.noa and no2=a.noq and len(isnull(addrno3,''))!=0)";
                     }else{
                         t_where2=''
                     }
                     
                     if($('#combWhere2').val()=='1'){
-                        t_where3=' order by address,addr'
+                        t_where3='1'
                     }else if($('#combWhere').val()=='2'){
-                        t_where3=' order by address desc,addr'
+                        t_where3='2'
                     }else if($('#combWhere').val()=='3'){
-                        t_where3=' order by address2 desc,addr2'
+                        t_where3='3'
                     }else if($('#combWhere').val()=='4'){
-                        t_where3=' order by address2 desc,addr2'
+                        t_where3='4'
                     }else{
-                        t_where3=''
+                        t_where3='0'
                     }
-                    t_where=t_where+t_where2+t_where3,
-                    q_gt('tranorde', t_where, 0, 0, 0, "", r_accy);
+                    t_where="where=^^['"+t_proj+"','"+t_datea+"','"+t_custno+"','"+t_cno+"','"+t_po+"','"+t_where3+"','"+0+"') "+t_where2+"^^";
+                    q_gt('tranorde_tranvcce', t_where, 0, 0, 0, "", r_accy);
                 });
 
                 $('#btnImport').click(function() {
@@ -220,6 +224,39 @@
                         
                     }
                 });
+                
+                $('#btnSeck').click(function(e){
+                    
+                    t_custno = $('#textCustno').val();
+                    t_cust = $('#textCust').val();
+                    t_Carno = $('#textCano').val();
+                    t_driverno = $('#textDriverno').val();
+                    t_driver = $('#textDriver').val();
+                    t_lng2 = $('#textLng2').val();
+                    t_where=" 1=1 ";
+                    
+                    var t_where = " 1=1 "
+                    +q_sqlPara2("Addrno",t_custno)
+                    +q_sqlPara2("addr", t_cust)
+                    ;
+                    
+                    if(t_Carno.length>0)
+                        t_where += " and exists(select noa from view_tranvcces"+r_accy+" where view_tranvcces"+r_accy+".noa=view_tranvcce"+r_accy+".noa and view_tranvcces"+r_accy+".Carno='"+t_Carno+"')";
+                    if(t_driverno.length>0)
+                        t_where += " and exists(select noa from view_tranvcces"+r_accy+" where view_tranvcces"+r_accy+".noa=view_tranvcce"+r_accy+".noa and view_tranvcces"+r_accy+".driverno='"+t_driverno+"')";
+                    if(t_driver.length>0)
+                        t_where += " and exists(select noa from view_tranvcces"+r_accy+" where view_tranvcces"+r_accy+".noa=view_tranvcce"+r_accy+".noa and view_tranvcces"+r_accy+".driver like '%"+t_driver+"%')";
+                    if(t_lng2.length>0)
+                        t_where += " and exists(select noa from view_tranvcces"+r_accy+" where view_tranvcces"+r_accy+".noa=view_tranvcce"+r_accy+".noa and view_tranvcces"+r_accy+".lng2='"+t_lng2+"')";
+
+                    if(t_where!=" 1=1 "){
+                        var s2=new Array('tranvcce_wj_s',"where=^^ " +t_where+ " ^^ ");
+                        q_boxClose2(s2);
+                    }else{
+                        var s2=new Array('tranvcce_wj_s',"where=^^ 1=1 ^^ ");
+                        q_boxClose2(s2);
+                    }
+                });
             }
 
             function q_boxClose(s2) {
@@ -246,9 +283,8 @@
 
             function q_gtPost(t_name) {
                 switch (t_name) {
-                    case 'tranorde':
-                        var am = _q_appendData("tranorde", "", true);
-                        var as = _q_appendData("tranordes", "", true);
+                    case 'tranorde_tranvcce':
+                        var as = _q_appendData("tranorde_tranvcce", "", true);
                         q_gridAddRow(bbsHtm, 'tbbs', 
                                     'txtCalctype,txtConn,txtCustno,txtCust,txtBdate,txtTime1,txtEdate,txtTime2,txtTypea,txtProductno,txtProduct,txtUnit,txtWeight,txtMount,txtTvolume,txtTheight,txtAddrno,txtAddr,txtAddress,txtAddrno2,txtAddr2,txtAddress2,txtTranno,txtOrdeno,txtNo2,txtMemo,txtUno,txtVolume,txtTotal,txtWidth,txtTotal2,txtProduct2,txtHeight,txtLat,txtPaths,txtUnit2,txtLengthb,txtTime3,txtTvolume,txtTheight,txtTotal2'
                                     , as.length,as
@@ -898,6 +934,7 @@
 						<td align="center" style="width:5%"><a id="vewChk"> </a></td>
 						<td align="center" style="display:none;"><a> </a></td>
 						<td align="center" style="width:20%"><a>日期</a></td>
+						<td align="center" style="width:20%"><a>客戶</a></td>
 						<td align="center" style="width:20%"><a>運輸單號</a></td>
 					</tr>
 					<tr>
@@ -905,6 +942,7 @@
 						<input id="chkBrow.*" type="checkbox"/>
 						</td>
 						<td align="center" id='datea'>~datea</td>
+						<td align="center" id='addr'>~addr</td>
 						<td align="center" id='lat'>~lat</td>
 					</tr>
 				</table>
@@ -912,7 +950,6 @@
 			<div class='dbbm'>
 				<table class="tbbm"  id="tbbm">
 					<tr class="tr0" style="height:1px;">
-						<td></td>
 						<td></td>
 						<td></td>
 						<td></td>
@@ -963,7 +1000,7 @@
                     </tr>
 					<tr>
 						<td><span> </span><a id="lblMemo" class="lbl" > </a></td>
-						<td colspan="5"><textarea id="txtMemo" style="height:40px;" class="txt c1"> </textarea></td>
+						<td colspan="5"><textarea id="txtMemo" style="height:50px;" class="txt c1"> </textarea></td>
 					</tr>
 					<tr>
 						<td><span> </span><a id="lblWorker" class="lbl" > </a></td>
@@ -977,9 +1014,50 @@
                         <td><input id="btnImport" type="button" value="匯至出車" style="width:100%;"/></td>
                         <td><input id="btnShow" type="button" value="顯示欄位" style="width:100%;"/></td>
 					</tr>
+					
 				</table>
 			</div>
 		</div>
+		<div id="divSeek" style="position:absolute; top:34px; left:1160px; width:400px; height:200px; background-color:#FFDDAA;solid gray;">
+            <table style="width:100%;">
+                <tr style="height:1px;">
+                    <td style="width:80px;"></td>
+                    <td style="width:80px;"></td>
+                    <td style="width:80px;"></td>
+                    <td style="width:80px;"></td>
+                    <td style="width:80px;"></td>
+                </tr>
+                <tr style="height:35px;">
+                    <td><span> </span><a style="float:right; color: blue; font-size: medium;">客戶</a></td>
+                    <td colspan="4">
+                    <input id="textCustno"  type="text" style="float:left; width:35%; font-size: medium;"/>
+                    <input id="textCust"  type="text" style="float:left; width:60%; font-size: medium;"/></td>
+                </tr>
+                <tr style="height:35px;">
+                    <td><span> </span><a style="float:right; color: blue; font-size: medium;">車牌</a></td>
+                    <td colspan="4">
+                    <input id="textCano"  type="text" style="float:left; width:100px; font-size: medium;"/>
+                </tr>
+                <tr style="height:35px;">
+                    <td><span> </span><a style="float:right; color: blue; font-size: medium;">司機</a></td>
+                    <td colspan="3">
+                    <input id="textDriverno"  type="text" style="float:left; width:48%; font-size: medium;"/>
+                    <input id="textDriver"  type="text" style="float:left; width:48%; font-size: medium;"/>
+                </tr>
+                <tr style="height:35px;">
+                    <td><span> </span><a style="float:right; color: blue; font-size: medium;">板台</a></td>
+                    <td colspan="4">
+                    <input id="textLng2"  type="text" style="float:left; width:100px; font-size: medium;"/>
+                </tr>
+                <tr style="height:35px;">
+                    <td> </td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td><input id="btnSeck" type="button" value="快速查詢"/></td>
+                </tr>
+            </table>
+        </div>
 		<div class='dbbs' >
 			<table id="tbbs" class='tbbs' style="width:2100px;">
 				<tr style='color:white; background:#003366;' >
