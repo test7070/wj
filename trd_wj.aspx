@@ -98,25 +98,7 @@
                 	q_gt('cust', t_where, 0, 0, 0, "");
                 });
                 $('#btnTrans').click(function(e) {
-                	if (!(q_cur == 1 || q_cur == 2))
-                		return;
-                	Lock(1,{opacity:0});
-                	if ($.trim($('#txtCustno').val()).length == 0) {
-                        alert('請輸入客戶');
-                        Unlock(1);
-                        return false;
-                    }
-                    if ($.trim($('#txtDatea').val()) == 0) {
-                        alert('請輸入'+q_getMsg('lblDatea'));
-                        Unlock(1);
-                        return false;
-                    }
-                    if($('#txtDatea').val().substring(0,3)!=r_accy){
-                        alert('年度異常錯誤，請切換到【'+$('#txtDatea').val().substring(0,3)+'】年度再作業。');
-                        Unlock(1);
-                        return;
-                    }
-                	var t_noa = $.trim($('#txtNoa').val());
+					var t_noa = $.trim($('#txtNoa').val());
                 	var t_custno = $.trim($('#txtCustno').val());
                 	var t_bdate = $.trim($('#txtBdate').val());
                 	var t_edate = $.trim($('#txtEdate').val());
@@ -125,28 +107,15 @@
                 	var t_baddrno = $.trim($('#txtStraddrno').val());
                 	var t_eaddrno = $.trim($('#txtEndaddrno').val());
                 	var t_trtype = $.trim($('#cmbTrtype').val());
-                	var t_where = "(b.noa is null or b.noa='"+t_noa+"')";
-                	t_where += " and a.custno='"+t_custno+"'";
-                	t_where += t_bdate.length>0?" and a.datea>='"+t_bdate+"'":"";
-                	t_where += t_edate.length>0?" and a.datea<='"+t_edate+"'":"";
-                	t_where += t_btrandate.length>0?" and a.trandate>='"+t_btrandate+"'":"";
-                	t_where += t_etrandate.length>0?" and a.trandate<='"+t_etrandate+"'":"";
-                	t_where += t_baddrno.length>0?" and a.straddrno>='"+t_baddrno+"'":"";
-                	t_where += t_eaddrno.length>0?" and a.straddrno<='"+t_eaddrno+"'":"";
-                	t_where += t_trtype.length>0?" and a.calctype<='"+t_trtype+"'":"";
-
-                	var t_po = "";
-                	if ($.trim($('#txtPo').val()).length > 0) {
-                        var tmp = $.trim($('#txtPo').val()).split(',');
-                        t_po = ' and (';
-                        for (var i in tmp)
-                        t_po += (i == 0 ? '' : ' or ') + "a.po='" + tmp[i] + "'";
-                        t_po += ')';
-                        t_where += t_po;
-                    }
-                	t_where = "where=^^"+t_where+"^^";
-                	q_gt('trd_tran', t_where, 0, 0, 0, "", r_accy);
-                	
+                	if (!(q_cur == 1 || q_cur == 2))
+                		return;
+                    if (t_custno.length > 0) {
+                        Lock(1, {
+                            opacity : 0
+                        });
+                        q_func('qtxt.query.trd', 'trd.txt,trd_wj,' + encodeURI(t_custno) + ';' + encodeURI(t_bdate) + ';' + encodeURI(t_edate) + ';' + encodeURI(t_btrandate) + ';' + encodeURI(t_etrandate) + ';' + encodeURI(t_baddrno) + ';' + encodeURI(t_eaddrno) + ';' + encodeURI(t_trtype)); 
+                    } else
+                        alert('請輸入客戶。');
                 });
                 $("#btnCustchg").click(function(e) {
                 	Lock(1,{opacity:0});
@@ -267,41 +236,6 @@
                         $('#txtTax').val(FormatNumber(t_tax));
                         sum();
                         Unlock(1);
-                        break;
-                    case 'trd_tran':
-                        var as = _q_appendData("view_trans", "", true);
-                        q_gridAddRow(bbsHtm, 'tbbs', 'txtTrandate,txtTranno,txtTrannoq,txtCarno,txtStraddr,txtTranmoney,txtCaseno,txtMount,txtPrice,txtTotal,txtCustorde,txtProduct,txtFill,txtOthercost,txtEndaddr'
-                        , as.length, as, 'trandate,noa,noq,carno,straddr,total,caseno,mount,price,total,po,product,timea,plus,endaddr', '','');
-                        for ( i = 0; i < q_bbsCount; i++) {
-                            if($('#txtCustno').val()=='029-001'){
-                                if(!emp($('#txtPrice_'+i).val()))
-                                    $('#txtPrice_'+i).val(round(q_mul(q_mul($('#txtPrice_'+i).val(),1.08),1.063830),0));
-                                if(!emp($('#txtTotal_'+i).val()))
-                                    $('#txtTotal_'+i).val(round(q_mul(q_mul($('#txtTotal_'+i).val(),1.08),1.063830),0));
-                            }else if($('#txtCustno').val()=='029-002'){
-                                if(!emp($('#txtPrice_'+i).val()))
-                                    $('#txtPrice_'+i).val(round(q_mul(q_mul($('#txtPrice_'+i).val(),1.08094),1.063830),0));
-                                if(!emp($('#txtTotal_'+i).val()))
-                                    $('#txtTotal_'+i).val(round(q_mul(q_mul($('#txtTotal_'+i).val(),1.08094),1.063830),0));
-                            }else if($('#txtCustno').val()=='029-003'){
-                                if(!emp($('#txtTotal_'+i).val()))
-                                    $('#txtPrice_'+i).val(round(q_mul(q_mul($('#txtPrice_'+i).val(),1.13986),1.063830),0));
-                                if(!emp($('#txtTotal_'+i).val()))
-                                    $('#txtTotal_'+i).val(round(q_mul(q_mul($('#txtTotal_'+i).val(),1.13986),1.063830),0));
-                            }else if($('#txtCustno').val()=='029-004'){
-                                if(!emp($('#txtTotal_'+i).val()))
-                                    $('#txtPrice_'+i).val(round(q_mul($('#txtPrice_'+i).val(),1.063830),0));
-                                if(!emp($('#txtTotal_'+i).val()))
-                                    $('#txtTotal_'+i).val(round(q_mul($('#txtTotal_'+i).val(),1.063830),0));
-                            }
-                            if (i < as.length) {
-                            }else{
-                            	_btnMinus("btnMinus_" + i);
-                            }
-                        }
-                        sum();
-                        Unlock(1);
-                        $('#txtCustno').focus();
                         break;
                     case q_name:
                         if (q_cur == 4)
@@ -491,7 +425,7 @@
             }
 
             function bbsSave(as) {
-                if (!as['tranno'] || !as['tranmoney']) {
+                if (!as['tranno']) {
                     as[bbsKey[1]] = '';
                     return;
                 }
@@ -534,6 +468,44 @@
                     $('#btnTrans').attr('disabled', 'disabled');
                     $('#btnCustchg').attr('disabled', 'disabled');
                     $('#btnVcca').attr('disabled', 'disabled');
+                }
+            }
+			function q_funcPost(t_func, result) {
+                switch(t_func) {
+                    case 'qtxt.query.trd':
+                        var as = _q_appendData("tmp0", "", true);
+                        q_gridAddRow(bbsHtm, 'tbbs', 'txtTrandate,txtTranno,txtTrannoq,txtCarno,txtStraddr,txtTranmoney,txtMount,txtPrice,txtTotal,txtCustorde,txtProduct,txtFill,txtOthercost,txtEndaddr'
+                        , as.length, as, 'trandate,tranno,trannoq,carno,straddr,total,mount,price,total,custorde,product,timea,plus,endaddr', '','');
+                        for ( i = 0; i < q_bbsCount; i++) {
+                            if($('#txtCustno').val()=='029-001'){
+                                if(!emp($('#txtPrice_'+i).val()))
+                                    $('#txtPrice_'+i).val(round(q_mul(q_mul($('#txtPrice_'+i).val(),1.08),1.063830),0));
+                                if(!emp($('#txtTotal_'+i).val()))
+                                    $('#txtTotal_'+i).val(round(q_mul(q_mul($('#txtTotal_'+i).val(),1.08),1.063830),0));
+                            }else if($('#txtCustno').val()=='029-002'){
+                                if(!emp($('#txtPrice_'+i).val()))
+                                    $('#txtPrice_'+i).val(round(q_mul(q_mul($('#txtPrice_'+i).val(),1.08094),1.063830),0));
+                                if(!emp($('#txtTotal_'+i).val()))
+                                    $('#txtTotal_'+i).val(round(q_mul(q_mul($('#txtTotal_'+i).val(),1.08094),1.063830),0));
+                            }else if($('#txtCustno').val()=='029-003'){
+                                if(!emp($('#txtTotal_'+i).val()))
+                                    $('#txtPrice_'+i).val(round(q_mul(q_mul($('#txtPrice_'+i).val(),1.13986),1.063830),0));
+                                if(!emp($('#txtTotal_'+i).val()))
+                                    $('#txtTotal_'+i).val(round(q_mul(q_mul($('#txtTotal_'+i).val(),1.13986),1.063830),0));
+                            }else if($('#txtCustno').val()=='029-004'){
+                                if(!emp($('#txtTotal_'+i).val()))
+                                    $('#txtPrice_'+i).val(round(q_mul($('#txtPrice_'+i).val(),1.063830),0));
+                                if(!emp($('#txtTotal_'+i).val()))
+                                    $('#txtTotal_'+i).val(round(q_mul($('#txtTotal_'+i).val(),1.063830),0));
+                            }
+                            if (i < as.length) {
+                            }else{
+                            	_btnMinus("btnMinus_" + i);
+                            }
+                        }
+                        sum();
+                        Unlock(1);
+                        $('#txtCustno').focus();
                 }
             }
 
