@@ -482,21 +482,29 @@
                                     $('#txtPrice_'+i).val(round(q_mul(q_mul($('#txtPrice_'+i).val(),1.08),1.063830),0));
                                 if(!emp($('#txtTotal_'+i).val()))
                                     $('#txtTotal_'+i).val(round(q_mul(q_mul($('#txtTotal_'+i).val(),1.08),1.063830),0));
+								if(!emp($('#txtTranmoney_'+i).val()))
+                                    $('#txtTranmoney_'+i).val(round(q_mul(q_mul($('#txtTranmoney_'+i).val(),1.08),1.063830),0));
                             }else if($('#txtCustno').val()=='029-002'){
                                 if(!emp($('#txtPrice_'+i).val()))
                                     $('#txtPrice_'+i).val(round(q_mul(q_mul($('#txtPrice_'+i).val(),1.08094),1.063830),0));
                                 if(!emp($('#txtTotal_'+i).val()))
                                     $('#txtTotal_'+i).val(round(q_mul(q_mul($('#txtTotal_'+i).val(),1.08094),1.063830),0));
+                                if(!emp($('#txtTranmoney_'+i).val()))
+                                    $('#txtTranmoney_'+i).val(round(q_mul(q_mul($('#txtTranmoney_'+i).val(),1.08094),1.063830),0));									
                             }else if($('#txtCustno').val()=='029-003'){
                                 if(!emp($('#txtTotal_'+i).val()))
                                     $('#txtPrice_'+i).val(round(q_mul(q_mul($('#txtPrice_'+i).val(),1.13986),1.063830),0));
                                 if(!emp($('#txtTotal_'+i).val()))
                                     $('#txtTotal_'+i).val(round(q_mul(q_mul($('#txtTotal_'+i).val(),1.13986),1.063830),0));
+                                if(!emp($('#txtTranmoney_'+i).val()))
+                                    $('#txtTranmoney_'+i).val(round(q_mul(q_mul($('#txtTranmoney_'+i).val(),1.13986),1.063830),0));									
                             }else if($('#txtCustno').val()=='029-004'){
                                 if(!emp($('#txtTotal_'+i).val()))
                                     $('#txtPrice_'+i).val(round(q_mul($('#txtPrice_'+i).val(),1.063830),0));
                                 if(!emp($('#txtTotal_'+i).val()))
                                     $('#txtTotal_'+i).val(round(q_mul($('#txtTotal_'+i).val(),1.063830),0));
+								 if(!emp($('#txtTranmoney_'+i).val()))
+                                    $('#txtTranmoney_'+i).val(round(q_mul($('#txtTranmoney_'+i).val(),1.063830),0));
                             }
                             if (i < as.length) {
                             }else{
