@@ -1264,6 +1264,7 @@
                         <input type="text" id="txtOrdeno.*" style="width:95%;" />
                         <input type="text" id="txtNo2.*" style="width:30%;" />
                     </td>
+                    <td style="display: "><input type="text" id="txtLng.*" style="width:95%;"/></td>
 				</tr>
 			</table>
 		</div>
