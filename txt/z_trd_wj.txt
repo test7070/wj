@@ -11,43 +11,43 @@ set @t_bnoa = case when '#non'=[5] then '' else [5] end
 set @t_enoa = case when '#non'=[6] then char(255) else [6] end
 declare @tmp table( 
 gno nvarchar(1), 
-trdnoa nvarchar(100), 
-recno int, 
-rr int, 
-custno nvarchar(100), 
-cust nvarchar(100), 
-boss nvarchar(100), 
-tel nvarchar(100), 
-fax nvarchar(100), 
-serial nvarchar(100), 
-invoiceno nvarchar(300), 
-
-trandate nvarchar(100), 
-datea nvarchar(100), 
-carno nvarchar(100), 
-straddr nvarchar(max), 
-endaddr nvarchar(max), 
-nick nvarchar(100), 
-product nvarchar(100), 
-mount nvarchar(30), 
-weight nvarchar(30), 
-weight2 nvarchar(30), 
-noa nvarchar(50), 
-price float, 
-total float, 
-cost float,--人工裝卸費 
-total2 float, 
-total3 float, 
-cartype nvarchar(50), 
-tranno nvarchar(50), 
-typea nvarchar(50), 
-range nvarchar(100), 
-total4 float,--自運金額 
-total5 float,--外車金額 
-cost2 float,--管理收入 
-tax float, 
-total6 float, 
-enda nvarchar(20) 
+	trdnoa nvarchar(100), 
+	recno int, 
+	rr int, 
+	custno nvarchar(100), 
+	cust nvarchar(100), 
+	boss nvarchar(100), 
+	tel nvarchar(100), 
+	fax nvarchar(100), 
+	serial nvarchar(100), 
+	invoiceno nvarchar(300), 
+	
+	trandate nvarchar(100), 
+	datea nvarchar(100), 
+	carno nvarchar(100), 
+	straddr nvarchar(max), 
+	endaddr nvarchar(max), 
+	nick nvarchar(100), 
+	product nvarchar(100), 
+	mount nvarchar(30), 
+	weight nvarchar(30), 
+	weight2 nvarchar(30), 
+	noa nvarchar(50), 
+	price float, 
+	total float, 
+	cost float,--人工裝卸費 
+	total2 float, 
+	total3 float, 
+	cartype nvarchar(50), 
+	tranno nvarchar(50), 
+	typea nvarchar(50), 
+	range nvarchar(100), 
+	total4 float,--自運金額 
+	total5 float,--外車金額 
+	cost2 float,--管理收入 
+	tax float, 
+	total6 float, 
+	enda nvarchar(20) 
 ) 
 
 insert into @tmp 
@@ -59,15 +59,14 @@ a.vccano,c.trandate,c.datea,c.carno
 ,d.tranno,d.typea,'',
 --cast(g.rate as nvarchar(50))+'T~'+cast(g.rate2 as nvarchar(50))+'T',
 '','',c.price3,'','','' 
-from view_trd[1] a 
-left join view_trds[1] b on a.noa = b.noa 
-left join view_trans[1] c on b.tranno=c.noa and b.trannoq=c.noq 
-left join view_tranvcces[1] d on c.ordeno=d.noa and c.so=d.noq 
+from view_trd a 
+left join view_trds b on a.noa = b.noa 
+left join view_trans c on b.tranno=c.noa and b.trannoq=c.noq 
+left join view_tranvcces d on c.ordeno=d.noa and c.so=d.noq 
 left join cust e on a.custno=e.noa 
 left join car2 f on c.carno=f.noa 
 --left join addr2s g on c.straddrno=g.noa and c.price=g.value and d.typea=g.carno 
 where (left(a.datea,6)=@t_mon or len(@t_mon)=0)and a.custno between @t_bcustno and @t_ecustno and a.noa between @t_bnoa and @t_enoa and (a.custno='001' or a.custno='002' or a.custno='003')
-
 
 update @tmp 
 set total3=b.total2,total4=case when a.cartype='自' then a.total2 else '' end,total5=case when a.cartype='外' then a.total2 else '' end 
@@ -133,33 +132,34 @@ set @t_class = case when '#non'=[7] then '' else [7] end
 set @t_carno = case when '#non'=[10] then '' else [10] end
 set @t_cartype = case when '#non'=[11] then '' else [11] end
 declare @tmp table( 
-gno nvarchar(5), 
-noa nvarchar(30), 
-tranno nvarchar(30), 
-datea nvarchar(30), 
-carno nvarchar(30), 
-car nvarchar(30), 
-tgg nvarchar(30), 
-class nvarchar(30), 
-straddr nvarchar(30), 
-endaddr nvarchar(30), 
-custno nvarchar(30), 
-cust nvarchar(30), 
-product nvarchar(30), 
-mount float, 
-[weight] float, 
-price float, 
-pd float, 
-total float, 
-tm float, 
-des6 float, 
-serialno nvarchar(30) 
-) 
-insert into @tmp (gno,noa,tranno,datea,carno,product,mount,price,total,car,class,straddr,endaddr,custno,cust) 
-select '0',a.noa,b.tranno,a.datea,b.carno,b.product,b.mount,b.price,b.tranmoney,
+	gno nvarchar(5), 
+	noa nvarchar(30), 
+	tranno nvarchar(30), 
+	datea nvarchar(30), 
+	carno nvarchar(30), 
+	car nvarchar(30), 
+	tgg nvarchar(30), 
+	class nvarchar(30), 
+	straddr nvarchar(30), 
+	endaddr nvarchar(30), 
+	custno nvarchar(30), 
+	cust nvarchar(30), 
+	product nvarchar(30), 
+	mount float, 
+	weight float, 
+	price float, 
+	pd float, 
+	total float, 
+	tm float, 
+	des6 float, 
+	serialno nvarchar(30) 
+)
+
+insert into @tmp (gno,noa,tranno,datea,carno,product,mount,weight,price,total,car,class,straddr,endaddr,custno,cust) 
+select '0',a.noa,b.tranno,a.datea,b.carno,b.product,b.mount,d.weight,b.price,b.tranmoney,
 case when c.cartype='2' or c.cartype='6' then '自' else '外' end,d.calctype,d.straddr,d.endaddr,d.custno,d.comp
-from view_trd[1] a 
-left join view_trds[1] b on a.noa = b.noa 
+from view_trd a 
+left join view_trds b on a.noa = b.noa 
 left join car2 c on b.carno=c.noa
 left join view_trans d on b.tranno = d.noa and b.trannoq = d.noq
 where 

@@ -835,6 +835,7 @@
 					<td align="center" style="width:15px;">裝貨</td>
                     <td align="center" style="width:15px;">拉貨</td>
                     <td align="center" style="width:15px;">卸貨</td>
+                    <td align="center" style="width:15px;">簽單</td>
 					<td align="center" style="width:80px;">出發時間</td>
 					<td align="center" style="width:80px;">回場時間</td>
 					<td align="center" style="width:80px;"><a>應收運費</a></td>

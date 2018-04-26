@@ -290,6 +290,12 @@
                                     , as.length,as
                                     ,'calctype,caseno,conn,tel,date1,time1,date2,time2,typea,productno,product,unit,theight,mount,total2,total3,addrno,addr,address,addrno2,addr2,address2,tranno,noa,noq,memo,uno,price,money,width,total,product2,height,containerno1,unit2,containerno2,tvolume,otype,width,height,total2'
                                     ,'txtCalctype,txtBdate,txtTime1,txtEdate,txtTime2,,txtCustno,txtAddrno,txtCarno');
+                        for ( i = 0; i < as.length; i++) {
+                            if($('#combWhere').val()=='1'){
+                                $('#chkChk1_'+i).prop('checked',true);
+                            }
+                        }
+                        
                         break;
                     case 'chgitem':
                         var as = _q_appendData("chgitem", "", true);
@@ -490,6 +496,54 @@
                                                 $('#txtUnit_' + seq).val(s22);
                                                 var s23 = $('#txtMount_' + x).val();
                                                 $('#txtMount_' + seq).val(s23);
+                                                var s24 = $('#txtCalctype_' + x).val();
+                                                $('#txtCalctype_' + seq).val(s24);
+                                                var s25 = $('#txtConn_' + x).val();
+                                                $('#txtConn_' + seq).val(s25);
+                                                var s26 = $('#txtTime3_' + x).val();
+                                                $('#txtTime3_' + seq).val(s26);
+                                                var s27 = $('#txtEdate_' + x).val();
+                                                $('#txtEdate_' + seq).val(s27);
+                                                var s28 = $('#txtPaths_' + x).val();
+                                                $('#txtPaths_' + seq).val(s28);
+                                                var s29 = $('#txtUweight_' + x).val();
+                                                $('#txtUweight_' + seq).val(s29);
+                                                var s30 = $('#txtWeight_' + x).val();
+                                                $('#txtWeight_' + seq).val(s30);
+                                                var s31 = $('#txtLengthb_' + x).val();
+                                                $('#txtLengthb_' + seq).val(s31);
+                                                var s32 = $('#txtUno_' + x).val();
+                                                $('#txtUno_' + seq).val(s32);
+                                                var s33 = $('#txtVolume_' + x).val();
+                                                $('#txtVolume_' + seq).val(s33);
+                                                var s34 = $('#txtTotal_' + x).val();
+                                                $('#txtTotal_' + seq).val(s34);
+                                                var s35 = $('#txtWidth_' + x).val();
+                                                $('#txtWidth_' + seq).val(s35);
+                                                var s36 = $('#txtTotal2_' + x).val();
+                                                $('#txtTotal2_' + seq).val(s36);
+                                                var s37 = $('#txtProduct2_' + x).val();
+                                                $('#txtProduct2_' + seq).val(s37);
+                                                var s38 = $('#txtHeight_' + x).val();
+                                                $('#txtHeight_' + seq).val(s38);
+                                                var s39 = $('#txtTvolume_' + x).val();
+                                                $('#txtTvolume_' + seq).val(s39);
+                                                var s40 = $('#txtTheight_' + x).val();
+                                                $('#txtTheight_' + seq).val(s40);
+                                                var s41 = $('#txtTranno_' + x).val();
+                                                $('#txtTranno_' + seq).val(s41);
+                                                var s42 = $('#txtLng_' + x).val();
+                                                $('#txtLng_' + seq).val(s42);
+                                                var s43 = $('#txtUnit2_' + x).val();
+                                                $('#txtUnit2_' + seq).val(s43);
+                                                var s44 = $('#txtTel_' + x).val();
+                                                $('#txtTel_' + seq).val(s44);
+                                                var s45 = $('#txtAllowcar_' + x).val();
+                                                $('#txtAllowcar_' + seq).val(s45);
+                                                var s46 = $('#txtOrdeno_' + x).val();
+                                                $('#txtOrdeno_' + seq).val(s46);
+                                                var s47 = $('#txtNo2_' + x).val();
+                                                $('#txtNo2_' + seq).val(s47);
                                         }else{
                                              y=y
                                         }
