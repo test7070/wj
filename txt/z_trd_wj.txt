@@ -38,7 +38,7 @@ declare @tmp table(
 	cost float,--人工裝卸費 
 	total2 float, 
 	total3 float, 
-	cartype nvarchar(50), 
+	cartp nvarchar(50), 
 	tranno nvarchar(50), 
 	typea nvarchar(50), 
 	range nvarchar(100), 
@@ -72,7 +72,7 @@ and (a.noa between @t_bnoa and @t_enoa)
 
 
 update @tmp 
-set total3=b.total2,total4=case when a.cartype='自' then a.total2 else '' end,total5=case when a.cartype='外' then a.total2 else '' end 
+set total3=b.total2,total4=case when a.cartp='自' then a.total2 else '' end,total5=case when a.cartp='外' then a.total2 else '' end 
 from @tmp a 
 outer apply(select trdnoa,SUM(total2)total2 from @tmp group by trdnoa)b 
 where a.trdnoa=b.trdnoa 
