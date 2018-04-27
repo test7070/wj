@@ -19,7 +19,7 @@
             var q_readonly = ['txtNoa', 'txtWeight','txtTotal', 'txtWorker', 'txtWorker2','txtAddress'];
             var q_readonlys = ['txtLat','txtUnit', 'txtTime3', 'txtPaths','txtOrdeno', 'txtNo2'];
             var bbmNum = [];
-            var bbsNum = [['txtWeight', 10, 0, 1],['txtUweight', 10, 2, 1],['txtMount', 10, 0, 1],['txtVolume', 10, 0, 1],['txtTvolume', 10, 0, 1],['txtTheight', 10, 0, 1],['txtTotal', 15, 0, 1],['txtTotal2', 10, 0, 1]];
+            var bbsNum = [['txtWeight', 10, 0, 1],['txtUweight', 10, 2, 1],['txtMount', 10, 0, 1],['txtVolume', 10, 0, 1],['txtTvolume', 10, 0, 1],['txtLengthb', 10, 0, 1],['txtTheight', 10, 0, 1],['txtTotal', 15, 0, 1],['txtTotal2', 10, 0, 1]];
             var bbmMask = [];
             var bbsMask = [['txtLng', '999/99/99'],['txtBdate', '999/99/99'],['txtEdate', '999/99/99'],['txtTime1', '99:99'],['txtTime2', '99:99']];
             q_sqlCount = 6;
@@ -1264,7 +1264,7 @@
                         <input type="text" id="txtOrdeno.*" style="width:95%;" />
                         <input type="text" id="txtNo2.*" style="width:30%;" />
                     </td>
-                    <td style="display: "><input type="text" id="txtLng.*" style="width:95%;"/></td>
+                    <td style="display:none "><input type="text" id="textLng.*" style="width:95%;"/></td>
 				</tr>
 			</table>
 		</div>

@@ -707,14 +707,14 @@
                 <table class="tview" id="tview">
                     <tr>
                         <td align="center" style="width:20px; color:black;"><a id='vewChk'> </a></td>
-                        <td align="center" style="width:120px; color:black;"><a>單號</a></td>
+                        <td align="center" style="width:120px; color:black;"><a>運輸單號</a></td>
                         <td align="center" style="width:130px; color:black;"><a>客戶</a></td>
                         <td align="center" style="width:95px; color:black;"><a>日期</a></td>
                         <td align="center" style="width:50px; color:black;"><a>結案</a></td>
                     </tr>
                     <tr>
                         <td><input id="chkBrow.*" type="checkbox"/></td>
-                        <td id='noa' style="text-align: center;">~noa</td>
+                        <td id='po' style="text-align: center;">~po</td>
                         <td id='nick' style="text-align: center;">~nick</td>
                         <td id='datea' style="text-align: center;">~datea</td>
                         <td id='enda' style="text-align: center;">~enda</td>

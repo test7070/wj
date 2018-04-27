@@ -10,7 +10,7 @@ set @t_ecustno = case when '#non'=[4] then char(255) else [4] end
 set @t_bnoa = case when '#non'=[5] then '' else [5] end
 set @t_enoa = case when '#non'=[6] then char(255) else [6] end
 declare @tmp table( 
-gno nvarchar(1), 
+	gno nvarchar(1), 
 	trdnoa nvarchar(100), 
 	recno int, 
 	rr int, 
@@ -66,7 +66,10 @@ left join view_tranvcces d on c.ordeno=d.noa and c.so=d.noq
 left join cust e on a.custno=e.noa 
 left join car2 f on c.carno=f.noa 
 --left join addr2s g on c.straddrno=g.noa and c.price=g.value and d.typea=g.carno 
-where (left(a.datea,6)=@t_mon or len(@t_mon)=0)and a.custno between @t_bcustno and @t_ecustno and a.noa between @t_bnoa and @t_enoa and (a.custno='001' or a.custno='002' or a.custno='003')
+where (left(a.datea,6)=@t_mon or len(@t_mon)=0)
+and (a.custno between @t_bcustno and @t_ecustno) 
+and (a.noa between @t_bnoa and @t_enoa) 
+
 
 update @tmp 
 set total3=b.total2,total4=case when a.cartype='自' then a.total2 else '' end,total5=case when a.cartype='外' then a.total2 else '' end 
