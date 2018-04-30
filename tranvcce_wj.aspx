@@ -290,9 +290,18 @@
                                     , as.length,as
                                     ,'calctype,caseno,conn,tel,date1,time1,date2,time2,typea,productno,product,unit,theight,mount,total2,total3,addrno,addr,address,addrno2,addr2,address2,tranno,noa,noq,memo,uno,price,money,width,total,product2,height,containerno1,unit2,containerno2,tvolume,otype,width,height,total2'
                                     ,'txtCalctype,txtBdate,txtTime1,txtEdate,txtTime2,,txtCustno,txtAddrno,txtCarno');
-                        for ( i = 0; i < as.length; i++) {
-                            if($('#combWhere').val()=='1'){
-                                $('#chkChk1_'+i).prop('checked',true);
+                        for ( i = 0; i < q_bbsCount; i++) {
+                            if(!($('#chkChk1_'+i).prop('checked')) && !($('#chkChk2_'+i).prop('checked')) && !($('#chkChk3_'+i).prop('checked')) && !($('#chkChk4_'+i).prop('checked'))){
+                                if($('#combWhere').val()=='1'){
+                                    $('#chkChk1_'+i).prop('checked',true);
+                                }else if($('#combWhere').val()=='2'){
+                                    $('#chkChk1_'+i).prop('checked',true);
+                                    $('#chkChk2_'+i).prop('checked',true);
+                                }else if($('#combWhere').val()=='3'){
+                                    $('#chkChk2_'+i).prop('checked',true);
+                                }else if($('#combWhere').val()=='4'){
+                                    $('#chkChk4_'+i).prop('checked',true);
+                                }  
                             }
                         }
                         
