@@ -511,6 +511,8 @@
                             	_btnMinus("btnMinus_" + i);
                             }
                         }
+						if(as[0].msg.length>0)
+							alert(''+as[0].msg.toString().replace(/未簽單/g,'未簽單\r'))
                         sum();
                         Unlock(1);
                         $('#txtCustno').focus();
