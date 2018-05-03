@@ -285,7 +285,8 @@ set rx=ra
 from (select ROW_NUMBER()over(partition by gno order by custno,datea )ra,rx from @tmp where rr=1)a
 
 select
-dbo.getComma(uweight,2)uweight
+dbo.charbr(noa,9) noa
+,dbo.getComma(uweight,2)uweight
 ,dbo.getComma(weight,2)weight
 ,dbo.getComma(tweight,0)tweight
 ,dbo.getComma(mount,0)mount
@@ -304,6 +305,9 @@ declare @t_ecarno nvarchar(20)
 declare @t_xshow nvarchar(10)
 declare @t_bdate2 nvarchar(10)
 declare @t_edate2 nvarchar(10)
+declare @t_bdriverno nvarchar(10)
+declare @t_edriverno nvarchar(10)
+declare @t_showtotal nvarchar(10)
 set @t_bdate = case when '#non'=[2] then '' else [2] end
 set @t_edate = case when '#non'=[3] then char(255) else [3] end
 set @t_bcarno = case when '#non'=[5] then '' else [5] end
@@ -311,6 +315,9 @@ set @t_ecarno = case when '#non'=[6] then char(255) else [6] end
 set @t_xshow = case when '#non'=[10] then 0 else [10] end
 set @t_bdate2 = case when '#non'=[13] then '' else [13] end
 set @t_edate2 = case when '#non'=[14] then char(255) else [14] end
+set @t_bdriverno = case when '#non'=[7] then '' else [7] end
+set @t_edriverno = case when '#non'=[8] then char(255) else [8] end
+set @t_showtotal = case when '#non'=[15] then 0 else [15] end
 declare @tmp table( 
 	gno nvarchar(1), 
 	rx nvarchar(20),
@@ -350,20 +357,24 @@ declare @tmp table(
 	time1 nvarchar(10),
 	time2 nvarchar(10),
 	t1 nvarchar(10),
-	t2 nvarchar(10)
+	t2 nvarchar(10),
+	lenghtb float
 ) 
 insert @tmp
 select '0','','',a.noa,b.bdate,b.custno,c.nick,b.addrno,b.addr,b.conn,b.typea,b.uno,
 b.productno,b.product,b.unit,b.uweight,b.weight,b.mount,b.volume,b.tvolume,b.theight,
-b.total,b.total2,b.addrno2,b.addr2,b.addrno3,b.addr3,b.carno,b.driverno,b.driver,b.tranno
+case when @t_showtotal=1 then b.total else null end
+,b.total2,b.addrno2,b.addr2,b.addrno3,b.addr3,b.carno,b.driverno,b.driver,b.tranno
 ,b.edate,cast(b.lng as nvarchar(10)),b.memo,b.lng2,
 case when @t_xshow=1 then b.time2 end,case when @t_xshow=1 then b.time1 end,
 case when @t_xshow=1 then '卸貨時間' end,case when @t_xshow=1 then '提貨時間' end
+,b.lengthb
 from view_tranvcce a left join view_tranvcces b on a.noa=b.noa
 left join cust c on b.custno=c.noa
 where (b.bdate between @t_bdate and @t_edate) and (b.edate between @t_bdate2 and @t_edate2)
 and(b.carno between @t_bcarno and @t_ecarno)
 and(chk3=@t_xshow or len(@t_xshow)=0)
+and(b.driverno between @t_bdriverno and @t_edriverno)
 
 update a
 set rr=rx,noa=case when rx!=1 then '' else noa end
@@ -382,6 +393,7 @@ dbo.getComma(uweight,2)uweight
 ,dbo.getComma(price2,0)price2
 ,dbo.getComma(total,0)total
 ,dbo.getComma(total2,0)total2
+,dbo.getComma(lenghtb,2)lenghtb
 ,* from @tmp
 order by datea,custno
 ;
