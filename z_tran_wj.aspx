@@ -39,6 +39,7 @@
 					},{//3
 						type : '2', //[5][6]
 						name : 'carno',
+						dbf : 'car2',
 						index : 'carno,driverno',
 						src : 'car2_b.aspx'
 					},{//4
