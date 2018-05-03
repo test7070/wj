@@ -19,7 +19,7 @@
             var q_readonly = ['txtNoa', 'txtWeight','txtTotal', 'txtWorker', 'txtWorker2','txtAddress'];
             var q_readonlys = ['txtLat','txtUnit', 'txtTime3', 'txtPaths','txtOrdeno', 'txtNo2'];
             var bbmNum = [];
-            var bbsNum = [['txtWeight', 10, 0, 1],['txtUweight', 10, 2, 1],['txtMount', 10, 0, 1],['txtVolume', 10, 0, 1],['txtTvolume', 10, 0, 1],['txtLengthb', 10, 0, 1],['txtTheight', 10, 0, 1],['txtTotal', 15, 0, 1],['txtTotal2', 10, 0, 1]];
+            var bbsNum = [['txtWeight', 10, 0, 1],['txtUweight', 10, 2, 1],['txtMount', 10, 0, 1],['txtVolume', 10, 2, 1],['txtTvolume', 10, 0, 1],['txtLengthb', 10, 0, 1],['txtTheight', 10, 0, 1],['txtTotal', 15, 0, 1],['txtTotal2', 10, 0, 1]];
             var bbmMask = [];
             var bbsMask = [['txtLng', '999/99/99'],['txtBdate', '999/99/99'],['txtEdate', '999/99/99'],['txtTime1', '99:99'],['txtTime2', '99:99']];
             q_sqlCount = 6;
@@ -1135,8 +1135,8 @@
 					<td align="center" style="width:180px"><a>收貨人/地點</a></td>
 					<td align="center" style="width:70px"><a>計價區域</a></td>
 					<td align="center" style="width:70px"><a>計價車種</a></td>
-					<td align="center" style="width:50px"><a>裝貨日期</a></td>
-					<td align="center" style="width:50px"><a>卸貨日期</a></td>
+					<td align="center" style="width:70px"><a>裝貨日期</a></td>
+					<td align="center" style="width:70px"><a>卸貨日期</a></td>
 					<td align="center" style="width:45px"><a>危險<br/>等級</a></td>
 					<td align="center" style="width:80px"><a>品名</a></td>
 					<td align="center" style="width:70px"><a>承載單位</a></td>

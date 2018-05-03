@@ -192,12 +192,18 @@ declare @t_bcarno nvarchar(20)
 declare @t_ecarno nvarchar(20)
 declare @t_xshow nvarchar(10)
 declare @t_bnoa nvarchar(10)
+declare @t_xtype nvarchar(10)
+declare @t_bdate2 nvarchar(10)
+declare @t_edate2 nvarchar(10)
 set @t_bdate = case when '#non'=[2] then '' else [2] end
 set @t_edate = case when '#non'=[3] then char(255) else [3] end
 set @t_bcarno = case when '#non'=[5] then '' else [5] end
 set @t_ecarno = case when '#non'=[6] then char(255) else [6] end
 set @t_xshow = case when '#non'=[9] then '' else [9] end
 set @t_bnoa = case when '#non'=[11] then '' else [11] end
+set @t_xtype = case when '#non'=[12] then '' else [12] end
+set @t_bdate2 = case when '#non'=[13] then '' else [13] end
+set @t_edate2 = case when '#non'=[14] then char(255) else [14] end
 declare @tmp table(
     gno nvarchar(1),
 	rx nvarchar(20),
@@ -242,30 +248,32 @@ end
 if(@t_xshow='1')
 begin
 	insert @tmp
-	select '0','','',a.noa,a.date1,a.custno,a.nick,b.addrno,b.addr,dbo.charbr(d.memo,15),a.po, 
+	select '0','','',a.noa,a.date1,a.custno,a.nick,b.addrno,dbo.charbr(b.addr,24.5),dbo.charbr(d.memo,24.5),a.po, 
 	b.typea,b.uno,b.productno,b.product,b.unit,b.weight,b.theight,b.tvolume,b.mount, 
-	b.total2,b.total3,b.addrno2,b.addr2,b.address2,c.carno,c.driverno,c.driver,b.tranno,b.trandate,b.date2,replace(dbo.charbr(replace(b.memo,'chr(10)','<BR>'),57),'<BR><BR>','<BR>'),c.noa 
+	b.total2,b.total3,b.addrno2,dbo.charbr(b.addr2,10),b.address2,c.carno,c.driverno,c.driver,b.tranno,b.trandate,b.date2,dbo.charbr(b.memo,24.5),c.noa 
 	from view_tranorde a left join view_tranordes b on a.noa=b.noa 
 	left join view_tranvcces c on c.ordeno=b.noa and c.no2=b.noa
 	outer apply(select top 1 memo from addr2 where custno=b.addrno order by sdate desc)d
-	where (b.date2 between @t_bdate and @t_edate)
+	where (b.date1 between @t_bdate and @t_edate) and (b.date2 between @t_bdate2 and @t_edate2)
 	and (isnull(c.carno,'') between @t_bcarno and @t_ecarno)
 	and isnull(c.noa,'')!=''
 	and (len(@t_bnoa)=0 or caseno=@t_bnoa)
+	and (a.custno=@t_xtype or len(@t_xtype)=0)
 end
 else
 begin
 	insert @tmp
-	select '0','','',a.noa,a.date1,a.custno,a.nick,b.addrno,b.addr,dbo.charbr(d.memo,15),a.po, 
+	select '0','','',a.noa,a.date1,a.custno,a.nick,b.addrno,dbo.charbr(b.addr,24.5),dbo.charbr(d.memo,24.5),a.po, 
 	b.typea,b.uno,b.productno,b.product,b.unit,b.weight,b.theight,b.tvolume,b.mount, 
-	b.total2,b.total3,b.addrno2,b.addr2,b.address2,c.carno,c.driverno,c.driver,b.tranno,b.trandate,b.date2,replace(dbo.charbr(replace(b.memo,'chr(10)','<BR>'),57),'<BR><BR>','<BR>'),c.noa 
+	b.total2,b.total3,b.addrno2,dbo.charbr(b.addr2,10),b.address2,c.carno,c.driverno,c.driver,b.tranno,b.trandate,b.date2,dbo.charbr(b.memo,24.5),c.noa 
 	from view_tranorde a left join view_tranordes b on a.noa=b.noa 
 	left join view_tranvcces c on c.ordeno=b.noa and c.no2=b.noa
 	outer apply(select top 1 memo from addr2 where custno=b.addrno order by sdate desc)d
-	where (b.date2 between @t_bdate and @t_edate)
+	where (b.date1 between @t_bdate and @t_edate) and (b.date2 between @t_bdate2 and @t_edate2)
 	and (isnull(c.carno,'') between @t_bcarno and @t_ecarno)
 	and isnull(c.noa,'')=''
 	and (len(@t_bnoa)=0 or a.po=@t_bnoa)
+	and (a.custno=@t_xtype or len(@t_xtype)=0)
 end
 
 update a
@@ -294,11 +302,15 @@ declare @t_edate nvarchar(10)
 declare @t_bcarno nvarchar(20) 
 declare @t_ecarno nvarchar(20) 
 declare @t_xshow nvarchar(10)
+declare @t_bdate2 nvarchar(10)
+declare @t_edate2 nvarchar(10)
 set @t_bdate = case when '#non'=[2] then '' else [2] end
 set @t_edate = case when '#non'=[3] then char(255) else [3] end
 set @t_bcarno = case when '#non'=[5] then '' else [5] end
 set @t_ecarno = case when '#non'=[6] then char(255) else [6] end
-set @t_xshow = case when '#non'=[10] then 0 else [10] end 
+set @t_xshow = case when '#non'=[10] then 0 else [10] end
+set @t_bdate2 = case when '#non'=[13] then '' else [13] end
+set @t_edate2 = case when '#non'=[14] then char(255) else [14] end
 declare @tmp table( 
 	gno nvarchar(1), 
 	rx nvarchar(20),
@@ -334,16 +346,22 @@ declare @tmp table(
 	ed nvarchar(10),
 	date2 nvarchar(10), 
 	memo nvarchar(max),
-	carplate nvarchar(50)
+	carplate nvarchar(50),
+	time1 nvarchar(10),
+	time2 nvarchar(10),
+	t1 nvarchar(10),
+	t2 nvarchar(10)
 ) 
 insert @tmp
 select '0','','',a.noa,b.bdate,b.custno,c.nick,b.addrno,b.addr,b.conn,b.typea,b.uno,
 b.productno,b.product,b.unit,b.uweight,b.weight,b.mount,b.volume,b.tvolume,b.theight,
 b.total,b.total2,b.addrno2,b.addr2,b.addrno3,b.addr3,b.carno,b.driverno,b.driver,b.tranno
-,b.edate,cast(b.lng as nvarchar(10)),b.memo,b.lng2
+,b.edate,cast(b.lng as nvarchar(10)),b.memo,b.lng2,
+case when @t_xshow=1 then b.time2 end,case when @t_xshow=1 then b.time1 end,
+case when @t_xshow=1 then '卸貨時間' end,case when @t_xshow=1 then '提貨時間' end
 from view_tranvcce a left join view_tranvcces b on a.noa=b.noa
 left join cust c on b.custno=c.noa
-where (b.bdate between @t_bdate and @t_edate)
+where (b.bdate between @t_bdate and @t_edate) and (b.edate between @t_bdate2 and @t_edate2)
 and(b.carno between @t_bcarno and @t_ecarno)
 and(chk3=@t_xshow or len(@t_xshow)=0)
 
@@ -812,53 +830,53 @@ memo nvarchar(300),
 driver nvarchar(30)
 ) 
 insert into @tmp (gno,carno,noa,ordeno,noq,cust,productno,weight,memo,y,m,d,driver) 
-select '0',a.carno,b.po,c.ordeno,b.noq,b.comp,b.product,b.weight,'', 
-SUBSTRING(b.trandate,1,3),SUBSTRING(b.trandate,5,2),SUBSTRING(b.trandate,8,2),a.driver
-from tran[1] a 
-left join trans[1] b on a.noa=b.noa 
-left join tranvcces[1] c on b.ordeno=c.noa and b.so=c.noq 
+select '0',b.carno,b.conn,b.ordeno,b.noq,b.addr2,b.product,c.tvolume/1000,b.memo,
+SUBSTRING(b.bdate,1,3),SUBSTRING(b.bdate,5,2),SUBSTRING(b.bdate,8,2),b.driver
+from view_tranvcce a
+left join view_tranvcces b on a.noa=b.noa
+left join view_tranordes c on b.ordeno=c.noa and b.no2 = c.noq
 where b.custno like '029%' and 
-b.trandate between @t_bdate and @t_edate and 
-a.carno between @t_bcarno and @t_ecarno and 
-a.driverno between @t_bdriverno and @t_edriverno 
+b.bdate between @t_bdate and @t_edate and 
+b.carno between @t_bcarno and @t_ecarno and 
+b.driverno between @t_bdriverno and @t_edriverno 
 
 DECLARE MyCursor Cursor FOR
-select y,m,d,noa,carno,count(1) a from @tmp group by noa,carno,y,m,d
+select y,m,d,carno,count(1) a from @tmp group by carno,y,m,d
 Open MyCursor 
 declare @y nvarchar(25)
 declare @m nvarchar(25)
 declare @d nvarchar(25)
-declare @noa nvarchar(25)
 declare @carno nvarchar(25)
 declare @a int
 declare @i int
-Fetch NEXT FROM MyCursor INTO @y,@m,@d,@noa,@carno,@a
+Fetch NEXT FROM MyCursor INTO @y,@m,@d,@carno,@a
 While (@@FETCH_STATUS <> -1)
 BEGIN	--內容
 set @i=0
 while (@i < 11-@a%11 and @a%11!=0)
 begin
-insert into @tmp (gno,y,m,d,carno,noa) values('1',@y,@m,@d,@carno,@noa)
+insert into @tmp (gno,y,m,d,carno) values('1',@y,@m,@d,@carno)
 set @i=@i+1
 end
-Fetch NEXT FROM MyCursor INTO @y,@m,@d,@noa,@carno,@a
+Fetch NEXT FROM MyCursor INTO @y,@m,@d,@carno,@a
 END		--內容END
 CLOSE MyCursor
 DEALLOCATE MyCursor
 
-insert into @tmp(gno,y,m,d,weight,carno,noa) 
-select '2',y,m,d,SUM(weight),carno,noa from @tmp 
+insert into @tmp(gno,y,m,d,weight,carno) 
+select '2',y,m,d,SUM(weight),carno from @tmp 
 where gno='0'
-group by carno,noa,y,m,d 
+group by carno,y,m,d 
 
-update a set a.driver = b.driver
-from @tmp a
-outer apply (select noa,driver from @tmp where gno='0')b
-where a.noa=b.noa and gno='2'
+update a set a.driver = c.namea
+from @tmp a 
+outer apply (select * from car2 where a.carno=noa)b 
+outer apply (select * from driver where b.driverno=noa)c
+where gno='2'
 
-insert into @tmp(gno,y,m,d,weight,carno,noa) 
-select '3',y,m,d,SUM(weight),carno,noa from @tmp 
+insert into @tmp(gno,y,m,d,weight,carno) 
+select '3',y,m,d,SUM(weight),carno from @tmp 
 where gno='0'
-group by carno,noa,y,m,d 
+group by carno,y,m,d 
 
-select * from @tmp order by y desc,m desc,d desc,carno,noa,gno;
+select * from @tmp order by y desc,m desc,d desc,carno,gno,ordeno;

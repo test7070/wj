@@ -23,7 +23,7 @@
 			var q_readonlyt = [];
 			var bbmNum = new Array();
 			var bbmMask = new Array(['txtDatea', '999/99/99'],['txtTrandate', '999/99/99']);
-			var bbsNum = new Array(['txtTotal', 10, 0, 1],['txtTotal2', 10, 0, 1],['txtPrice', 10, 0, 1],['txtPrice2', 10, 0, 1],['txtPrice3', 10, 0, 1],['txtMount', 10, 0, 1],['txtPlus', 10, 0, 1],['txtMinus', 10, 0, 1]);
+			var bbsNum = new Array(['txtTotal', 10, 0, 1],['txtTotal2', 10, 0, 1],['txtPrice', 10, 2, 1],['txtPrice2', 10, 0, 1],['txtPrice3', 10, 0, 1],['txtMount', 10, 0, 1],['txtPlus', 10, 0, 1],['txtMinus', 10, 0, 1]);
 			var bbsMask = new Array(['txtTrandate', '999/99/99'],['txtltime', '99:99'],['txtStime', '99:99']);
 			var bbtNum  = new Array(); 
 			var bbtMask = new Array();
