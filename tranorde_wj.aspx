@@ -114,11 +114,6 @@
                             + encodeURI(t_noa)+';'+encodeURI(r_userno)+';'+encodeURI(r_name)+';'+encodeURI(r_accy),r_accy,1);
                             
                         var as = _q_appendData("tmp0", "", true, true);
-                        if (as[0] != undefined) {
-                            if($('#txtNoa').val()==as[0].noa){
-                                $('#txtApv').val(as[0].apv);
-                            }
-                        }
                     }
                     $('#chkEnda').prop('checked', true);
                     
@@ -655,7 +650,7 @@
                 margin: -1px;
             }
             .dbbs {
-                width: 3000px;
+                width: 3050px;
             }
             .tbbs a {
                 font-size: medium;
@@ -707,6 +702,7 @@
                 <table class="tview" id="tview">
                     <tr>
                         <td align="center" style="width:20px; color:black;"><a id='vewChk'> </a></td>
+                        <td align="center" style="width:120px; color:black;display:none"><a>電腦單號</a></td>
                         <td align="center" style="width:120px; color:black;"><a>運輸單號</a></td>
                         <td align="center" style="width:130px; color:black;"><a>客戶</a></td>
                         <td align="center" style="width:95px; color:black;"><a>日期</a></td>
@@ -714,6 +710,7 @@
                     </tr>
                     <tr>
                         <td><input id="chkBrow.*" type="checkbox"/></td>
+                        <td id='noa' style="text-align: center;display:none">~noa</td>
                         <td id='po' style="text-align: center;">~po</td>
                         <td id='nick' style="text-align: center;">~nick</td>
                         <td id='datea' style="text-align: center;">~datea</td>
@@ -809,7 +806,7 @@
                 <tr style='color:white; background:#003366;' >
                     <td align="center" style="width:25px"><input class="btn"  id="btnPlus" type="button" value='+' style="font-weight: bold;"  /></td>
                     <td align="center" style="width:20px;"> </td>
-                    <td align="center" style="width:70px"><a>類別</a></td>
+                    <td align="center" style="width:120px"><a>類別</a></td>
 					<td align="center" style="width:90px"><a>出單日期</a></td>
 					<td align="center" style="width:120px"><a>送(提)貨單號</a></td>
 					<td align="center" style="width:90px"><a>提貨日期</a></td>
@@ -846,7 +843,7 @@
                     </td>
                     <td><a id="lblNo.*" style="font-weight: bold;text-align: center;display: block;"> </a></td>
                     <td>
-                        <input type="text" id="txtCalctype.*" type="text" class="txt c1" style="width: 60%;"/>
+                        <input type="text" id="txtCalctype.*" type="text" class="txt c1" style="width: 80%;"/>
                         <select id="combCalctype.*" class="txt" style="width: 17px;"> </select>
                     </td>
 					<td><input type="text" id="txtTrandate.*" style="width:95%;" /></td>
