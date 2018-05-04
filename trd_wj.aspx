@@ -26,6 +26,7 @@
             var bbsNum = [['txtTranmoney', 10, 0,1], ['txtOverweightcost', 10, 0,1], ['txtOthercost', 10, 0,1], ['txtMount', 10, 3,1], ['txtPrice', 10, 3,1], ['txtTotal', 10, 0,1], ['txtOthercost', 10, 0,1]];
             var bbmMask = [];
             var bbsMask = [];
+
             q_sqlCount = 6;
             brwCount = 6;
             brwList = [];
@@ -236,6 +237,77 @@
                         $('#txtTax').val(FormatNumber(t_tax));
                         sum();
                         Unlock(1);
+                        break;
+					case 'cPrice':
+						var as = _q_appendData("addr3s", "", true);
+						if(as[0].price1.length>0){
+							var price = as[0].price1;
+							for ( i = 0; i < q_bbsCount; i++) {
+									if($('#txtCustno').val()=='029-001'){
+										if(!emp($('#txtPrice_'+i).val()))
+											$('#txtPrice_'+i).val(round(q_mul(q_mul($('#txtPrice_'+i).val(),1.08),(1+(0.01*price))),0));
+										if(!emp($('#txtTotal_'+i).val()))
+											$('#txtTotal_'+i).val(round(q_mul(q_mul($('#txtTotal_'+i).val(),1.08),(1+(0.01*price))),0));
+										if(!emp($('#txtTranmoney_'+i).val()))
+											$('#txtTranmoney_'+i).val(round(q_mul(q_mul($('#txtTranmoney_'+i).val(),1.08),(1+(0.01*price))),0));
+									}else if($('#txtCustno').val()=='029-002'){
+										if(!emp($('#txtPrice_'+i).val()))
+											$('#txtPrice_'+i).val(round(q_mul(q_mul($('#txtPrice_'+i).val(),1.08094),(1+(0.01*price))),0));
+										if(!emp($('#txtTotal_'+i).val()))
+											$('#txtTotal_'+i).val(round(q_mul(q_mul($('#txtTotal_'+i).val(),1.08094),(1+(0.01*price))),0));
+										if(!emp($('#txtTranmoney_'+i).val()))
+											$('#txtTranmoney_'+i).val(round(q_mul(q_mul($('#txtTranmoney_'+i).val(),1.08094),(1+(0.01*price))),0));									
+									}else if($('#txtCustno').val()=='029-003'){
+										if(!emp($('#txtTotal_'+i).val()))
+											$('#txtPrice_'+i).val(round(q_mul(q_mul($('#txtPrice_'+i).val(),1.13986),(1+(0.01*price))),0));
+										if(!emp($('#txtTotal_'+i).val()))
+											$('#txtTotal_'+i).val(round(q_mul(q_mul($('#txtTotal_'+i).val(),1.13986),(1+(0.01*price))),0));
+										if(!emp($('#txtTranmoney_'+i).val()))
+											$('#txtTranmoney_'+i).val(round(q_mul(q_mul($('#txtTranmoney_'+i).val(),1.13986),(1+(0.01*price))),0));									
+									}else if($('#txtCustno').val()=='029-004'){
+										if(!emp($('#txtTotal_'+i).val()))
+											$('#txtPrice_'+i).val(round(q_mul($('#txtPrice_'+i).val(),(1+(0.01*price))),0));
+										if(!emp($('#txtTotal_'+i).val()))
+											$('#txtTotal_'+i).val(round(q_mul($('#txtTotal_'+i).val(),(1+(0.01*price))),0));
+										 if(!emp($('#txtTranmoney_'+i).val()))
+											$('#txtTranmoney_'+i).val(round(q_mul($('#txtTranmoney_'+i).val(),(1+(0.01*price))),0));
+									}				
+								}
+							}
+							else {
+							for ( i = 0; i < q_bbsCount; i++) {
+									if($('#txtCustno').val()=='029-001'){
+										if(!emp($('#txtPrice_'+i).val()))
+											$('#txtPrice_'+i).val(round(q_mul(q_mul($('#txtPrice_'+i).val(),1.08),1),0));
+										if(!emp($('#txtTotal_'+i).val()))
+											$('#txtTotal_'+i).val(round(q_mul(q_mul($('#txtTotal_'+i).val(),1.08),1),0));
+										if(!emp($('#txtTranmoney_'+i).val()))
+											$('#txtTranmoney_'+i).val(round(q_mul(q_mul($('#txtTranmoney_'+i).val(),1.08),1),0));
+									}else if($('#txtCustno').val()=='029-002'){
+										if(!emp($('#txtPrice_'+i).val()))
+											$('#txtPrice_'+i).val(round(q_mul(q_mul($('#txtPrice_'+i).val(),1.08094),1),0));
+										if(!emp($('#txtTotal_'+i).val()))
+											$('#txtTotal_'+i).val(round(q_mul(q_mul($('#txtTotal_'+i).val(),1.08094),1),0));
+										if(!emp($('#txtTranmoney_'+i).val()))
+											$('#txtTranmoney_'+i).val(round(q_mul(q_mul($('#txtTranmoney_'+i).val(),1.08094),1),0));									
+									}else if($('#txtCustno').val()=='029-003'){
+										if(!emp($('#txtTotal_'+i).val()))
+											$('#txtPrice_'+i).val(round(q_mul(q_mul($('#txtPrice_'+i).val(),1.13986),1),0));
+										if(!emp($('#txtTotal_'+i).val()))
+											$('#txtTotal_'+i).val(round(q_mul(q_mul($('#txtTotal_'+i).val(),1.13986),1),0));
+										if(!emp($('#txtTranmoney_'+i).val()))
+											$('#txtTranmoney_'+i).val(round(q_mul(q_mul($('#txtTranmoney_'+i).val(),1.13986),1),0));									
+									}else if($('#txtCustno').val()=='029-004'){
+										if(!emp($('#txtTotal_'+i).val()))
+											$('#txtPrice_'+i).val(round(q_mul($('#txtPrice_'+i).val(),1),0));
+										if(!emp($('#txtTotal_'+i).val()))
+											$('#txtTotal_'+i).val(round(q_mul($('#txtTotal_'+i).val(),1),0));
+										 if(!emp($('#txtTranmoney_'+i).val()))
+											$('#txtTranmoney_'+i).val(round(q_mul($('#txtTranmoney_'+i).val(),1),0));
+									}
+								}
+							}
+							sum();
                         break;
                     case q_name:
                         if (q_cur == 4)
@@ -474,38 +546,10 @@
                 switch(t_func) {
                     case 'qtxt.query.trd':
                         var as = _q_appendData("tmp0", "", true);
-                        q_gridAddRow(bbsHtm, 'tbbs', 'txtTrandate,txtTranno,txtTrannoq,txtCarno,txtStraddr,txtTranmoney,txtMount,txtPrice,txtTotal,txtCustorde,txtProduct,txtFill,txtOthercost,txtEndaddr'
-                        , as.length, as, 'trandate,tranno,trannoq,carno,straddr,total,mount,price,total,custorde,product,timea,plus,endaddr', '','');
-                        for ( i = 0; i < q_bbsCount; i++) {
-                            if($('#txtCustno').val()=='029-001'){
-                                if(!emp($('#txtPrice_'+i).val()))
-                                    $('#txtPrice_'+i).val(round(q_mul(q_mul($('#txtPrice_'+i).val(),1.08),1.063830),0));
-                                if(!emp($('#txtTotal_'+i).val()))
-                                    $('#txtTotal_'+i).val(round(q_mul(q_mul($('#txtTotal_'+i).val(),1.08),1.063830),0));
-								if(!emp($('#txtTranmoney_'+i).val()))
-                                    $('#txtTranmoney_'+i).val(round(q_mul(q_mul($('#txtTranmoney_'+i).val(),1.08),1.063830),0));
-                            }else if($('#txtCustno').val()=='029-002'){
-                                if(!emp($('#txtPrice_'+i).val()))
-                                    $('#txtPrice_'+i).val(round(q_mul(q_mul($('#txtPrice_'+i).val(),1.08094),1.063830),0));
-                                if(!emp($('#txtTotal_'+i).val()))
-                                    $('#txtTotal_'+i).val(round(q_mul(q_mul($('#txtTotal_'+i).val(),1.08094),1.063830),0));
-                                if(!emp($('#txtTranmoney_'+i).val()))
-                                    $('#txtTranmoney_'+i).val(round(q_mul(q_mul($('#txtTranmoney_'+i).val(),1.08094),1.063830),0));									
-                            }else if($('#txtCustno').val()=='029-003'){
-                                if(!emp($('#txtTotal_'+i).val()))
-                                    $('#txtPrice_'+i).val(round(q_mul(q_mul($('#txtPrice_'+i).val(),1.13986),1.063830),0));
-                                if(!emp($('#txtTotal_'+i).val()))
-                                    $('#txtTotal_'+i).val(round(q_mul(q_mul($('#txtTotal_'+i).val(),1.13986),1.063830),0));
-                                if(!emp($('#txtTranmoney_'+i).val()))
-                                    $('#txtTranmoney_'+i).val(round(q_mul(q_mul($('#txtTranmoney_'+i).val(),1.13986),1.063830),0));									
-                            }else if($('#txtCustno').val()=='029-004'){
-                                if(!emp($('#txtTotal_'+i).val()))
-                                    $('#txtPrice_'+i).val(round(q_mul($('#txtPrice_'+i).val(),1.063830),0));
-                                if(!emp($('#txtTotal_'+i).val()))
-                                    $('#txtTotal_'+i).val(round(q_mul($('#txtTotal_'+i).val(),1.063830),0));
-								 if(!emp($('#txtTranmoney_'+i).val()))
-                                    $('#txtTranmoney_'+i).val(round(q_mul($('#txtTranmoney_'+i).val(),1.063830),0));
-                            }
+                        q_gridAddRow(bbsHtm, 'tbbs', 'txtTrandate,txtTranno,txtTrannoq,txtCarno,txtStraddr,txtTranmoney,txtMount,txtPrice,txtTotal,txtCustorde,txtProduct,txtFill,txtOthercost,txtEndaddr,txtWeight'
+                        , as.length, as, 'trandate,tranno,trannoq,carno,straddr,total,mount,price,total,custorde,product,timea,plus,endaddr,weight', '','');
+                        
+						for ( i = 0; i < q_bbsCount; i++) {
                             if (i < as.length) {
                             }else{
                             	_btnMinus("btnMinus_" + i);
@@ -514,8 +558,10 @@
 						if(as[0].msg.length>0)
 							alert(''+as[0].msg.toString().replace(/未簽單/g,'未簽單\r'))
                         sum();
-                        Unlock(1);
+						Unlock(1);
                         $('#txtCustno').focus();
+						var t_where =" where=^^ '"+ $('#txtDatea').val()+"' between addrno and addr and productno='"+ $('#txtCustno').val() +"'"+"^^";
+						q_gt('addr3s', t_where, 0, 0, 0, 'cPrice',r_accy);//浮動油價
                 }
             }
 
@@ -952,6 +998,7 @@
 					   <input type="text" id="txtProduct.*" style="width:95%;" />
 					</td>
 					<td >
+					   <input type="text" id="txtWeight.*" style="display: none;"/>
 					   <input type="text" id="txtMount.*" style="width:95%;text-align: right;" />
 					</td>
 					<td >

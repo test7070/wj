@@ -25,8 +25,9 @@
 			var q_readonlys = ['txtNoq'];
 			var bbmNum = [];
 			var bbsNum = [];
-			var bbmMask = [];
-			var bbsMask = [];
+			var bbmMask = new Array(['txtSdate', '999/99/99']);
+			var bbsMask = new Array(['txtAddrno', '999/99/99'],['txtAddr', '999/99/99']);
+			aPop = new Array(['txtProductno_', 'btnCust_', 'cust', 'noa,comp,nick', 'txtProductno_,txtProduct_', 'cust_b.aspx']);
 			q_sqlCount = 6;
 			brwCount = 6;
 			brwList = [];
@@ -39,7 +40,8 @@
 				bbsKey = ['noa', 'noq'];
 				q_brwCount();
 				q_gt(q_name, q_content, q_sqlCount, 1, 0, '', r_accy);
-				document.title='駕駛運費主檔';
+				$('#txtSdate').datepicker();
+				document.title='浮動油價主檔';
 			}).mousedown(function(e) {
 				if (!$('#div_row').is(':hidden')) {
 					if (mouse_div) {
@@ -55,6 +57,7 @@
 				}
 				mainForm(0);
 			}
+
 			function mainPost() {
 				q_getFormat();
 				q_mask(bbmMask);
@@ -131,13 +134,20 @@
 							row_bbsbbt = 'bbs';
 						});*/
 					}
+					$('#txtProductno_' + i).bind('contextmenu', function(e) {
+						/*滑鼠右鍵*/
+						e.preventDefault();
+						var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
+						$('#btnCust_'+n).click();
+					});
 				}
+
 				_bbsAssign();
 			}
 			function btnIns() {
 				_btnIns();
 				$('#txtNoa').val('AUTO');
-				$('#txtNamea').focus();
+				$('#txtSdate').focus();
 			}
 			function btnModi() {
 				if (emp($('#txtNoa').val()))
@@ -154,10 +164,6 @@
 				_btnOk(key_value, bbmKey[0], bbsKey[1], '', 2);
 			}
 			function bbsSave(as) {
-				if (!as['addrno']) {
-					as[bbsKey[1]] = '';
-					return;
-				}
 				q_nowf();
 				as['noa'] = abbm2['noa'];
 				return true;
@@ -320,7 +326,7 @@
                 font-size: medium;
             }
             .dbbs {
-                width: 950px;
+                width: 600px;
             }
             .tbbs a {
                 font-size: medium;
@@ -370,13 +376,13 @@
                 <table class="tview" id="tview">
                     <tr>
                         <td align="center" style="width:20px; color:black;"><a id='vewChk'> </a></td>
-                        <td align="center" style="width:130px; color:black;"><a id='vewNamea'> </a></td>
+                        <td align="center" style="width:130px; color:black;"><a>登錄日期</a></td>
                     </tr>
                     <tr>
                         <td>
                         <input id="chkBrow.*" type="checkbox" />
                         </td>
-                        <td id="namea" style="text-align: center;">~namea</td>
+                        <td id="sdate" style="text-align: center;">~sdate</td>
                     </tr>
                 </table>
             </div>
@@ -390,19 +396,12 @@
                         <td class="tdZ"> </td>
                     </tr>
                     <tr>
-                        <td><span> </span><a id="lblNamea" class="lbl"></a></td>
-                        <td colspan="2">
-                        <input id="txtNamea" type="text"  class="txt c1"/>
-                        </td>
-                        <td>
-                        <input id="txtNoa" type="text" class="txt c1" style="display:none;"/>
-                       
+                        <td><span> </span><a id="lblNoa" class="lbl">電腦編號</a></td>
+                        <td><input id="txtNoa" type="text" class="txt c1"/></td>
                     </tr>
                     <tr>
-                        <td><span> </span><a id="lblSdate" class="lbl"></a>生效日期</td>
-                        <td colspan="2">
-                        <input id="txtSdate" type="text"  class="txt c1"/>
-                        </td>
+                        <td><span> </span><a id="lblSdate" class="lbl">登錄日期</a></td>
+                        <td><input id="txtSdate" type="text"  class="txt c1"/></td>
                     </tr>
                     <!--<tr>
                         <td> </td>
@@ -418,13 +417,10 @@
                     <input class="btn"  id="btnPlus" type="button" value='+' style="font-weight: bold;"  />
                     </td>
                     <td align="center" style="width:20px;"> </td>
-                    <td align="center" style="width:100px;">起點</td>
-                    <td align="center" style="width:100px;">迄點</td>
-                    <td align="center" style="width:150px;">貨品</td>
-                    <td align="center" style="width:80px;">裝貨</td>
-                    <td align="center" style="width:80px;">卸貨</td>
-                    <td align="center" style="width:80px;">當天自裝卸</td>
-                    <td align="center" style="width:200px;">說明</td>
+					<td align="center" style="width:70px;">客戶</td>
+					<td align="center" style="width:70px;">生效日期</td>
+					<td align="center" style="width:70px;">失效日期</td>
+                    <td align="center" style="width:70px;">浮動油價(%)</td>
                 </tr>
                 <tr  style='background:#cad3ff;'>
                     <td align="center">
@@ -432,19 +428,14 @@
                     <input id="txtNoq.*" type="text" style="display: none;" />
                     </td>
                     <td><a id="lblNo.*" style="font-weight: bold;text-align: center;display: block;"> </a></td>
-                    <td><input type="text" id="txtAddrno.*" style="width:95%;" />
-                        <input type="text" id="txtAddr.*"  style="width:95%;"/>
-                    </td>
-                    <td><input type="text" id="txtAddrno2.*" style="width:95%;" />
-                        <input type="text" id="txtAddr2.*"  style="width:95%;"/>
-                    </td>
-                    <td><input type="text" id="txtProductno.*" style="width:95%;" />
-                        <input type="text" id="txtProduct.*"  style="width:95%;"/>
-                    </td>
-                    <td><input type="text" id="txtPrice1.*" style="width:95%;" /></td>
-                    <td><input type="text" id="txtPrice2.*" style="width:95%;" /></td>
-                    <td><input type="text" id="txtTotal.*" style="width:95%;" /></td>
-                    <td><input type="text" id="txtMemo.*" style="width:95%;" /></td>
+					<td>
+						<input type="text" id="txtProductno.*" style="width:95%;"/>
+						<input type="text" id="txtProduct.*" style="width:95%;"/>
+						<input type="button" id="btnCust.*" style="display:none;">
+					</td>
+					<td><input type="text" id="txtAddrno.*" style="width:95%;"/></td>
+					<td><input type="text" id="txtAddr.*" style="width:95%;"/></td>
+                    <td><input type="text" id="txtPrice1.*" class="num" style="float:left;width:95%;"/></td>
                 </tr>
             </table>
         </div>
