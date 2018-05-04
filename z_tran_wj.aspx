@@ -72,6 +72,9 @@
                         type : '8',//[15]
                         name : 'xshowprice',
                         value : '1@顯示運費'.split(',')
+                    },{
+                        type : '6',//[16]
+                        name : 'xponoa'
                     }]
                     });
                 q_popAssign();
@@ -80,7 +83,10 @@
                  $('#txtDate1').mask('999/99/99');
 	             $('#txtDate1').datepicker();
 	             $('#txtDate2').mask('999/99/99');
-	             $('#txtDate2').datepicker();  
+	             $('#txtDate2').datepicker(); 
+	            
+	            $('#Xponoa').css("width","605px");
+	            $('#txtXponoa').css("width","500px");
                
                 var t_noa=typeof(q_getId()[5])=='undefined'?'':q_getId()[5];
                 t_noa  =  t_noa.replace('noa=','');
