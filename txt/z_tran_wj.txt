@@ -285,7 +285,8 @@ set rx=ra
 from (select ROW_NUMBER()over(partition by gno order by custno,datea )ra,rx from @tmp where rr=1)a
 
 select
-dbo.charbr(noa,9) noa
+dbo.charbr(noa,7) noa
+,dbo.charbr(typea,4) typea
 ,dbo.getComma(uweight,2)uweight
 ,dbo.getComma(weight,2)weight
 ,dbo.getComma(tweight,0)tweight
