@@ -75,6 +75,16 @@
                     },{
                         type : '6',//[16]
                         name : 'xponoa'
+                    },{//[17][18]
+                        type : '2',
+                        name : 'cust',
+                        dbf : 'cust',
+                        index : 'noa,comp',
+                        src : 'cust_b.aspx'
+                    },{
+                        type : '5',//[19]
+                        name : 'xshowch4',
+                        value : ' @全部,無@無,有@有'.split(',')
                     }]
                     });
                 q_popAssign();

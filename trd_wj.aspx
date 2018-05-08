@@ -245,32 +245,32 @@
 							for ( i = 0; i < q_bbsCount; i++) {
 									if($('#txtCustno').val()=='029-001'){
 										if(!emp($('#txtPrice_'+i).val()))
-											$('#txtPrice_'+i).val(round(q_mul(q_mul($('#txtPrice_'+i).val(),1.08),(1+(0.01*price))),0));
+											$('#txtPrice_'+i).val(round(q_mul(q_mul($('#txtPrice_'+i).val(),1.08),(1+(0.01*price))),2));
 										if(!emp($('#txtTotal_'+i).val()))
-											$('#txtTotal_'+i).val(round(q_mul(q_mul($('#txtTotal_'+i).val(),1.08),(1+(0.01*price))),0));
+											$('#txtTotal_'+i).val(round(q_mul(q_mul($('#txtTotal_'+i).val(),1.08),(1+(0.01*price))),2));
 										if(!emp($('#txtTranmoney_'+i).val()))
-											$('#txtTranmoney_'+i).val(round(q_mul(q_mul($('#txtTranmoney_'+i).val(),1.08),(1+(0.01*price))),0));
+											$('#txtTranmoney_'+i).val(round(q_mul(q_mul($('#txtTranmoney_'+i).val(),1.08),(1+(0.01*price))),2));
 									}else if($('#txtCustno').val()=='029-002'){
 										if(!emp($('#txtPrice_'+i).val()))
-											$('#txtPrice_'+i).val(round(q_mul(q_mul($('#txtPrice_'+i).val(),1.08094),(1+(0.01*price))),0));
+											$('#txtPrice_'+i).val(round(q_mul(q_mul($('#txtPrice_'+i).val(),1.08094),(1+(0.01*price))),2));
 										if(!emp($('#txtTotal_'+i).val()))
-											$('#txtTotal_'+i).val(round(q_mul(q_mul($('#txtTotal_'+i).val(),1.08094),(1+(0.01*price))),0));
+											$('#txtTotal_'+i).val(round(q_mul(q_mul($('#txtTotal_'+i).val(),1.08094),(1+(0.01*price))),2));
 										if(!emp($('#txtTranmoney_'+i).val()))
-											$('#txtTranmoney_'+i).val(round(q_mul(q_mul($('#txtTranmoney_'+i).val(),1.08094),(1+(0.01*price))),0));									
+											$('#txtTranmoney_'+i).val(round(q_mul(q_mul($('#txtTranmoney_'+i).val(),1.08094),(1+(0.01*price))),2));									
 									}else if($('#txtCustno').val()=='029-003'){
 										if(!emp($('#txtTotal_'+i).val()))
-											$('#txtPrice_'+i).val(round(q_mul(q_mul($('#txtPrice_'+i).val(),1.13986),(1+(0.01*price))),0));
+											$('#txtPrice_'+i).val(round(q_mul(q_mul($('#txtPrice_'+i).val(),1.13986),(1+(0.01*price))),2));
 										if(!emp($('#txtTotal_'+i).val()))
-											$('#txtTotal_'+i).val(round(q_mul(q_mul($('#txtTotal_'+i).val(),1.13986),(1+(0.01*price))),0));
+											$('#txtTotal_'+i).val(round(q_mul(q_mul($('#txtTotal_'+i).val(),1.13986),(1+(0.01*price))),2));
 										if(!emp($('#txtTranmoney_'+i).val()))
-											$('#txtTranmoney_'+i).val(round(q_mul(q_mul($('#txtTranmoney_'+i).val(),1.13986),(1+(0.01*price))),0));									
+											$('#txtTranmoney_'+i).val(round(q_mul(q_mul($('#txtTranmoney_'+i).val(),1.13986),(1+(0.01*price))),2));									
 									}else if($('#txtCustno').val()=='029-004'){
 										if(!emp($('#txtTotal_'+i).val()))
-											$('#txtPrice_'+i).val(round(q_mul($('#txtPrice_'+i).val(),(1+(0.01*price))),0));
+											$('#txtPrice_'+i).val(round(q_mul($('#txtPrice_'+i).val(),(1+(0.01*price))),2));
 										if(!emp($('#txtTotal_'+i).val()))
-											$('#txtTotal_'+i).val(round(q_mul($('#txtTotal_'+i).val(),(1+(0.01*price))),0));
+											$('#txtTotal_'+i).val(round(q_mul($('#txtTotal_'+i).val(),(1+(0.01*price))),2));
 										 if(!emp($('#txtTranmoney_'+i).val()))
-											$('#txtTranmoney_'+i).val(round(q_mul($('#txtTranmoney_'+i).val(),(1+(0.01*price))),0));
+											$('#txtTranmoney_'+i).val(round(q_mul($('#txtTranmoney_'+i).val(),(1+(0.01*price))),2));
 									}				
 								}
 							}
@@ -278,32 +278,32 @@
 							for ( i = 0; i < q_bbsCount; i++) {
 									if($('#txtCustno').val()=='029-001'){
 										if(!emp($('#txtPrice_'+i).val()))
-											$('#txtPrice_'+i).val(round(q_mul(q_mul($('#txtPrice_'+i).val(),1.08),1),0));
+											$('#txtPrice_'+i).val(round(q_mul(q_mul($('#txtPrice_'+i).val(),1.08),1),2));
 										if(!emp($('#txtTotal_'+i).val()))
-											$('#txtTotal_'+i).val(round(q_mul(q_mul($('#txtTotal_'+i).val(),1.08),1),0));
+											$('#txtTotal_'+i).val(round(q_mul(q_mul($('#txtTotal_'+i).val(),1.08),1),2));
 										if(!emp($('#txtTranmoney_'+i).val()))
-											$('#txtTranmoney_'+i).val(round(q_mul(q_mul($('#txtTranmoney_'+i).val(),1.08),1),0));
+											$('#txtTranmoney_'+i).val(round(q_mul(q_mul($('#txtTranmoney_'+i).val(),1.08),1),2));
 									}else if($('#txtCustno').val()=='029-002'){
 										if(!emp($('#txtPrice_'+i).val()))
-											$('#txtPrice_'+i).val(round(q_mul(q_mul($('#txtPrice_'+i).val(),1.08094),1),0));
+											$('#txtPrice_'+i).val(round(q_mul(q_mul($('#txtPrice_'+i).val(),1.08094),1),2));
 										if(!emp($('#txtTotal_'+i).val()))
-											$('#txtTotal_'+i).val(round(q_mul(q_mul($('#txtTotal_'+i).val(),1.08094),1),0));
+											$('#txtTotal_'+i).val(round(q_mul(q_mul($('#txtTotal_'+i).val(),1.08094),1),2));
 										if(!emp($('#txtTranmoney_'+i).val()))
-											$('#txtTranmoney_'+i).val(round(q_mul(q_mul($('#txtTranmoney_'+i).val(),1.08094),1),0));									
+											$('#txtTranmoney_'+i).val(round(q_mul(q_mul($('#txtTranmoney_'+i).val(),1.08094),1),2));									
 									}else if($('#txtCustno').val()=='029-003'){
 										if(!emp($('#txtTotal_'+i).val()))
-											$('#txtPrice_'+i).val(round(q_mul(q_mul($('#txtPrice_'+i).val(),1.13986),1),0));
+											$('#txtPrice_'+i).val(round(q_mul(q_mul($('#txtPrice_'+i).val(),1.13986),1),2));
 										if(!emp($('#txtTotal_'+i).val()))
-											$('#txtTotal_'+i).val(round(q_mul(q_mul($('#txtTotal_'+i).val(),1.13986),1),0));
+											$('#txtTotal_'+i).val(round(q_mul(q_mul($('#txtTotal_'+i).val(),1.13986),1),2));
 										if(!emp($('#txtTranmoney_'+i).val()))
-											$('#txtTranmoney_'+i).val(round(q_mul(q_mul($('#txtTranmoney_'+i).val(),1.13986),1),0));									
+											$('#txtTranmoney_'+i).val(round(q_mul(q_mul($('#txtTranmoney_'+i).val(),1.13986),1),2));									
 									}else if($('#txtCustno').val()=='029-004'){
 										if(!emp($('#txtTotal_'+i).val()))
-											$('#txtPrice_'+i).val(round(q_mul($('#txtPrice_'+i).val(),1),0));
+											$('#txtPrice_'+i).val(round(q_mul($('#txtPrice_'+i).val(),1),2));
 										if(!emp($('#txtTotal_'+i).val()))
-											$('#txtTotal_'+i).val(round(q_mul($('#txtTotal_'+i).val(),1),0));
+											$('#txtTotal_'+i).val(round(q_mul($('#txtTotal_'+i).val(),1),2));
 										 if(!emp($('#txtTranmoney_'+i).val()))
-											$('#txtTranmoney_'+i).val(round(q_mul($('#txtTranmoney_'+i).val(),1),0));
+											$('#txtTranmoney_'+i).val(round(q_mul($('#txtTranmoney_'+i).val(),1),2));
 									}
 								}
 							}
