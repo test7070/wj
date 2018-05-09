@@ -16,12 +16,15 @@
 		<script src="css/jquery/ui/jquery.ui.widget.js"> </script>
 		<script src="css/jquery/ui/jquery.ui.datepicker_tw.js"> </script>
 		<script type="text/javascript">
+		var gfrun = false;	
+		var xtypeItem = '';
+
            if (location.href.indexOf('?') < 0) {
 				location.href = location.href + "?;;;;" + ((new Date()).getUTCFullYear() - 1911);
 			}
             $(document).ready(function() {
             	q_getId();
-                q_gf('', 'z_tran_wj');
+				q_gt('calctype', '1=1 ', 0, 0, 0, "calctype");
             });
             function q_gfPost() {
                $('#q_report').q_report({
@@ -62,8 +65,7 @@
                     },{//[12]
 						type : '5', 
 						name : 'xtype',
-						value:'#non@全部,029-001@北區,029-002@中區,029-003@南區,029-004@移倉'.split(',')
-
+						value : xtypeItem.split(',')
 					},{//[13][14]
 						type : '1',
 						name : 'date2'
@@ -88,6 +90,9 @@
                     }]
                     });
                 q_popAssign();
+                q_getFormat();
+                q_langShow();
+
 				 $('#txtMon').mask('999/99');
 	             $('#txtMon').datepicker();
                  $('#txtDate1').mask('999/99/99');
@@ -128,8 +133,22 @@
 
             function q_boxClose(s2) {
             }
-            function q_gtPost(s2) {
-            }
+			
+			function q_gtPost(t_name) {
+                switch (t_name) {
+                    case 'calctype':
+                        var as = _q_appendData("calctype", "", true);
+                        xspecItem = " @全部";
+                        for ( i = 0; i < as.length; i++) {
+                            xtypeItem += "," + as[i].namea;
+                        }
+                        break;
+				}
+				if (!gfrun) {
+                    gfrun = true;
+                    q_gf('', 'z_tran_wj');
+                }
+			}
 		</script>
 	</head>
 	<body ondragstart="return false" draggable="false"
