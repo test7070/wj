@@ -824,6 +824,10 @@
 					<td align="center" style="width:200px;"><a>起運地點</a></td>
 					<td align="center" style="width:100px;"><a>中繼站</a></td>
 					<td align="center" style="width:200px;"><a>卸貨地點</a></td>
+					<td align="center" style="width:15px;">裝貨</td>
+                    <td align="center" style="width:15px;">拉貨</td>
+                    <td align="center" style="width:15px;">卸貨</td>
+                    <td align="center" style="width:15px;">簽單</td>
 					<td align="center" style="width:80px;"><a>板台<br>號碼</a></td>
 					<td align="center" style="width:80px;">實車</td>
 					<td align="center" style="width:80px;">空車</td>	
@@ -832,10 +836,6 @@
 					<td align="center" style="width:60px;"><a>抽成<br>獎金</a></td>
 					<td align="center" style="width:100px;"><a>司機加減項</a></td>
                     <td align="center" style="width:80px;"><a>司機加減項金額</a></td>
-					<td align="center" style="width:15px;">裝貨</td>
-                    <td align="center" style="width:15px;">拉貨</td>
-                    <td align="center" style="width:15px;">卸貨</td>
-                    <td align="center" style="width:15px;">簽單</td>
 					<td align="center" style="width:80px;">出發時間</td>
 					<td align="center" style="width:80px;">回場時間</td>
 					<td align="center" style="width:80px;"><a>應收運費</a></td>
@@ -896,6 +896,10 @@
 						<input type="text" id="txtAaddr.*" style="float:left;width:95%;"/>
 						<input type="button" id="btnEndaddr.*" style="display:none;">
 					</td>
+					<td align="center"><input id="chkChk1.*" type="checkbox"/></td>
+                    <td align="center"><input id="chkChk2.*" type="checkbox"/></td>
+                    <td align="center"><input id="chkChk3.*" type="checkbox"/></td>
+                    <td align="center"><input id="chkChk4.*" type="checkbox"/></td>
 					<td>
 						<input type="text" id="txtCardeal.*" class="txt c1" style="width:95%;"/>
 						<input type="text" id="btnCardeal.*" style="display:none;"/>
@@ -911,10 +915,6 @@
                         <select id="combProduct1.*" class="txt" style="width: 20px;"> </select>
                     </td>
                     <td><input type="text" id="txtMinus.*" class="num" style="float:center;width:95%;"/></td>
-					<td align="center"><input id="chkChk1.*" type="checkbox"/></td>
-                    <td align="center"><input id="chkChk2.*" type="checkbox"/></td>
-                    <td align="center"><input id="chkChk3.*" type="checkbox"/></td>
-                    <td align="center"><input id="chkChk4.*" type="checkbox"/></td>
 					<td><input type="text" id="txtltime.*"  style="float:left;width:95%;"/></td>
 					<td><input type="text" id="txtStime.*"  style="float:left;width:95%;"/></td>
 					<td><input type="text" id="txtTotal.*" class="num" style="float:center;width:95%;"/></td>
