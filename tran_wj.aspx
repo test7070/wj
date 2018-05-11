@@ -813,7 +813,7 @@
 					<td align="center" style="width:20px;"> </td>
 					<td align="center" style="width:80px"><a>類別</a></td>
 					<td align="center" style="width:100px;"><a>運輸單號</a></td>
-					<td align="center" style="width:100px;"><a>承車日期</a></td>
+					<td align="center" style="width:100px;"><a>承運日期</a></td>
 					<td align="center" style="width:100px;"><a>託運人</a></td>
 					<td align="center" style="width:100px;"><a>品名</a></td>
 					<td align="center" style="width:70px;"><a>承載單位</a></td>
