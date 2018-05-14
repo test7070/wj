@@ -212,7 +212,7 @@ declare @tmp table(
 	[weight] numeric(10,3),
 	price numeric(10,2), 
 	pd float, 
-	total numeric(10,2),
+	total float,
 	tm float, 
 	des6 float, 
 	serialno nvarchar(30),
@@ -235,7 +235,7 @@ from @tmp group by price,class
 
 update @tmp set weight = ROUND(weight,2)
 
-update @tmp set total = case when weight>0 and price>0 then weight*price else 0 end 
+update @tmp set total = case when weight>0 and price>0 then round(weight*price,0) else 0 end 
 
 update @tmp set [weight]=ROUND([weight],3)
 

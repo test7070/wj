@@ -346,7 +346,7 @@
 			function _btnSeek() {		//查詢
 				if (q_cur > 0 && q_cur < 4)
 					return;
-				q_box('tran_s.aspx', q_name + '_s', "500px", "600px", q_getMsg("popSeek"));
+				q_box('tran_wj_s.aspx', q_name + '_s', "500px", "600px", q_getMsg("popSeek"));
 			}
 
 			function btnIns() {		//新增
