@@ -233,10 +233,6 @@ insert into @tmp(gno,class,mount,weight,price,total)
 select '1',class,SUM(mount),SUM(weight),price,SUM(total) 
 from @tmp group by price,class 
 
-update @tmp set weight = ROUND(weight,2)
-
-update @tmp set total = case when weight>0 and price>0 then round(weight*price,0) else 0 end 
-
 update @tmp set [weight]=ROUND([weight],3)
 
 select a.*,SUBSTRING(datea,1,3) as yy, SUBSTRING(datea,5,2) as mm,SUBSTRING(datea,5,5) as dateb 
