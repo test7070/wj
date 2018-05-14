@@ -212,7 +212,7 @@ declare @tmp table(
 	[weight] numeric(10,3),
 	price numeric(10,2), 
 	pd float, 
-	total numeric(10,2),
+	total float,
 	tm float, 
 	des6 float, 
 	serialno nvarchar(30),
@@ -232,10 +232,6 @@ from @tmp a outer apply(select * from cust where a.custno=noa)b
 insert into @tmp(gno,class,mount,weight,price,total) 
 select '1',class,SUM(mount),SUM(weight),price,SUM(total) 
 from @tmp group by price,class 
-
-update @tmp set weight = ROUND(weight,2)
-
-update @tmp set total = case when weight>0 and price>0 then weight*price else 0 end 
 
 update @tmp set [weight]=ROUND([weight],3)
 
