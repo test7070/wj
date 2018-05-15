@@ -58,8 +58,12 @@
                         $('#txtMount_'+i).val(round(q_div(q_float('txtTvolume_'+i), q_float('txtWeight_'+i)),0));
                         $('#txtVolume_'+i).val(round(q_div(q_float('txtTheight_'+i), q_float('txtMount_'+i)),0));
                     }else{//單位淨重*數量=淨重   單位毛重*數量=毛重
-                        $('#txtTheight_'+i).val(round(q_mul(q_float('txtVolume_'+i), q_float('txtMount_'+i)),0));
-                        $('#txtTvolume_'+i).val(round(q_mul(q_float('txtWeight_'+i), q_float('txtMount_'+i)),0));
+                        if($('#txtTheight_'+i).val()==0){
+                            $('#txtTheight_'+i).val(round(q_mul(q_float('txtVolume_'+i), q_float('txtMount_'+i)),0));
+                        }
+                        if($('#txtTvolume_'+i).val()==0){
+                            $('#txtTvolume_'+i).val(round(q_mul(q_float('txtWeight_'+i), q_float('txtMount_'+i)),0));
+                        }
                     }
                     
 					if($('#txtUnit_'+i).val()=='板'){
