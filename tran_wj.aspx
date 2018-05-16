@@ -811,6 +811,7 @@
 				<tr style='color:white; background:#003366;' >
 					<td align="center" style="width:25px"><input class="btn"  id="btnPlus" type="button" value='+' style="font-weight: bold;"  /></td>
 					<td align="center" style="width:20px;"> </td>
+					<td align="center" style="width:15px;">簽單</td>
 					<td align="center" style="width:80px"><a>類別</a></td>
 					<td align="center" style="width:100px;"><a>運輸單號</a></td>
 					<td align="center" style="width:100px;"><a>承運日期</a></td>
@@ -827,7 +828,6 @@
 					<td align="center" style="width:15px;">裝貨</td>
                     <td align="center" style="width:15px;">拉貨</td>
                     <td align="center" style="width:15px;">卸貨</td>
-                    <td align="center" style="width:15px;">簽單</td>
 					<td align="center" style="width:80px;"><a>板台<br>號碼</a></td>
 					<td align="center" style="width:80px;">實車</td>
 					<td align="center" style="width:80px;">空車</td>	
@@ -850,7 +850,8 @@
 						<input class="btn"  id="btnMinus.*" type="button" value='-' style=" font-weight: bold;" />
 						<input type="text" id="txtNoq.*" style="display:none;"/>
 					</td>
-					<td><a id="lblNo.*" style="font-weight: bold;text-align: center;display: block;"> </a></td>					
+					<td><a id="lblNo.*" style="font-weight: bold;text-align: center;display: block;"> </a></td>	
+					<td align="center"><input id="chkChk4.*" type="checkbox"/></td>					
 					<td>
                         <input type="text" id="txtCalctype.*" type="text" class="txt c1" style="width: 70%;"/>
                         <select id="combCalctype.*" class="txt" style="width: 20px;"> </select>
@@ -899,7 +900,6 @@
 					<td align="center"><input id="chkChk1.*" type="checkbox"/></td>
                     <td align="center"><input id="chkChk2.*" type="checkbox"/></td>
                     <td align="center"><input id="chkChk3.*" type="checkbox"/></td>
-                    <td align="center"><input id="chkChk4.*" type="checkbox"/></td>
 					<td>
 						<input type="text" id="txtCardeal.*" class="txt c1" style="width:95%;"/>
 						<input type="text" id="btnCardeal.*" style="display:none;"/>
