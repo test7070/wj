@@ -715,13 +715,13 @@
 				<table class="tview" id="tview">
 					<tr>
 						<td align="center" style="width:20px; color:black;"><a id='vewChk'> </a></td>
-						<td align="center" style="width:80px; color:black;"><a>日期</a></td>
+						<td align="center" style="width:80px; color:black;"><a>交運日期</a></td>
 						<td align="center" style="width:120px; color:black;"><a>司機</a></td>
 						<td align="center" style="width:150px; color:black;"><a>車號</a></td>
 					</tr>
 					<tr>
 						<td><input id="chkBrow.*" type="checkbox"/></td>
-						<td id='datea' style="text-align: center;">~datea</td>
+						<td id='trandate' style="text-align: center;">~trandate</td>
 						<td id='driver' style="text-align: center;">~driver</td>
 						<td id='carno' style="text-align: center;">~carno</td>
 					</tr>
