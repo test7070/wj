@@ -951,7 +951,7 @@ outer apply (select * from driver where b.driverno=noa)c
 where gno='2' 
 
 select * from @tmp 
-order by y desc,m desc,d desc,carno,noq ,gno;
+order by y desc,m desc,d desc,carno,noq,gno,noa;
 ---------------------------------------------------------------------------------------------
 z_tran_wj9:--z_tran_wj9
 declare @t_bdate nvarchar(10)
