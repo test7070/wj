@@ -219,7 +219,7 @@ declare @tmp table(
 	chk4 nvarchar(30)
 )
 insert into @tmp (gno,noa,tranno,custno,cust,datea,carno,product,mount,price,total,class,straddr,endaddr,ender,weight,chk4) 
-select '0',a.noa,c.po,a.custno,a.comp,c.datea,b.carno,b.product,b.mount,b.price,b.total,c.calctype
+select '0',a.noa,c.po,a.custno,a.comp,c.trandate,b.carno,b.product,b.mount,b.price,b.total,c.calctype
 ,c.straddr,c.aaddr,c.endaddr,c.weight,case when isnull(c.chk4,0)=1 then 'V' else '' end
 from view_trd a 
 left join view_trds b on a.noa = b.noa 
@@ -234,6 +234,10 @@ select '1',class,SUM(mount),SUM(weight),price,SUM(total)
 from @tmp group by price,class 
 
 update @tmp set [weight]=ROUND([weight],3)
+
+update @tmp set endaddr= case when charindex('市',endaddr)>0 or charindex('區',endaddr)>0 or charindex('鄉',endaddr)>0 then SUBSTRING(endaddr,charindex('市',endaddr)-2,2)+SUBSTRING(endaddr,charindex('區',endaddr)-2,2)+SUBSTRING(endaddr,charindex('鄉',endaddr)-2,2)
+							  when charindex('縣',endaddr)>0 or charindex('區',endaddr)>0 or charindex('鄉',endaddr)>0 then SUBSTRING(endaddr,charindex('縣',endaddr)-2,2)+SUBSTRING(endaddr,charindex('區',endaddr)-2,2)+SUBSTRING(endaddr,charindex('鄉',endaddr)-2,2)
+							  END
 
 select a.*,SUBSTRING(datea,1,3) as yy, SUBSTRING(datea,5,2) as mm,SUBSTRING(datea,5,5) as dateb 
 from @tmp a order by price,class,gno;
