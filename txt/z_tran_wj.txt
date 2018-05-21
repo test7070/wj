@@ -1,0 +1,1026 @@
+﻿z_tran_wj1:--z_tran_wj1
+	declare @t_bdate nvarchar(10)
+	declare @t_edate nvarchar(10)
+	declare @t_bcarno nvarchar(10)
+	declare @t_ecarno nvarchar(10)
+	declare @t_bdriverno nvarchar(10)
+	declare @t_edriverno nvarchar(10)
+	set @t_bdate = case when '#non'=[2] then '' else [2] end
+	set @t_edate = case when '#non'=[3] then char(255) else [3] end
+	set @t_bcarno = case when '#non'=[5] then '' else [5] end
+	set @t_ecarno = case when '#non'=[6] then char(255) else [6] end
+	set @t_bdriverno = case when '#non'=[7] then '' else [7] end
+	set @t_edriverno = case when '#non'=[8] then char(255) else [8] end
+	declare @tmp table( 
+	gno nvarchar(10), 
+	noa nvarchar(200), 
+	datea nvarchar(50), 
+	roc nvarchar(10), 
+	mon nvarchar(10), 
+	day nvarchar(10),
+	comp nvarchar(100),
+	driverno nvarchar(100), 
+	recno int, 
+
+	carno nvarchar(100), 
+	carplateno nvarchar(50), 
+	driver nvarchar(100), 
+	fcar nvarchar(100), 
+
+	trandate nvarchar(50), 
+	cust nvarchar(50), 
+	product nvarchar(50), 
+	price float, 
+	mount float, 
+	mount2 float, 
+	weight float, 
+	straddr nvarchar(max), 
+	endaddr nvarchar(max), 
+	plateno nvarchar(50), 
+	ltime nvarchar(50), 
+	stime nvarchar(50), 
+	iCar float, 
+	vCar float, 
+	miles float, 
+	total float, 
+	total2 float, 
+	--油量與旅程 
+	oilproduct nvarchar(50), 
+	t_oiladd float, 
+	bmiles float, 
+	emiles float, 
+	rate float, 
+	--回數票 
+	etccost float, 
+	--出車費用 
+	fixcarcost float, 
+	t_carcost float, 
+	g_fixcarcost float, 
+	b_fixcarcost float, 
+	total3 float, 
+	other float, 
+	o_fixcarcost float , 
+	addp nvarchar(50), 
+	decp nvarchar(50) 
+	) 
+
+	insert into @tmp (gno,noa,roc,mon,day,comp,
+	datea,trandate,cust,product,price,mount,weight,straddr,endaddr,plateno,iCar,vCar,miles,total,ltime,stime,total2, 
+	driverno,driver,carno,carplateno,fcar) 
+	select '0',a.noa,''+SUBSTRING(a.datea,1,3),''+SUBSTRING(a.datea,5,2),''+SUBSTRING(a.datea,8,2),a.acomp,a.datea 
+	,b.trandate,b.comp,b.product,b.price,b.mount,b.weight,b.straddr,b.endaddr 
+	,b.cardeal,b.bmile,b.emile,b.miles,b.reserve,b.ltime,b.stime,b.total 
+	,a.driverno,a.driver,a.carno,a.etime,a.btime 
+	from view_tran a 
+	left join view_trans b on a.noa = b.noa 
+	where a.datea between @t_bdate and @t_edate 
+	and (a.carno BETWEEN @t_bcarno and @t_ecarno) 
+	and (a.driverno BETWEEN @t_bdriverno and @t_edriverno)
+	--------------------------------------------------------------------------------------------------------------------
+	insert into @tmp (gno,noa,roc,mon,day,recno,
+	datea,trandate,cust,product,price,mount,weight,straddr,endaddr,plateno,iCar,vCar,miles,total,ltime,stime,total2, 
+	driverno,driver,carno,carplateno,fcar) 
+	select '0',noa,roc,mon,day,ROW_NUMBER()over(partition by noa order by roc desc),
+	datea,trandate,cust,product,price,mount,weight,straddr,endaddr,plateno,iCar,vCar,miles,total,ltime,stime,total2, 
+	driverno,driver,carno,carplateno,fcar
+	from @tmp 
+
+	delete from @tmp where recno is null and gno='0' --recno合併，刪除重複的
+
+	insert into @tmp (gno,recno,noa,datea,total,total2,weight) 
+	select '2','9999',noa,datea,SUM(total),SUM(total2),SUM(weight) from @tmp 
+	where gno='0' group by noa,datea 
+	--------------------------------------------------------------------------------------------------------- 
+	--加減 
+	insert into @tmp (gno,noa,datea,fixcarcost,t_carcost,g_fixcarcost,b_fixcarcost,other,o_fixcarcost) 
+	select '4',a.noa,a.datea, 
+	case when charindex(b.fill,'修車費')>0 then (b.minus) else 0 end, 
+	case when charindex(b.fill,'旅費')>0 then (b.minus) else 0 end, 
+	case when charindex(b.fill,'去裝卸車費')>0 then (b.minus) else 0 end, 
+	case when charindex(b.fill,'回裝卸車費')>0 then (b.minus) else 0 end, 
+	case when 
+	charindex(b.fill,'修車費')=0 and 
+	charindex(b.fill,'旅費')=0 and 
+	charindex(b.fill,'去裝卸車費')=0 and 
+	charindex(b.fill,'回裝卸車費')=0 and 
+	charindex(b.fill,'補胎費')=0 
+	then (b.minus) else 0 end, 
+	case when charindex(b.fill,'補胎費')>0 then (b.minus) else 0 end 
+	from view_tran a 
+	left join view_trans b on a.noa = b.noa 
+	where a.datea between @t_bdate and @t_edate 
+	and (a.carno BETWEEN @t_bcarno and @t_ecarno) 
+	and (a.driverno BETWEEN @t_bdriverno and @t_edriverno) 
+
+	insert into @tmp (gno,noa,datea,etccost) 
+	select '4',a.noa,a.datea,c.money 
+	from view_tran a 
+	left join etc c on (a.trandate = c.datea) and (a.carno = c.carno) 
+	where a.datea between @t_bdate and @t_edate 
+	and (a.carno BETWEEN @t_bcarno and @t_ecarno) 
+	and (a.driverno BETWEEN @t_bdriverno and @t_edriverno)
+
+	insert into @tmp (gno,noa,datea,oilproduct,t_oiladd,bmiles,emiles,miles,rate) 
+	select '4',a.noa,a.datea,b.product,b.mount,b.bmiles,b.emiles,b.miles,b.miles/b.mount 
+	from view_tran a 
+	left join oil b on (a.trandate = b.oildate) and (a.carno = b.carno) 
+	where a.datea between @t_bdate and @t_edate 
+	and (a.carno BETWEEN @t_bcarno and @t_ecarno) 
+	and (a.driverno BETWEEN @t_bdriverno and @t_edriverno)
+	------------------------------------------------------------------------------------------------------- 
+	insert into @tmp (gno,noa,datea,oilproduct,t_oiladd,bmiles,emiles,miles,rate,etccost,fixcarcost,t_carcost,g_fixcarcost,b_fixcarcost,other,o_fixcarcost,total3) 
+	select '5',noa,datea,oilproduct,sum(t_oiladd),min(bmiles),max(emiles),sum(miles),sum(rate),etccost,SUM(fixcarcost),SUM(t_carcost),SUM(g_fixcarcost),SUM(b_fixcarcost),SUM(other),SUM(o_fixcarcost), 
+	SUM(fixcarcost)+SUM(t_carcost)+SUM(g_fixcarcost)+SUM(b_fixcarcost)+SUM(o_fixcarcost)+SUM(other) 
+	from @tmp where gno='4' 
+	group by noa,datea,etccost,oilproduct 
+
+	insert into @tmp (gno,recno,noa,datea,oilproduct,t_oiladd,bmiles,emiles,miles,rate,etccost,fixcarcost,t_carcost,g_fixcarcost,b_fixcarcost,total3,other,o_fixcarcost) 
+	select '3','9999',noa,datea,min(oilproduct),sum(t_oiladd),min(bmiles),max(emiles),sum(miles),sum(rate),sum(etccost),SUM(fixcarcost),SUM(t_carcost),SUM(g_fixcarcost),SUM(b_fixcarcost),SUM(total3),SUM(other),SUM(o_fixcarcost)
+	from @tmp where gno='5' 
+	group by noa,datea 
+
+	delete from @tmp where gno='4' 
+	delete from @tmp where gno='5' 
+	--------------------------------------------------------------------------------------------------------- 
+	declare @t_pageline int = 8
+	declare @noa nvarchar(100) 
+	declare @count int
+	declare @page int
+	declare cursor_table cursor for 
+	select noa,MAX(recno) count from @tmp where noa is not null and gno='0' group by noa
+	open cursor_table 
+	fetch next from cursor_table 
+	into @noa,@count
+	while(@@FETCH_STATUS <> -1) 
+	begin 
+	set @page = @count % @t_pageline
+	while @page < 8
+	begin
+	set @count = @count +1
+	insert into @tmp (gno,recno,noa) values('1',@count,@noa)
+	set @page = @page +1
+	end
+
+	while @page = 8
+	begin
+	if(@count>8)
+	insert into @tmp (gno,recno,noa) values('3',@count,@noa)
+	set @page = @page +1
+	end
+
+	fetch next from cursor_table 
+	into @noa,@count
+	end 
+	close cursor_table 
+	deallocate cursor_table
+
+	update @tmp set recno = 8 where gno='3' and recno!=9999
+	delete from @tmp where product=''
+	--------------------------------------------------------------------------------------------------------- 
+	select recno rr,gno,a.noa,roc,mon,day,a.carno,fcar,a.driver,a.driverno,a.datea,a.trandate,cust,product,price,a.mount,a.weight,straddr,endaddr,carplateno,plateno, 
+	ltime,stime,iCar,vCar,miles,a.total,a.total2,oilproduct,t_oiladd,bmiles,emiles,dbo.getcomma(rate,2) rate,etccost,fixcarcost,t_carcost,g_fixcarcost,b_fixcarcost, 
+	a.total3,o_fixcarcost,other,'tran_wj?noa=$noa?' ghref,b.acomp comp
+	from @tmp a
+	left join view_tran b on a.noa=b.noa
+	order by a.noa,recno,gno;
+-------------------------------------------------------------------------------------------------------------
+z_tran_wj3:--z_tran_wj3
+SET QUOTED_IDENTIFIER OFF
+declare @t_bdate nvarchar(10)
+declare @t_edate nvarchar(10)
+declare @t_bcarno nvarchar(20)
+declare @t_ecarno nvarchar(20)
+declare @t_xshow nvarchar(10)
+declare @t_bnoa nvarchar(10)
+declare @t_xtype nvarchar(10)
+declare @t_bdate2 nvarchar(10)
+declare @t_edate2 nvarchar(10)
+declare @t_bcustno nvarchar(10)
+declare @t_ecustno nvarchar(10)
+set @t_bdate = case when '#non'=[2] then '' else [2] end
+set @t_edate = case when '#non'=[3] then char(255) else [3] end
+set @t_bcarno = case when '#non'=[5] then '' else [5] end
+set @t_ecarno = case when '#non'=[6] then char(255) else [6] end
+set @t_xshow = case when '#non'=[9] then '' else [9] end
+set @t_bnoa = case when '#non'=[11] then '' else [11] end
+set @t_xtype = case when '#non'=[12] then '' else [12] end
+set @t_bdate2 = case when '#non'=[13] then '' else [13] end
+set @t_edate2 = case when '#non'=[14] then char(255) else [14] end
+set @t_bcustno = case when '#non'=[17] then '' else [17] end
+set @t_ecustno = case when '#non'=[18] then char(255) else [18] end
+declare @tmp table(
+    gno nvarchar(1),
+	rx nvarchar(20),
+	rr int,
+	noa nvarchar(50),
+	datea nvarchar(10),
+	custno nvarchar(50),
+	comp nvarchar(100),
+	addrno nvarchar(50),
+	addr nvarchar(200),
+	addrmemo nvarchar(max),
+	po nvarchar(50),
+	typea nvarchar(20),
+	uno nvarchar(50),
+	productno nvarchar(50),
+	product nvarchar(100),
+	unit nvarchar(50),
+	uweight float,
+	tweight int,
+	weight float,
+	mount float,
+	price1 float,
+	price2 float,
+	addrno2 nvarchar(50),
+	addr2 nvarchar(200),
+	address2 nvarchar(max),
+	carno nvarchar(20),
+	driverno nvarchar(20),
+	driver nvarchar(20),
+	tranno nvarchar(50),
+	trandate nvarchar(10),
+	ed nvarchar(10),
+	memo nvarchar(max),
+	tranvcceno nvarchar(50)
+)
+if(len(@t_bnoa)!=0)
+begin
+	set @t_bdate = case when '#non'='#non' then '' else '#non' end
+	set @t_edate = case when '#non'='#non' then char(255) else '#non' end
+end
+
+if(@t_xshow='1')
+begin
+	insert @tmp
+	select '0','','',a.noa,a.date1,a.custno,a.nick,b.addrno,dbo.charbr(b.addr,24.5),dbo.charbr(d.memo,24.5),a.po, 
+	b.typea,b.uno,b.productno,b.product,b.unit,b.weight,b.theight,b.tvolume,b.mount, 
+	b.total2,b.total3,b.addrno2,dbo.charbr(b.addr2,10),b.address2,c.carno,c.driverno,c.driver,b.tranno,b.trandate,b.date2,dbo.charbr(b.memo,24.5),c.noa 
+	from view_tranorde a left join view_tranordes b on a.noa=b.noa 
+	left join view_tranvcces c on c.ordeno=b.noa and c.no2=b.noa
+	outer apply(select top 1 memo from addr2 where custno=b.addrno order by sdate desc)d
+	where (b.date1 between @t_bdate and @t_edate) and (b.date2 between @t_bdate2 and @t_edate2)
+	and (isnull(c.carno,'') between @t_bcarno and @t_ecarno)
+	and isnull(c.noa,'')!=''
+	and (len(@t_bnoa)=0 or caseno=@t_bnoa)
+	and (b.calctype=@t_xtype or len(@t_xtype)=0)
+	and (a.custno between @t_bcustno and @t_ecustno)
+end
+else
+begin
+	insert @tmp
+	select '0','','',a.noa,a.date1,a.custno,a.nick,b.addrno,dbo.charbr(b.addr,24.5),dbo.charbr(d.memo,24.5),a.po, 
+	b.typea,b.uno,b.productno,b.product,b.unit,b.weight,b.theight,b.tvolume,b.mount, 
+	b.total2,b.total3,b.addrno2,dbo.charbr(b.addr2,10),b.address2,c.carno,c.driverno,c.driver,b.tranno,b.trandate,b.date2,dbo.charbr(b.memo,24.5),c.noa 
+	from view_tranorde a left join view_tranordes b on a.noa=b.noa 
+	left join view_tranvcces c on c.ordeno=b.noa and c.no2=b.noa
+	outer apply(select top 1 memo from addr2 where custno=b.addrno order by sdate desc)d
+	where (b.date1 between @t_bdate and @t_edate) and (b.date2 between @t_bdate2 and @t_edate2)
+	and (isnull(c.carno,'') between @t_bcarno and @t_ecarno)
+	and isnull(c.noa,'')=''
+	and (len(@t_bnoa)=0 or a.po=@t_bnoa)
+	and (b.calctype=@t_xtype or len(@t_xtype)=0)
+	and (a.custno between @t_bcustno and @t_ecustno)
+end
+
+update a
+set rr=rx,noa=case when rx!=1 then '' else noa end
+from (select ROW_NUMBER()over(partition by noa order by custno,datea )rx,rr,noa from @tmp)a
+
+update a
+set rx=ra
+from (select ROW_NUMBER()over(partition by gno order by custno,datea )ra,rx from @tmp where rr=1)a
+
+select
+dbo.charbr(noa,7) noa
+,dbo.charbr(typea,4) typea
+,dbo.getComma(uweight,2)uweight
+,dbo.getComma(weight,2)weight
+,dbo.getComma(tweight,0)tweight
+,dbo.getComma(mount,0)mount
+,dbo.getComma(price1,0)price1
+,dbo.getComma(price2,0)price2     
+,* from @tmp
+order by ed,addrno2
+;
+---------------------------------------------------------------------------------------------------
+z_tran_wj4:--z_tran_wj4
+SET QUOTED_IDENTIFIER OFF 
+declare @t_bdate nvarchar(10) 
+declare @t_edate nvarchar(10) 
+declare @t_bcarno nvarchar(20) 
+declare @t_ecarno nvarchar(20) 
+declare @t_xshow nvarchar(10)
+declare @t_bdate2 nvarchar(10)
+declare @t_edate2 nvarchar(10)
+declare @t_bdriverno nvarchar(10)
+declare @t_edriverno nvarchar(10)
+declare @t_showtotal nvarchar(10)
+declare @t_bcustno nvarchar(10)
+declare @t_ecustno nvarchar(10)
+set @t_bdate = case when '#non'=[2] then '' else [2] end
+set @t_edate = case when '#non'=[3] then char(255) else [3] end
+set @t_bcarno = case when '#non'=[5] then '' else [5] end
+set @t_ecarno = case when '#non'=[6] then char(255) else [6] end
+set @t_xshow = case when '#non'=[10] then 0 else [10] end
+set @t_bdate2 = case when '#non'=[13] then '' else [13] end
+set @t_edate2 = case when '#non'=[14] then char(255) else [14] end
+set @t_bdriverno = case when '#non'=[7] then '' else [7] end
+set @t_edriverno = case when '#non'=[8] then char(255) else [8] end
+set @t_showtotal = case when '#non'=[15] then 0 else [15] end
+set @t_bcustno = case when '#non'=[17] then '' else [17] end
+set @t_ecustno = case when '#non'=[18] then char(255) else [18] end
+declare @tmp table( 
+	gno nvarchar(1), 
+	rx nvarchar(20),
+	rr int,
+	noa nvarchar(50),
+	datea nvarchar(10), 
+	custno nvarchar(50), 
+	comp nvarchar(100), 
+	addrno nvarchar(50), 
+	addr nvarchar(200), 
+	po nvarchar(50), 
+	typea nvarchar(20), 
+	uno nvarchar(50), 
+	productno nvarchar(50), 
+	product nvarchar(100), 
+	unit nvarchar(20), 
+	uweight float, 
+	tweight float, 
+	mount float,
+	price float,
+	price1 float, 
+	price2 float,
+	total float,
+	total2 float,
+	addrno2 nvarchar(50), 
+	addr2 nvarchar(200),
+	addrno3 nvarchar(50), 
+	addr3 nvarchar(200),  
+	carno nvarchar(20), 
+	driverno nvarchar(20), 
+	driver nvarchar(20), 
+	tranno nvarchar(50), 
+	ed nvarchar(10),
+	date2 nvarchar(10), 
+	memo nvarchar(max),
+	carplate nvarchar(50),
+	time1 nvarchar(10),
+	time2 nvarchar(10),
+	t1 nvarchar(10),
+	t2 nvarchar(10),
+	lenghtb float,
+	ck1 int,
+	ck2 int,
+	ck3 int,
+	ck4 int,
+	ordeno nvarchar(50),
+	no2 nvarchar(50)
+) 
+insert @tmp
+select '9','','',a.noa,b.bdate,b.custno,c.nick,b.addrno,b.addr,b.conn,b.typea,b.uno,
+b.productno,b.product,b.unit,b.uweight,b.weight,b.mount,b.volume,b.tvolume,b.theight,
+case when @t_showtotal=1 then b.total else null end
+,b.total2,b.addrno2,b.addr2,b.addrno3,b.addr3,b.carno,b.driverno,b.driver,b.tranno
+,b.edate,cast(b.lng as nvarchar(10)),b.memo,b.lng2,
+case when @t_xshow=1 then b.time2 end,case when @t_xshow=1 then b.time1 end,
+case when @t_xshow=1 then '卸貨時間' end,case when @t_xshow=1 then '提貨時間' end
+,b.lengthb,b.chk1,b.chk2,b.chk3,b.chk4,b.ordeno,b.no2
+from view_tranvcce a left join view_tranvcces b on a.noa=b.noa
+left join cust c on b.custno=c.noa
+where (b.bdate between @t_bdate and @t_edate) and (b.edate between @t_bdate2 and @t_edate2)
+and(b.carno between @t_bcarno and @t_ecarno)
+and(b.driverno between @t_bdriverno and @t_edriverno)
+and (a.addrno between @t_bcustno and @t_ecustno)
+
+update @tmp
+set ck1=b.ck1,ck2=b.ck2,ck3=b.ck3,ck4=b.ck4
+from @tmp a
+outer apply(select ordeno,no2,max(ck1)ck1,max(ck2)ck2,max(ck3)ck3,max(ck3)ck4 from @tmp where a.ordeno=ordeno and a.no2=no2 group by ordeno,no2)b
+
+if(@t_xshow='1')
+begin
+	insert @tmp
+	select '0',rx,rr,noa,datea,custno,comp,addrno,addr,po,typea,uno,productno,product,unit,uweight,tweight,mount,price,price1,price2
+		   ,total,total2,addrno2,addr2,addrno3,addr3,carno,driverno,driver,tranno,ed,date2,memo,carplate,time1,time2,t1,t2,lenghtb
+		   ,ck1,ck2,ck3,ck4,ordeno,no2
+	from @tmp
+	where ck3='1' and ck2='1'
+end
+else
+begin
+	insert @tmp
+	select '0',rx,rr,noa,datea,custno,comp,addrno,addr,po,typea,uno,productno,product,unit,uweight,tweight,mount,price,price1,price2
+		   ,total,total2,addrno2,addr2,addrno3,addr3,carno,driverno,driver,tranno,ed,date2,memo,carplate,time1,time2,t1,t2,lenghtb
+		   ,ck1,ck2,ck3,ck4,ordeno,no2
+	from @tmp
+	where ck2='0'
+end
+
+delete @tmp where gno='9'
+
+update a
+set rr=rx,noa=case when rx!=1 then '' else noa end
+from (select ROW_NUMBER()over(partition by noa order by datea,custno)rx,rr,noa from @tmp)a
+
+update a
+set rx=ra
+from (select ROW_NUMBER()over(partition by gno order by datea,custno)ra,rx from @tmp where rr=1)a
+
+select 
+dbo.getComma(uweight,2)uweight
+,dbo.getComma(tweight,2)tweight
+,dbo.getComma(mount,0)mount
+,dbo.getComma(price,0)price
+,dbo.getComma(price1,0)price1
+,dbo.getComma(price2,0)price2
+,dbo.getComma(total,0)total
+,dbo.getComma(total2,0)total2
+,dbo.getComma(lenghtb,2)lenghtb
+,* from @tmp
+order by datea,custno
+;
+--------------------------------------------------------------------------------------
+z_tran_wj5:--z_tran_wj5
+SET QUOTED_IDENTIFIER OFF
+declare @t_bdate nvarchar(10)
+declare @t_edate nvarchar(10)
+declare @t_bcarno nvarchar(10)
+declare @t_ecarno nvarchar(10)
+declare @t_bdriverno nvarchar(10)
+declare @t_edriverno nvarchar(10)
+set @t_bdate = case when '#non'=[2] then '' else [2] end
+set @t_edate = case when '#non'=[3] then char(255) else [3] end
+set @t_bcarno = case when '#non'=[5] then '' else [5] end
+set @t_ecarno = case when '#non'=[6] then char(255) else [6] end
+set @t_bdriverno = case when '#non'=[7] then '' else [7] end
+set @t_edriverno = case when '#non'=[8] then char(255) else [8] end
+
+IF OBJECT_ID('tempdb..#tmp')is not null
+BEGIN
+	drop table #tmp
+END
+IF OBJECT_ID('tempdb..#result')is not null
+BEGIN
+	drop table #result
+END
+
+create table #tmp(
+	gno nvarchar(1),
+	rr int,
+	triptype nvarchar(10),
+	cardeal nvarchar(50),
+	carno nvarchar(50),
+	driverno nvarchar(50),
+	driver nvarchar(50),
+	edate nvarchar(10),
+	comp nvarchar(50),
+	product nvarchar(100),
+	addr nvarchar(100),
+	carplate nvarchar(50),
+	driver2 nvarchar(50)
+)
+insert #tmp 
+select '9','',a.unit2 
+,case b.cardealno when '01' then '聯結車' when '04' then '卡車' 
+when '07' then '外車' when '08' then '文揚' when '09' then '欣城' when '10' then '達運' when '11' then '中鋼班' 
+else '' end 
+,a.carno,a.driverno,a.driver,a.edate,c.nick,a.product 
+,addr+(SELECT case when len(addr2)=0 then '' else '/'+addr2 end from view_tranvcces 
+where unit2=a.unit2 and carno=a.carno 
+and driver=a.driver and edate=a.edate and custno=a.custno and productno=a.productno 
+and addrno=a.addrno and addrno=a.addrno
+group by addr2
+FOR XML PATH('')) 
+,(SELECT case when len(lng2)=0 then '' else '/'+cast(lng2 AS NVARCHAR )end from view_tranvcces 
+where unit2=a.unit2 and carno=a.carno 
+and driver=a.driver and edate=a.edate and custno=a.custno and productno=a.productno 
+and addrno=a.addrno and addrno=a.addrno
+group by lng2
+FOR XML PATH('')) 
+,a.tel 
+from view_tranvcces a 
+left join car2 b on a.carno=b.noa 
+left join cust c on a.custno=c.noa 
+where (a.edate between @t_bdate and @t_edate) 
+and(a.carno between @t_bcarno and @t_ecarno) 
+and(a.driverno between @t_bdriverno and @t_edriverno) 
+
+insert #tmp
+select '0','',triptype,cardeal,carno,driverno,driver,edate,comp,product,addr,carplate,driver2
+from #tmp
+group by triptype,cardeal,carno,driverno,driver,edate,comp,product,addr,carplate,driver2
+
+delete #tmp where gno='9'
+
+update a
+set rr=rx
+from (select ROW_NUMBER()over(partition by triptype,cardeal,carno,driverno,edate order by edate,cardeal,carno,driverno)rx,rr from #tmp)a
+
+create table #result(
+	gno nvarchar(1),
+	rr int,
+	triptype nvarchar(10),
+	cardeal nvarchar(50),
+	carno nvarchar(50),
+	driverno nvarchar(50),
+	driver nvarchar(50),
+	edate nvarchar(10),
+	comp1 nvarchar(50),
+	product1 nvarchar(100),
+	addr1 nvarchar(100),
+	carplate1 nvarchar(50),
+	driver2 nvarchar(50),
+	edate2 nvarchar(10),
+	comp2 nvarchar(50),
+	product2 nvarchar(100),
+	addr2 nvarchar(100),
+	carplate2 nvarchar(50)
+)
+insert #result(gno,rr,triptype,cardeal,carno,driverno,driver,edate,comp1,product1,addr1,carplate1,driver2)
+select '0',rr,triptype,cardeal,carno,driverno,driver,edate,comp,product,addr,substring(carplate,2,len(carplate)),driver2
+from #tmp
+where triptype<2
+
+update #result
+set edate2=b.edate,comp2=b.comp,product2=b.product,addr2=b.addr,carplate2=substring(b.carplate,2,len(b.carplate))
+from #result a
+outer apply(select * from #tmp where rr=a.rr and a.cardeal=cardeal and a.carno=carno and a.driverno=driverno and a.edate=edate and triptype='2')b
+
+insert #result(gno,cardeal,edate)
+select '1',char(255),edate
+from #result
+group by edate
+
+insert #result(gno,cardeal,edate)
+select '2',char(255),edate
+from #result
+group by edate
+
+select 
+RIGHT(edate,5)ed1,
+RIGHT(edate2,5)ed2,
+left(edate,3)+' 年 '+substring(edate,5,2)+' 月 '+RIGHT(edate,2)+' 日' year,
+* from #result
+order by edate,cardeal,carno,driverno,gno
+
+IF OBJECT_ID('tempdb..#tmp')is not null
+BEGIN
+	drop table #tmp
+END
+IF OBJECT_ID('tempdb..#result')is not null
+BEGIN
+	drop table #result
+END
+;
+---------------------------------------------------------------------------------------------------
+z_tran_wj6:--z_tran_wj6
+SET QUOTED_IDENTIFIER OFF
+declare @t_bdate nvarchar(10)
+declare @t_edate nvarchar(10)
+declare @t_bcarno nvarchar(10)
+declare @t_ecarno nvarchar(10)
+declare @t_bdriverno nvarchar(10)
+declare @t_edriverno nvarchar(10)
+set @t_bdate = case when '#non'=[2] then '' else [2] end
+set @t_edate = case when '#non'=[3] then char(255) else [3] end
+set @t_bcarno = case when '#non'=[5] then '' else [5] end
+set @t_ecarno = case when '#non'=[6] then char(255) else [6] end
+set @t_bdriverno = case when '#non'=[7] then '' else [7] end
+set @t_edriverno = case when '#non'=[8] then char(255) else [8] end
+
+IF OBJECT_ID('tempdb..#tmp')is not null
+BEGIN
+	drop table #tmp
+END
+IF OBJECT_ID('tempdb..#result')is not null
+BEGIN
+	drop table #result
+END
+
+create table #tmp(
+	custno nvarchar(50),
+	comp nvarchar(50),
+	comp2 nvarchar(50),
+	addrno nvarchar(50),
+	addr nvarchar(50),
+	productno nvarchar(50),
+	product nvarchar(50),
+	uweight float,
+	mount float,
+	unit nvarchar(20),
+	weight float,
+	carno nvarchar(50),
+	driverno nvarchar(50),
+	driver nvarchar(50),
+	addrno2 nvarchar(50),
+	addr2 nvarchar(50),
+	carno2 nvarchar(50),
+	driverno2 nvarchar(50),
+	driver2 nvarchar(50),
+	typea nvarchar(50),
+	ed nvarchar(10),
+	memo nvarchar(max),
+	carplate nvarchar(50),
+	memo2 nvarchar(max),
+	tranno nvarchar(50),
+	datea nvarchar(10)							
+)
+insert #tmp
+select b.custno,b.cust,c.nick,b.addrno
+,SUBSTRING(b.addr,CHARINDEX('-',b.addr)+1,LEN(b.addr)-CHARINDEX('-',b.addr))
+,b.productno,b.product,b.uweight,b.mount,b.unit,b.weight,b.carno,b.driverno,b.driver,b.addrno2
+,SUBSTRING(b.addr2,CHARINDEX('-',b.addr2)+1,LEN(b.addr2)-CHARINDEX('-',b.addr2))
+,'','','',cast(d.rate as nvarchar(10))+'T~'+cast(d.rate2 as nvarchar(10))+'T',b.edate
+,isnull(b.memo,'')+isnull(c.memo2,''),b.lng2,d.memo,b.tranno,b.bdate
+from view_tranvcce a left join view_tranvcces b on a.noa=b.noa
+left join cust c on b.addrno2=c.noa
+outer apply(select top 1 sb.rate,sb.rate2,sa.memo from addr2 sa left join addr2s sb on sa.noa=sb.noa where sa.datea<=a.datea and a.addrno=sa.custno and b.typea=sb.carno and b.volume=sb.value)d
+where b.chk1='1'
+and(b.bdate between @t_bdate and @t_edate)
+and(b.carno between @t_bcarno and @t_ecarno)
+and(b.driverno between @t_bdriverno and @t_edriverno)
+
+insert #tmp
+select b.custno,b.cust,c.nick,b.addrno
+,SUBSTRING(b.addr,CHARINDEX('-',b.addr)+1,LEN(b.addr)-CHARINDEX('-',b.addr))
+,b.productno,b.product,b.uweight,b.mount,b.unit,b.weight,'','','',b.addrno2
+,SUBSTRING(b.addr2,CHARINDEX('-',b.addr2)+1,LEN(b.addr2)-CHARINDEX('-',b.addr2))
+,b.carno,b.driverno,b.driver,cast(d.rate as nvarchar(10))+'T~'+cast(d.rate2 as nvarchar(10))+'T'
+,b.edate,isnull(b.memo,'')+isnull(c.memo2,''),b.lng2,d.memo,b.tranno,b.bdate
+from view_tranvcce a left join view_tranvcces b on a.noa=b.noa
+left join cust c on b.addrno2=c.noa
+outer apply(select top 1 sb.rate,sb.rate2,sa.memo from addr2 sa left join addr2s sb on sa.noa=sb.noa where sa.datea<=a.datea and a.addrno=sa.custno and b.typea=sb.carno and b.volume=sb.value)d
+where b.chk2='1'
+and(b.bdate between @t_bdate and @t_edate)
+and(b.carno between @t_bcarno and @t_ecarno)
+and(b.driverno between @t_bdriverno and @t_edriverno)
+
+create table #result(
+	gno nvarchar(1),
+	custno nvarchar(50),
+	comp nvarchar(50),
+	comp2 nvarchar(50),
+	addrno nvarchar(50),
+	addr nvarchar(50),
+	productno nvarchar(50),
+	product nvarchar(50),
+	uweight float,
+	mount float,
+	unit nvarchar(20),
+	weight float,
+	carno nvarchar(50),
+	driverno nvarchar(50),
+	driver nvarchar(50),
+	addrno2 nvarchar(50),
+	addr2 nvarchar(50),
+	carno2 nvarchar(50),
+	driverno2 nvarchar(50),
+	driver2 nvarchar(50),
+	typea nvarchar(50),
+	ed nvarchar(10),
+	memo nvarchar(max),
+	carplate nvarchar(50),
+	memo2 nvarchar(max),
+	tranno nvarchar(50),
+	datea nvarchar(10)								
+) 
+insert #result
+select '0',custno,comp,comp2,addrno,addr,productno,product,uweight,mount,unit,weight,MAX(carno),MAX(driverno),MAX(driver)
+,addrno2,addr2,MAX(carno2),MAX(driverno2),MAX(driver2),dbo.charbr(typea,4),RIGHT(ed,5),memo,carplate,memo2,tranno,datea
+from #tmp
+group by custno,comp,comp2,addrno,addr,productno,product,uweight,mount,unit,weight,addrno2,addr2,typea,ed,memo,carplate,memo2,tranno,datea
+
+insert #result(gno,custno,addrno,addrno2,carno,driverno,carno2,driverno2,tranno,datea,memo2)
+select '1',custno,addrno,addrno2,carno,driverno,carno2,driverno2,tranno,datea,memo2
+from #result
+group by custno,addrno,addrno2,datea,carno,driverno,carno2,tranno,driverno2,memo2
+
+insert #result(gno,custno,addrno,addrno2,carno,driverno,carno2,driverno2,tranno,datea)
+select '2',custno,addrno,addrno2,carno,driverno,carno2,driverno2,tranno,datea
+from #result
+group by custno,addrno,addrno2,datea,carno,driverno,carno2,tranno,driverno2
+
+select * from #result
+order by tranno,custno,addrno,addrno2,datea,carno,driverno,gno
+
+IF OBJECT_ID('tempdb..#tmp')is not null
+BEGIN
+	drop table #tmp
+END
+IF OBJECT_ID('tempdb..#result')is not null
+BEGIN
+	drop table #result
+END
+;
+---------------------------------------------------------------------------------------------------
+z_tran_wj7:--z_tran_wj7
+SET QUOTED_IDENTIFIER OFF
+declare @t_bdate nvarchar(10)
+declare @t_edate nvarchar(10)
+declare @t_bcarno nvarchar(10)
+declare @t_ecarno nvarchar(10)
+declare @t_bdriverno nvarchar(10)
+declare @t_edriverno nvarchar(10)
+set @t_bdate = case when '#non'=[2] then '' else [2] end
+set @t_edate = case when '#non'=[3] then char(255) else [3] end
+set @t_bcarno = case when '#non'=[5] then '' else [5] end
+set @t_ecarno = case when '#non'=[6] then char(255) else [6] end
+set @t_bdriverno = case when '#non'=[7] then '' else [7] end
+set @t_edriverno = case when '#non'=[8] then char(255) else [8] end
+
+IF OBJECT_ID('tempdb..#tmp')is not null
+BEGIN
+	drop table #tmp
+END
+IF OBJECT_ID('tempdb..#result')is not null
+BEGIN
+	drop table #result
+END
+
+create table #tmp(
+	custno nvarchar(50),
+	comp nvarchar(50),
+	comp2 nvarchar(50),
+	addrno nvarchar(50),
+	addr nvarchar(50),
+	productno nvarchar(50),
+	product nvarchar(50),
+	uweight float,
+	mount float,
+	unit nvarchar(20),
+	weight float,
+	carno nvarchar(50),
+	driverno nvarchar(50),
+	driver nvarchar(50),
+	addrno2 nvarchar(50),
+	addr2 nvarchar(50),
+	carno2 nvarchar(50),
+	driverno2 nvarchar(50),
+	driver2 nvarchar(50),
+	typea nvarchar(50),
+	ed nvarchar(10),
+	memo nvarchar(max),
+	carplate nvarchar(50),
+	memo2 nvarchar(max),
+	tranno nvarchar(50),
+	datea nvarchar(10)							
+)
+insert #tmp
+select b.custno,b.cust,c.nick,b.addrno
+,SUBSTRING(b.addr,CHARINDEX('-',b.addr)+1,LEN(b.addr)-CHARINDEX('-',b.addr))
+,b.productno,b.product,b.uweight,b.mount,b.unit,b.weight,b.carno,b.driverno,b.driver,b.addrno2
+,SUBSTRING(b.addr2,CHARINDEX('-',b.addr2)+1,LEN(b.addr2)-CHARINDEX('-',b.addr2))
+,'','','',cast(d.rate as nvarchar(10))+'T~'+cast(d.rate2 as nvarchar(10))+'T',b.edate
+,isnull(b.memo,'')+isnull(c.memo2,''),b.lng2,d.memo,b.tranno,b.bdate
+from view_tranvcce a left join view_tranvcces b on a.noa=b.noa
+left join cust c on b.addrno2=c.noa
+outer apply(select top 1 sb.rate,sb.rate2,sa.memo from addr2 sa left join addr2s sb on sa.noa=sb.noa where sa.datea<=a.datea and a.addrno=sa.custno and b.typea=sb.carno and b.volume=sb.value)d
+where b.chk1='1'
+and(b.bdate between @t_bdate and @t_edate)
+and(b.carno between @t_bcarno and @t_ecarno)
+and(b.driverno between @t_bdriverno and @t_edriverno)
+
+insert #tmp
+select b.custno,b.cust,c.nick,b.addrno
+,SUBSTRING(b.addr,CHARINDEX('-',b.addr)+1,LEN(b.addr)-CHARINDEX('-',b.addr))
+,b.productno,b.product,b.uweight,b.mount,b.unit,b.weight,'','','',b.addrno2
+,SUBSTRING(b.addr2,CHARINDEX('-',b.addr2)+1,LEN(b.addr2)-CHARINDEX('-',b.addr2))
+,b.carno,b.driverno,b.driver,cast(d.rate as nvarchar(10))+'T~'+cast(d.rate2 as nvarchar(10))+'T'
+,b.edate,isnull(b.memo,'')+isnull(c.memo2,''),b.lng2,d.memo,b.tranno,b.bdate
+from view_tranvcce a left join view_tranvcces b on a.noa=b.noa
+left join cust c on b.addrno2=c.noa
+outer apply(select top 1 sb.rate,sb.rate2,sa.memo from addr2 sa left join addr2s sb on sa.noa=sb.noa where sa.datea<=a.datea and a.addrno=sa.custno and b.typea=sb.carno and b.volume=sb.value)d
+where b.chk2='1'
+and(b.bdate between @t_bdate and @t_edate)
+and(b.carno between @t_bcarno and @t_ecarno)
+and(b.driverno between @t_bdriverno and @t_edriverno)
+
+create table #result(
+	gno nvarchar(1),
+	custno nvarchar(50),
+	comp nvarchar(50),
+	comp2 nvarchar(50),
+	addrno nvarchar(50),
+	addr nvarchar(50),
+	productno nvarchar(50),
+	product nvarchar(50),
+	uweight float,
+	mount float,
+	unit nvarchar(20),
+	weight float,
+	carno nvarchar(50),
+	driverno nvarchar(50),
+	driver nvarchar(50),
+	addrno2 nvarchar(50),
+	addr2 nvarchar(50),
+	carno2 nvarchar(50),
+	driverno2 nvarchar(50),
+	driver2 nvarchar(50),
+	typea nvarchar(50),
+	ed nvarchar(10),
+	memo nvarchar(max),
+	carplate nvarchar(50),
+	memo2 nvarchar(max),
+	tranno nvarchar(50),
+	datea nvarchar(10)								
+) 
+insert #result
+select '0',custno,comp,comp2,addrno,addr,productno,product,uweight,mount,unit,weight,MAX(carno),MAX(driverno),MAX(driver)
+,addrno2,addr2,MAX(carno2),MAX(driverno2),MAX(driver2),dbo.charbr(typea,4),RIGHT(ed,5),memo,carplate,memo2,tranno,datea
+from #tmp
+group by custno,comp,comp2,addrno,addr,productno,product,uweight,mount,unit,weight,addrno2,addr2,typea,ed,memo,carplate,memo2,tranno,datea
+
+insert #result(gno,custno,addrno,addrno2,carno,driverno,carno2,driverno2,tranno,datea,carplate,memo2)
+select '1',custno,addrno,addrno2,carno,driverno,carno2,driverno2,tranno,datea,carplate,memo2
+from #result
+group by custno,addrno,addrno2,datea,carno,driverno,carno2,tranno,driverno2,carplate,memo2
+
+insert #result(gno,custno,addrno,addrno2,carno,driverno,carno2,driverno2,tranno,carplate,datea)
+select '2',custno,addrno,addrno2,carno,driverno,carno2,driverno2,tranno,carplate,datea
+from #result
+group by custno,addrno,addrno2,datea,carno,driverno,carno2,tranno,carplate,driverno2
+
+select 
+left(datea,3)+' 年 '+substring(datea,5,2)+' 月 '+RIGHT(datea,2)+' 日' year
+,* from #result
+order by tranno,custno,addrno,addrno2,datea,carno,driverno,gno
+
+IF OBJECT_ID('tempdb..#tmp')is not null
+BEGIN
+	drop table #tmp
+END
+IF OBJECT_ID('tempdb..#result')is not null
+BEGIN
+	drop table #result
+END
+;
+---------------------------------------------------------------------------------------------------
+z_tran_wj8:--z_tran_wj8
+declare @t_bdate nvarchar(10)
+declare @t_edate nvarchar(10)
+declare @t_bcarno nvarchar(10)
+declare @t_ecarno nvarchar(10)
+declare @t_bdriverno nvarchar(10)
+declare @t_edriverno nvarchar(10)
+declare @t_xtype nvarchar(10)
+declare @t_ponoa nvarchar(max)
+set @t_bdate = case when '#non'=[2] then '' else [2] end
+set @t_edate = case when '#non'=[3] then char(255) else [3] end
+set @t_bcarno = case when '#non'=[5] then '' else [5] end
+set @t_ecarno = case when '#non'=[6] then char(255) else [6] end
+set @t_bdriverno = case when '#non'=[7] then '' else [7] end
+set @t_edriverno = case when '#non'=[8] then char(255) else [8] end
+set @t_xtype = case when '#non'=[12] then '' else [12] end
+set @t_ponoa = case when '#non'=[16] then '' else [16]+',' end 
+
+declare @tmp table( 
+gno nvarchar(1), 
+noq int, 
+datea nvarchar(20), 
+typea nvarchar(20), 
+y nvarchar(3), 
+m nvarchar(3), 
+d nvarchar(3), 
+carno nvarchar(30), 
+noa nvarchar(30), 
+cust nvarchar(30), 
+productno nvarchar(30), 
+weight float, 
+driver nvarchar(30), 
+address nvarchar(100) 
+) 
+insert into @tmp (gno,noq,datea,typea,carno,noa,cust,productno,weight,y,m,d,driver,address) 
+select '0',ROW_NUMBER()over(partition by b.bdate,b.carno order by b.carno),b.bdate,b.calctype,b.carno,b.conn,b.addr2,b.product,c.tvolume/1000, 
+SUBSTRING(b.bdate,1,3),SUBSTRING(b.bdate,5,2),SUBSTRING(b.bdate,8,2),b.driver,b.addr 
+from view_tranvcce a 
+left join view_tranvcces b on a.noa=b.noa 
+left join view_tranordes c on b.ordeno=c.noa and b.no2 = c.noq 
+where b.custno like '029%' and 
+b.bdate between @t_bdate and @t_edate and 
+b.carno between @t_bcarno and @t_ecarno and 
+b.driverno between @t_bdriverno and @t_edriverno and 
+(len(@t_ponoa)=0 or CHARINDEX(b.conn+',',@t_ponoa)>0) and 
+(b.calctype = @t_xtype or len(@t_xtype)=0) 
+
+DECLARE MyCursor Cursor FOR 
+select y,m,d,carno,count(1) a from @tmp group by carno,y,m,d 
+Open MyCursor 
+declare @y nvarchar(25) 
+declare @m nvarchar(25) 
+declare @d nvarchar(25) 
+declare @carno nvarchar(25) 
+declare @a int 
+declare @i int 
+declare @j int 
+Fetch NEXT FROM MyCursor INTO @y,@m,@d,@carno,@a 
+While (@@FETCH_STATUS <> -1) 
+BEGIN	--內容 
+set @i=0 
+set @j=0 
+while (@i < 11-@a%11 and @a%11!=0) 
+begin 
+insert into @tmp (gno,noq,y,m,d,carno) values('1','99',@y,@m,@d,@carno) 
+set @i=@i+1 
+end 
+while (@j <@a/11 and @a>11 and @a%11!=0) 
+begin 
+insert into @tmp (gno,noq,y,m,d,carno) values('2',@a-@a%11,@y,@m,@d,@carno) 
+insert into @tmp (gno,noq,y,m,d,carno) values('3',@a-@a%11,@y,@m,@d,@carno) 
+set @j=@j+1 
+end 
+Fetch NEXT FROM MyCursor INTO @y,@m,@d,@carno,@a 
+END	--內容END 
+CLOSE MyCursor 
+DEALLOCATE MyCursor 
+
+insert into @tmp(gno,noq,y,m,d,weight,carno) 
+select '2','999',y,m,d,SUM(weight),carno from @tmp 
+where gno='0' 
+group by carno,y,m,d 
+
+insert into @tmp(gno,noq,y,m,d,weight,carno) 
+select '3','999',y,m,d,SUM(weight),carno from @tmp 
+where gno='0' 
+group by carno,y,m,d 
+
+update a set a.driver = c.namea 
+from @tmp a 
+outer apply (select * from car2 where a.carno=noa)b 
+outer apply (select * from driver where b.driverno=noa)c 
+where gno='2' 
+
+select * from @tmp 
+order by y desc,m desc,d desc,carno,noq,gno,noa;
+---------------------------------------------------------------------------------------------
+z_tran_wj9:--z_tran_wj9
+declare @t_bdate nvarchar(10)
+declare @t_edate nvarchar(10)
+declare @t_bcustno nvarchar(10)
+declare @t_ecustno nvarchar(10)
+declare @t_xtype nvarchar(10)
+declare @t_xshow nvarchar(10)
+
+set @t_bdate = case when '#non'=[2] then '' else [2] end
+set @t_edate = case when '#non'=[3] then char(255) else [3] end
+set @t_xtype = case when '#non'=[12] then '' else [12] end
+set @t_bcustno = case when '#non'=[17] then '' else [17] end
+set @t_ecustno = case when '#non'=[18] then char(255) else [18] end
+set @t_xshow = case when '#non'=[19] then '' else [19] end
+
+declare @tmp table(
+	gno nvarchar(1),
+	noa nvarchar(50),
+	noq nvarchar(10), 
+	custno nvarchar(50),
+	comp nvarchar(100),
+	po nvarchar(50),
+	addrno nvarchar(50),
+	addr1 nvarchar(max),
+	addrno2 nvarchar(50),
+	addr2 nvarchar(max),
+	date1 nvarchar(20),
+	date2 nvarchar(20),
+	productno nvarchar(50),
+	product nvarchar(100),
+	unit nvarchar(50),
+	weight float,
+	uweight float,
+	mount float,
+	price float,
+	total float,
+	typea nvarchar(50),
+	chk4 nvarchar(10)
+)
+insert @tmp 
+select '0',a.noa,a.noq,a.conn,c.nick,a.caseno,a.addrno,a.addr,a.addrno2,a.addr2,a.date1,a.date2,a.productno,a.product 
+,a.unit2,a.theight,a.tvolume,a.mount,a.price,round(a.total,0) 
+,case when isnull(b.chk2,0)='1' and isnull(b.chk3,0)='1' then '完工' else (case when b.bdate=b.edate and isnull(b.chk3,0)='0' then '自裝自卸' else (case when isnull(b.chk2,0)='1' then '卸貨' else (case when isnull(b.chk4,0)='1' then '拉貨' else (case when isnull(b.chk1,0)='1' then '裝貨' else '' end) end) end) end) end 
+,'' 
+from view_tranordes a 
+left join view_tranorde d on a.noa=d.noa
+left join cust c on a.conn=c.noa 
+outer apply(select ordeno,no2,max(cast(chk1 as int))chk1,max(cast(chk2 as int))chk2,max(cast(chk3 as int))chk3,max(cast(chk4 as int))chk4,bdate,edate from view_tranvcces where a.noa=ordeno and a.noq=no2 group by ordeno,no2,bdate,edate)b 
+where (a.date1 between @t_bdate and @t_edate) 
+and (d.custno between @t_bcustno and @t_ecustno) 
+and (a.calctype=@t_xtype or len(@t_xtype)=0) 
+
+update @tmp
+set chk4=case when isnull(b.chk4,0)=1 then '有' else '無' end
+from @tmp sa
+outer apply(select max(cast(a.chk4 as int))chk4,b.ordeno,b.no2 from view_trans a left join view_tranvcces b on a.ordeno=b.noa and a.so=b.noq where sa.noa=b.ordeno and sa.noq=b.no2 group by b.ordeno,b.no2)b
+
+insert @tmp(gno,weight,uweight,total,po,date1)
+select '1',sum(isnull(weight,0)),sum(isnull(uweight,0)),sum(isnull(total,0)),char(255),char(255)
+from @tmp
+
+select 
+dbo.getComma(weight,0)weight
+,dbo.getComma(uweight,0)uweight
+,dbo.getComma(mount,0)mount
+,dbo.getComma(price,2)price
+,dbo.getComma(total,0)total
+,* from @tmp
+where (chk4=@t_xshow or len(@t_xshow)=0)
+order by date1,po
+;
