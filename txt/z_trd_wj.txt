@@ -237,7 +237,7 @@ update @tmp set [weight]=ROUND([weight],3)
 
 update @tmp set endaddr= case when charindex('市',endaddr)>0 or charindex('區',endaddr)>0 or charindex('鄉',endaddr)>0 then SUBSTRING(endaddr,charindex('市',endaddr)-2,2)+SUBSTRING(endaddr,charindex('區',endaddr)-2,2)+SUBSTRING(endaddr,charindex('鄉',endaddr)-2,2)
 							  when charindex('縣',endaddr)>0 or charindex('區',endaddr)>0 or charindex('鄉',endaddr)>0 then SUBSTRING(endaddr,charindex('縣',endaddr)-2,2)+SUBSTRING(endaddr,charindex('區',endaddr)-2,2)+SUBSTRING(endaddr,charindex('鄉',endaddr)-2,2)
-							  END
+							  else endaddr END
 
 select a.*,SUBSTRING(datea,1,3) as yy, SUBSTRING(datea,5,2) as mm,SUBSTRING(datea,5,5) as dateb 
 from @tmp a order by price,class,gno;
