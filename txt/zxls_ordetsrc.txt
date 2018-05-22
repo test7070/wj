@@ -4,7 +4,24 @@ declare @cmd nvarchar(max)
 declare @curdate nvarchar(max) = replace(substring(convert(nvarchar,getDate(),120),1,10),'-','/')
 declare @accy nvarchar(5)=cast(cast(left(@curdate,4)as int)-1911 as nvarchar)
 declare @worker nvarchar(max) = ''
-declare @tmp table(
+declare @msg nvarchar(max) = ''
+IF OBJECT_ID('tempdb..#tmp')is not null
+BEGIN
+	drop table #tmp
+END
+IF OBJECT_ID('tempdb..#tmps')is not null
+BEGIN
+	drop table #tmps
+END
+IF OBJECT_ID('tempdb..#tmpss')is not null
+BEGIN
+	drop table #tmpss
+END
+IF OBJECT_ID('tempdb..#tmpsss')is not null
+BEGIN
+	drop table #tmpsss
+END
+create table #tmp(
 noa nvarchar(30),
 custno nvarchar(30),
 comp nvarchar(30),
@@ -19,7 +36,7 @@ addr2 nvarchar(100),
 page nvarchar(10),
 mount float
 )
-declare @tmps table(
+create table #tmps(
 noa nvarchar(30),
 noq nvarchar(10),
 calctype nvarchar(10),
@@ -48,7 +65,7 @@ price float,
 total float,
 po nvarchar(30)
 )
-declare @tmpss table(
+create table #tmpss(
 noa nvarchar(30),
 noq nvarchar(10),
 calctype nvarchar(10),
@@ -83,7 +100,7 @@ memo2 nvarchar(max),
 theight float,
 po nvarchar(30)
 )
-declare @tmpsss table(
+create table #tmpsss(
 noa nvarchar(30),
 noq nvarchar(10),
 calctype nvarchar(10),
@@ -151,6 +168,9 @@ declare @po table(
 	npo nvarchar(30),
 	id INT PRIMARY KEY IDENTITY
 )
+declare @jg table(
+	noa nvarchar(30)
+)
 declare @noa nvarchar(max)
 declare @a nvarchar(max)
 declare @b nvarchar(max)
@@ -166,6 +186,7 @@ declare @k nvarchar(max)
 declare @l nvarchar(max)
 declare @page int = 0
 ----------------------------------------------------------------------------------------------------
+
 declare cursor_table cursor for
 select noa,a,b,c,d,e,f,g,h,i,j,k from ztmpxls order by CAST(noa as int)
 open cursor_table
@@ -178,7 +199,7 @@ begin
 	if(CHARINDEX('台橡',@b)>0 or CHARINDEX('台橡',@c)>0 or CHARINDEX('台橡',@d)>0 or CHARINDEX('台橡',@e)>0 or CHARINDEX('台橡',@f)>0 or CHARINDEX('台橡',@g)>0 or CHARINDEX('台橡',@h)>0)
 	begin
 		set @page = @page + 1
-		insert into @tmp (datea,page,custno,comp,nick) values(cast(cast(substring(REPLACE(@curdate,' ',''),1,4) as int)-1911 as nvarchar) + '/' + substring(REPLACE(@curdate,' ',''),6,2) + '/' + substring(REPLACE(@curdate,' ',''),9,2),@page,'029-004','世捷股份有限公司','世捷-移倉')
+		insert into #tmp (datea,page,custno,comp,nick) values(cast(cast(substring(REPLACE(@curdate,' ',''),1,4) as int)-1911 as nvarchar) + '/' + substring(REPLACE(@curdate,' ',''),6,2) + '/' + substring(REPLACE(@curdate,' ',''),9,2),@page,'029-004','世捷股份有限公司','世捷-移倉')
 	end
 	end try
 	begin catch
@@ -220,7 +241,7 @@ into @bnoa,@enoa,@page
 while(@@FETCH_STATUS <> -1)
 begin
 	begin try
-	insert into @tmps (calctype,noq,product,mount,tvolume,weight,uno,addrno3,addr3,page)
+	insert into #tmps (calctype,noq,product,mount,tvolume,weight,uno,addrno3,addr3,page)
 	select '移倉',ROW_NUMBER()over(partition by page order by a),c,
 	cast(replace(substring(h,1,CHARINDEX(CHAR(10),h)),CHAR(10),'')as float),
 	cast(replace(replace(substring(h,CHARINDEX(CHAR(10),h),len(h)),CHAR(10),''),',','')as float),
@@ -236,7 +257,7 @@ begin
 end
 close cursor_table
 deallocate cursor_table
-update @tmps set noq = RIGHT('000'+noq,3)
+update #tmps set noq = RIGHT('000'+noq,3)
 ----------------------------------------------------------------------------------------------------
 declare cursor_table cursor for
 select * from @tmpz
@@ -248,24 +269,24 @@ begin
 	begin try
 	if(CHARINDEX('單號',@b)>0)
 	begin
-		update @tmp set noa = @c,po=@c where page=@page
-		update @tmps set noa = @c,po=@c,caseno=@c where page=@page
+		update #tmp set noa = @c,po=@c where page=@page
+		update #tmps set noa = @c,po=@c,caseno=@c where page=@page
 	end
 	if(CHARINDEX('日',@h)>0)
 	begin
-		update @tmp set date1 = cast(cast(substring(REPLACE(@h,' ',''),1,4) as int)-1911 as nvarchar) + '/' + substring(REPLACE(@h,' ',''),6,2) + '/' + substring(REPLACE(@h,' ',''),9,2) where page=@page
-		update @tmps set date1 = cast(cast(substring(REPLACE(@h,' ',''),1,4) as int)-1911 as nvarchar) + '/' + substring(REPLACE(@h,' ',''),6,2) + '/' + substring(REPLACE(@h,' ',''),9,2),
+		update #tmp set date1 = cast(cast(substring(REPLACE(@h,' ',''),1,4) as int)-1911 as nvarchar) + '/' + substring(REPLACE(@h,' ',''),6,2) + '/' + substring(REPLACE(@h,' ',''),9,2) where page=@page
+		update #tmps set date1 = cast(cast(substring(REPLACE(@h,' ',''),1,4) as int)-1911 as nvarchar) + '/' + substring(REPLACE(@h,' ',''),6,2) + '/' + substring(REPLACE(@h,' ',''),9,2),
 						 date2 = cast(cast(substring(REPLACE(@h,' ',''),1,4) as int)-1911 as nvarchar) + '/' + substring(REPLACE(@h,' ',''),6,2) + '/' + substring(REPLACE(@h,' ',''),9,2)
 		where page=@page
 	end
 	if(CHARINDEX('淨重',@b)>0)
 	begin
-		update @tmp set tweight2 = replace(@f,',','') where page=@page
-		update @tmp set price2 = replace(@c,',','') where page=@page
-		update @tmp set mount = replace(@h,',','') where page=@page
+		update #tmp set tweight2 = replace(@f,',','') where page=@page
+		update #tmp set price2 = replace(@c,',','') where page=@page
+		update #tmp set mount = replace(@h,',','') where page=@page
 	end
 	if(CHARINDEX('倉庫',@b)>0)
-		update @tmps set addrno = @c,addr=@c,addrno2=@f,addr2=@f where page=@page
+		update #tmps set addrno = @c,addr=@c,addrno2=@f,addr2=@f where page=@page
 	end try
 	begin catch
 	end catch
@@ -274,161 +295,139 @@ begin
 end
 close cursor_table
 deallocate cursor_table
-update @tmps set conn='029-004',tel='世捷-移倉'
+update #tmps set conn='029-004',tel='世捷-移倉'
 
 update a set a.addrno=b.custno,area1=b.siteno,a.address=b.address,a.addr=b.addr
-from @tmps a outer apply(select * from addr2 where CHARINDEX(a.addr,addr)>0)b
+from #tmps a outer apply(select * from addr2 where CHARINDEX(a.addr,addr)>0)b
 
 update a set a.addrno2=b.custno,a.area2=b.siteno,a.address2=b.address,a.addr2=b.addr
-from @tmps a outer apply(select * from addr2 where CHARINDEX(a.addr2,addr)>0 and custno like '029%')b
+from #tmps a outer apply(select * from addr2 where CHARINDEX(a.addr2,addr)>0 and custno like '029%')b
 
 
 update a set a.price=c.value
-from @tmps a
-outer apply(select * from @tmp)b
+from #tmps a
+outer apply(select * from #tmp)b
 outer apply(select * from addr2s where addrno=b.custno and a.area1=address and a.area2=lng)c
 where a.noa=b.noa
 
-update @tmps set total = case when [tvolume]>0 then round(price*([tvolume]/1000),0) else 0 end
+update #tmps set total = case when [tvolume]>0 then round(price*([tvolume]/1000),0) else 0 end
 ----------------------------------------------------------------------------------------------------
-insert into @tmpss (noa,calctype,date1,date2,product,addrno,addr,address,addrno2,addr2,address2,weight,tvolume,mount,caseno,addrno3,addr3,tel,conn,area1,area2,price,total,po)
+insert into #tmpss (noa,calctype,date1,date2,product,addrno,addr,address,addrno2,addr2,address2,weight,tvolume,mount,caseno,addrno3,addr3,tel,conn,area1,area2,price,total,po)
 select noa,calctype,date1,date2,product,addrno,addr,address,addrno2,addr2,address2,weight,sum(tvolume),sum(mount),caseno,addrno3,addr3,tel,conn,area1,area2,price,sum(total),po
-from @tmps group by noa,calctype,date1,date2,product,addrno,addr,address,addrno2,addr2,address2,weight,caseno,addrno3,addr3,tel,conn,area1,area2,price,po
+from #tmps group by noa,calctype,date1,date2,product,addrno,addr,address,addrno2,addr2,address2,weight,caseno,addrno3,addr3,tel,conn,area1,area2,price,po
 
-insert into @tmpsss (noa,noq,calctype,date1,date2,product,addrno,addr,address,addrno2,addr2,address2,weight,tvolume,mount,caseno,addrno3,addr3,tel,conn,area1,area2,price,total,theight,po)
+insert into #tmpsss (noa,noq,calctype,date1,date2,product,addrno,addr,address,addrno2,addr2,address2,weight,tvolume,mount,caseno,addrno3,addr3,tel,conn,area1,area2,price,total,theight,po)
 select noa,ROW_NUMBER()over(partition by noa order by noq),calctype,date1,date2,product,addrno,addr,address,addrno2,addr2,address2,weight,sum(tvolume),sum(mount),caseno,addrno3,addr3,tel,conn,area1,area2,price,sum(total),SUM(theight),po
-from @tmpss group by noa,calctype,date1,date2,product,addrno,addr,address,addrno2,addr2,address2,weight,caseno,addrno3,addr3,tel,conn,area1,area2,price,noq,po
+from #tmpss group by noa,calctype,date1,date2,product,addrno,addr,address,addrno2,addr2,address2,weight,caseno,addrno3,addr3,tel,conn,area1,area2,price,noq,po
 --update noa & po
 insert into @noa2 (onoa,nnoa)
 select a.noa,case when b.noa is not null then b.noa else 'B'+cast(cast(left(@curdate,4)as int)-1911 as nvarchar)+SUBSTRING(@curdate,6,2) + SUBSTRING(@curdate,9,2)+'000' end
-from @tmp a outer apply(select max(noa) noa from view_tranorde where datea = cast(cast(SUBSTRING(@curdate,1,4) as float)-1911 as nvarchar)+SUBSTRING(@curdate,5,7))b
+from #tmp a outer apply(select max(noa) noa from view_tranorde where datea = cast(cast(SUBSTRING(@curdate,1,4) as float)-1911 as nvarchar)+SUBSTRING(@curdate,5,7))b
 
 insert into @po (opo,npo)
-select a.po,'' from @tmp a 
+select a.po,'' from #tmp a 
 outer apply(select max(po) po from view_tranorde where datea = cast(cast(SUBSTRING(@curdate,1,4) as float)-1911 as nvarchar)+SUBSTRING(@curdate,5,7) and po like cast(cast(SUBSTRING(@curdate,1,4) as float)-1911 as nvarchar) + SUBSTRING(@curdate,6,2) + SUBSTRING(@curdate,9,2)+'%')b
 
-update a set a.noa = substring(b.nnoa,1,8) + RIGHT('000'+cast(cast(RIGHT(b.nnoa,3) as float) + CAST(b.id as float)as nvarchar),3) from @tmp a outer apply(select * from @noa2 where a.noa=onoa)b
-update a set a.noa = substring(b.nnoa,1,8) + RIGHT('000'+cast(cast(RIGHT(b.nnoa,3) as float) + CAST(b.id as float)as nvarchar),3) from @tmpsss a outer apply(select * from @noa2 where a.noa=onoa)b
+update a set a.noa = substring(b.nnoa,1,8) + RIGHT('000'+cast(cast(RIGHT(b.nnoa,3) as float) + CAST(b.id as float)as nvarchar),3) from #tmp a outer apply(select * from @noa2 where a.noa=onoa)b
+update a set a.noa = substring(b.nnoa,1,8) + RIGHT('000'+cast(cast(RIGHT(b.nnoa,3) as float) + CAST(b.id as float)as nvarchar),3) from #tmpsss a outer apply(select * from @noa2 where a.noa=onoa)b
 
 update a set a.npo = case when b.po is not null then case when len(a.opo)=0 then b.po else a.opo end
 					 else cast(cast(SUBSTRING(@curdate,1,4) as float)-1911 as nvarchar)+SUBSTRING(@curdate,6,2)+SUBSTRING(@curdate,9,2)+'000' end
 from @po a
 outer apply(select MAX(po) po from view_tranorde where datea = cast(cast(SUBSTRING(@curdate,1,4) as float)-1911 as nvarchar)+SUBSTRING(@curdate,5,7) and po like cast(cast(SUBSTRING(@curdate,1,4) as float)-1911 as nvarchar)+SUBSTRING(@curdate,6,2)+'%')b
 
-update a set a.po = cast(cast(SUBSTRING(@curdate,1,4) as float)-1911 as nvarchar)+SUBSTRING(@curdate,6,2)+SUBSTRING(@curdate,9,2)+RIGHT('000'+cast(cast(RIGHT(b.npo,3) as float)+CAST(b.id as float) as nvarchar),3) from @tmp a outer apply(select * from @po)b where len(a.po)=0
-update a set a.po = cast(cast(SUBSTRING(@curdate,1,4) as float)-1911 as nvarchar)+SUBSTRING(@curdate,6,2)+SUBSTRING(@curdate,9,2)+RIGHT('000'+cast(cast(RIGHT(b.npo,3) as float)+CAST(b.id as float) as nvarchar),3) from @tmpsss a outer apply(select * from @po)b where len(a.po)=0
+update a set a.po = cast(cast(SUBSTRING(@curdate,1,4) as float)-1911 as nvarchar)+SUBSTRING(@curdate,6,2)+SUBSTRING(@curdate,9,2)+RIGHT('000'+cast(cast(RIGHT(b.npo,3) as float)+CAST(b.id as float) as nvarchar),3) from #tmp a outer apply(select * from @po)b where len(a.po)=0
+update a set a.po = cast(cast(SUBSTRING(@curdate,1,4) as float)-1911 as nvarchar)+SUBSTRING(@curdate,6,2)+SUBSTRING(@curdate,9,2)+RIGHT('000'+cast(cast(RIGHT(b.npo,3) as float)+CAST(b.id as float) as nvarchar),3) from #tmpsss a outer apply(select * from @po)b where len(a.po)=0
 
-update @tmpsss set product=case when charindex('-',substring(product,CHARINDEX('-',product)+1,len(product)))>0 then product else product+'-' end
+update #tmpsss set product=case when charindex('-',substring(product,CHARINDEX('-',product)+1,len(product)))>0 then product else product+'-' end
 
 update a set a.productno=b.noa,a.volume=b.uweight,weight2=b.price2,a.unit=b.unit,memo2=b.memo,typea=b.typea,namea=b.namea
-from @tmpsss a outer apply 
+from #tmpsss a outer apply 
 (select * from ucc where
 substring(substring(a.product,CHARINDEX('-',a.product)+1,len(a.product)),1,CHARINDEX('-',substring(a.product,CHARINDEX('-',a.product)+1,len(a.product)))-1)
 =SUBSTRING(product,CHARINDEX('-',product)+1,len(product)))b
 
-update @tmpsss set theight = volume * mount
+update #tmpsss set theight = volume * mount
 
-update @tmpsss set product=case when RIGHT(product,1)='-' then SUBSTRING(product,1,len(product)-1) else product end
+update #tmpsss set product=case when RIGHT(product,1)='-' then SUBSTRING(product,1,len(product)-1) else product end
 
-update @tmpsss set noq = RIGHT('000'+noq ,3)
+update #tmpsss set noq = RIGHT('000'+noq ,3)
 
-update @tmpsss set doc = case when len(namea)>0 then '1' else '0' end
+update #tmpsss set doc = case when len(namea)>0 then '1' else '0' end
 
 DECLARE MyCursor Cursor FOR
-select po from @tmp
+select po,count(1) www from #tmp group by po
 Open MyCursor 
 declare @ordenoa nvarchar(25) 
+declare @www nvarchar(25) 
 --如有相同noa 刪除後再insert
-Fetch NEXT FROM MyCursor INTO @ordenoa
+Fetch NEXT FROM MyCursor INTO @ordenoa,@www
 While (@@FETCH_STATUS <> -1)
 BEGIN
-	set @cmd = 'delete from tranorde' + @accy +" where po='"+@ordenoa+"'"
-	EXEC(@cmd)
-	set @cmd = 'delete from tranordes' + @accy + " where tranno='"+@ordenoa+"'"
-	EXEC(@cmd)
-Fetch NEXT FROM MyCursor INTO @ordenoa
+	if exists(select * from view_tranvcces where conn = @ordenoa)
+	begin
+		set @msg += "運輸單號:" + @ordenoa + " 已派車"
+	end
+	else
+	begin
+		set @msg += "運輸單號:" + @ordenoa + " 上傳成功"
+		if exists(select po from view_tranorde where po = @ordenoa)
+		begin --如有相同運輸單,Update所有資料
+			set @cmd = 'update tranorde' + @accy + " set custno=a.custno,datea=a.datea,date1=a.date1,tweight2=a.tweight2,price2=a.price2"+
+			" from #tmp a where tranorde" + @accy + ".po=" +"'"+@ordenoa+"'"
+			EXEC(@cmd)
+			set @cmd = 'update tranordes' + @accy + " set calctype=a.calctype,date1=a.date1,date2=a.date2,product=a.product,addrno=a.addrno,addr=a.addr,address=a.address,addrno2=a.addrno2,addr2=a.addr2,address2=a.address2,"+
+			"weight=a.weight2,tvolume=a.tvolume,mount=a.mount,uno=a.uno,caseno=a.caseno,addrno3=a.addrno3,addr3=a.addr3,tel=a.tel,conn=a.conn,driver=a.area1,containerno1=a.area2,price=a.price,total=a.total,productno=a.productno,volume=a.volume,"+
+			"unit=a.unit,memo2=a.memo2,theight=a.theight,typea=a.typea,productno2=a.namea,chk1=a.doc,tranno=a.po" + 
+			" from #tmpsss a where tranordes" + @accy + ".caseno=a.po and tranordes" + @accy + ".noq=a.noq"
+			EXEC(@cmd)
+		end
+		else
+		begin
+			insert into @jg values(@ordenoa)	--沒有的運輸單號
+		end
+	end
+Fetch NEXT FROM MyCursor INTO @ordenoa,@www
 END
 CLOSE MyCursor
 DEALLOCATE MyCursor
 
-----------------------------------------------------------------------------------------------------
-DECLARE MyCursor Cursor FOR
-select DISTINCT custno,comp,nick,noa,datea,date1,po,tweight2,price2,'02','欣城通運股份有限公司',mount from @tmp
+DECLARE MyCursor Cursor FOR	--沒有的運輸單號,也沒派車insert
+select noa,count(1) a from @jg group by noa
 Open MyCursor 
-declare @a1 nvarchar(max)
-declare @a2 nvarchar(max)
-declare @a3 nvarchar(max)
-declare @a4 nvarchar(max)
-declare @a5 nvarchar(max)
-declare @a6 nvarchar(max)
-declare @a7 nvarchar(max)
-declare @a8 nvarchar(max)
-declare @a9 nvarchar(max)
-declare @a10 nvarchar(max)
-declare @a11 nvarchar(max)
-declare @a12 nvarchar(max)
-Fetch NEXT FROM MyCursor INTO @a1,@a2,@a3,@a4,@a5,@a6,@a7,@a8,@a9,@a10,@a11,@a12
+declare @ordenoa2 nvarchar(25) 
+declare @z nvarchar(25) 
+Fetch NEXT FROM MyCursor INTO @ordenoa2,@z
 While (@@FETCH_STATUS <> -1)
-BEGIN	--內容
-set @cmd ='insert into tranorde' + @accy +
-"(custno,comp,nick,noa,datea,date1,po,tweight2,price2,cno,acomp,mount,worker)" + "
- values('"+isnull(@a1,'')+"',"+"'"+isnull(@a2,'')+"',"+"'"+isnull(@a3,'')+"',"+"'"+isnull(@a4,'')+"',"+"'"+isnull(@a5,'')+"',"+"'"+isnull(@a6,'')+"',"+"'"+isnull(@a7,'')+"',"+"'"+isnull(@a8,'')+"'"+','+"'"+isnull(@a9,'')+"',"+"'"+isnull(@a10,'')+"',"+"'"+isnull(@a11,'')+"',"+"'"+isnull(@a12,'')+"'"+",'"+ @worker +"')"
-exec(@cmd)
-Fetch NEXT FROM MyCursor INTO @a1,@a2,@a3,@a4,@a5,@a6,@a7,@a8,@a9,@a10,@a11,@a12
-END		--內容END
+BEGIN
+		set @cmd ='insert into tranorde' + @accy + '(custno,comp,nick,noa,datea,date1,po,tweight2,price2,cno,acomp,mount,worker)' +
+		" select DISTINCT custno,comp,nick,noa,datea,date1,po,tweight2,price2,'02','欣城通運股份有限公司',mount,'"+@worker+"'" +
+		" from #tmp where po='" + @ordenoa2 + "'"
+		EXEC(@cmd)
+		set @cmd = 'insert into tranordes' + @accy + '(noa,noq,calctype,date1,date2,product,addrno,addr,address,addrno2,addr2,address2,tvolume,mount,caseno,addrno3,addr3,conn,tel,containerno1,containerno2,otype,unit2,typea,driver,tranno,price,total,money,productno,volume,weight,unit,memo2,theight,productno2,chk1)' +
+		" select DISTINCT noa,noq,calctype,date1,date2,product,addrno,addr,address,addrno2,addr2,address2,tvolume,mount,caseno,addrno3,addr3,conn,tel,area2,'1','','噸',typea,area1,po,price,total,total,productno,volume,weight2,unit,memo2,theight,namea,doc" +
+		" from #tmpsss where po='" + @ordenoa2 + "'"
+		EXEC(@cmd)
+Fetch NEXT FROM MyCursor INTO @ordenoa2,@z
+END
 CLOSE MyCursor
 DEALLOCATE MyCursor
 
-DECLARE MyCursor Cursor FOR
-select DISTINCT noa,noq,calctype,date1,date2,product,addrno,addr,address,addrno2,addr2,address2,tvolume,mount,caseno,addrno3,addr3,conn,tel,area2,'1','','噸',typea,area1,po,price,total,total,productno,volume,weight2,unit,memo2,theight,namea,doc from @tmpsss
-Open MyCursor 
-declare @aa1 nvarchar(max)
-declare @aa2 nvarchar(max)
-declare @aa3 nvarchar(max)
-declare @aa4 nvarchar(max)
-declare @aa5 nvarchar(max)
-declare @aa6 nvarchar(max)
-declare @aa7 nvarchar(max)
-declare @aa8 nvarchar(max)
-declare @aa9 nvarchar(max)
-declare @aa10 nvarchar(max)
-declare @aa11 nvarchar(max)
-declare @aa12 nvarchar(max)
-declare @aa13 nvarchar(max)
-declare @aa14 nvarchar(max)
-declare @aa15 nvarchar(max)
-declare @aa16 nvarchar(max)
-declare @aa17 nvarchar(max)
-declare @aa18 nvarchar(max)
-declare @aa19 nvarchar(max)
-declare @aa20 nvarchar(max)
-declare @aa21 nvarchar(max)
-declare @aa22 nvarchar(max)
-declare @aa23 nvarchar(max)
-declare @aa24 nvarchar(max)
-declare @aa25 nvarchar(max)
-declare @aa26 nvarchar(max)
-declare @aa27 nvarchar(max)
-declare @aa28 nvarchar(max)
-declare @aa29 nvarchar(max)
-declare @aa30 nvarchar(max)
-declare @aa31 nvarchar(max)
-declare @aa32 nvarchar(max)
-declare @aa33 nvarchar(max)
-declare @aa34 nvarchar(max)
-declare @aa35 nvarchar(max)
-declare @aa36 nvarchar(max)
-declare @aa37 nvarchar(max)
-Fetch NEXT FROM MyCursor INTO @aa1,@aa2,@aa3,@aa4,@aa5,@aa6,@aa7,@aa8,@aa9,@aa10,@aa11,@aa12,@aa13,@aa14,@aa15,@aa16,@aa17,@aa18,@aa19,@aa20,@aa21,@aa22,@aa23,@aa24,@aa25,@aa26,@aa27,@aa28,@aa29,@aa30,@aa31,@aa32,@aa33,@aa34,@aa35,@aa36,@aa37
-While (@@FETCH_STATUS <> -1)
-BEGIN	--內容
-set @cmd ='insert into tranordes' + @accy +
-'(noa,noq,calctype,date1,date2,product,addrno,addr,address,addrno2,addr2,address2,tvolume,mount,caseno,addrno3,addr3,conn,tel,containerno1,containerno2,otype,unit2,typea,driver,tranno,price,total,money,productno,volume,weight,unit,memo2,theight,productno2,chk1)' + "
- values('"+isnull(@aa1,'')+"',"+"'"+isnull(@aa2,'')+"',"+"'"+isnull(@aa3,'')+"',"+"'"+isnull(@aa4,'')+"',"+"'"+isnull(@aa5,'')+"',"+"'"+isnull(@aa6,'')+"',"+"'"+isnull(@aa7,'')+"',"+"'"+isnull(@aa8,'')+"'"+','+"'"+isnull(@aa9,'')+"',"+"'"+cast(isnull(@aa10,'') as nvarchar)+"',"+"'"+isnull(@aa11,'')+"',"+"'"+isnull(@aa12,'')+"',"+"'"+isnull(@aa13,'')+"',"+"'"+isnull(@aa14,'')+"',"+
- +"'"+isnull(@aa15,'')+"',"+"'"+isnull(@aa16,'')+"',"+"'"+isnull(@aa17,'')+"',"+"'"+isnull(@aa18,'')+"',"+"'"+isnull(@aa19,'')+"',"+"'"+isnull(@aa20,'')+"',"+"'"+isnull(@aa21,'')+"',"+"'"+isnull(@aa22,'')+"',"+"'"+isnull(@aa23,'')+"',"+"'"+isnull(@aa24,'')+"',"+"'"+isnull(@aa25,'')+"',"+"'"+isnull(@aa26,'')+"',"+"'"+isnull(@aa27,'')+"',"+"'"+isnull(@aa28,'')+"',"+"'"+isnull(@aa29,'')+"',"
- +"'"+isnull(@aa30,'')+"',"+"'"+isnull(@aa31,'')+"',"+"'"+isnull(@aa32,'')+"',"+"'"+isnull(@aa33,'')+"',"+"'"+isnull(@aa34,'')+"',"+"'"+isnull(@aa35,'')+"',"+"'"+isnull(@aa36,'')+"'"+",'"+isnull(@aa37,'')+"'"+')'
-exec(@cmd)
-Fetch NEXT FROM MyCursor INTO @aa1,@aa2,@aa3,@aa4,@aa5,@aa6,@aa7,@aa8,@aa9,@aa10,@aa11,@aa12,@aa13,@aa14,@aa15,@aa16,@aa17,@aa18,@aa19,@aa20,@aa21,@aa22,@aa23,@aa24,@aa25,@aa26,@aa27,@aa28,@aa29,@aa30,@aa31,@aa32,@aa33,@aa34,@aa35,@aa36,@aa37
-END		--內容END
-CLOSE MyCursor
-DEALLOCATE MyCursor;
+IF OBJECT_ID('tempdb..#tmp')is not null
+BEGIN
+	drop table #tmp
+END
+IF OBJECT_ID('tempdb..#tmps')is not null
+BEGIN
+	drop table #tmps
+END
+IF OBJECT_ID('tempdb..#tmpss')is not null
+BEGIN
+	drop table #tmpss
+END
+IF OBJECT_ID('tempdb..#tmpsss')is not null
+BEGIN
+	drop table #tmpsss
+END
+
+select @msg msg;
