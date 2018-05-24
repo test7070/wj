@@ -15,12 +15,15 @@
 		<script src="css/jquery/ui/jquery.ui.widget.js"></script>
 		<script src="css/jquery/ui/jquery.ui.datepicker_tw.js"></script>
 		<script type="text/javascript">
+		var xtypeItem = '';
+
 			if (location.href.indexOf('?') < 0) {
 				location.href = location.href + "?;;;;" + ((new Date()).getUTCFullYear() - 1911);
 			}
 			$(document).ready(function() {
-				q_gf('', 'z_trd_wj');
+				//q_gf('', 'z_trd_wj');
 				q_getId();
+				q_gt('calctype', '1=1 ', 0, 0, 0, "calctype");
 			});
 			function q_gfPost() {
 				$('#q_report').q_report({
@@ -44,8 +47,7 @@
 					},{//[7]
 						type : '5', 
 						name : 'xtype',
-						value:'#non@全部,北區@北區,中區@中區,南區@南區,移倉@移倉'.split(',')
-
+						value : xtypeItem.split(',')
 					},{//[8][9]
 						type : '1', 
 						name : 'date'
@@ -56,7 +58,11 @@
 						type : '5', 
 						name : 'cartype',
 						value:'#non@全部,自運@自運,外車@外車'.split(',')
-					}]
+					},{
+                        type : '8',//[13]
+                        name : 'xshow',
+                        value : '1@顯示車號'.split(',')
+                    }]
 				});
 
 				q_getFormat();
@@ -101,6 +107,18 @@
                 t_day = t_day>9?t_day+'':'0'+t_day;
                 $('#txtDate2').val(t_year+'/'+t_month+'/'+t_day);
 
+			}
+			function q_gtPost(t_name) {
+                switch (t_name) {
+                    case 'calctype':
+                        var as = _q_appendData("calctype", "", true);
+                        xspecItem = " @全部";
+                        for ( i = 0; i < as.length; i++) {
+                            xtypeItem += "," + as[i].namea;
+                        }
+                        break;
+				}
+								q_gf('', 'z_trd_wj');
 			}
 		</script>
 	</head>
