@@ -192,13 +192,16 @@ z_trd_wj3:--z_trd_wj3
 declare @t_bdate nvarchar(10) 
 declare @t_edate nvarchar(10) 
 declare @typea nvarchar(10) 
+declare @car nvarchar(1)
 set @typea = case when '#non'=[7] then '' else [7] end
 set @t_bdate = case when '#non'=[8] then '' else [8] end
 set @t_edate = case when '#non'=[9] then '' else [9] end
+set @car = case when '#non'=[12] then '' else [12] end
 declare @tmp table( 
 gno nvarchar(5), 
 noa nvarchar(30), 
 noq nvarchar(5), 
+noq2 nvarchar(5), 
 custno nvarchar(30), 
 cust nvarchar(30), 
 tranno nvarchar(30), 
@@ -217,31 +220,100 @@ total float,
 tm float, 
 des6 float, 
 serialno nvarchar(30), 
-chk4 nvarchar(30) 
+chk4 nvarchar(30), 
+curPage int, 
+totPage int 
 ) 
 insert into @tmp (gno,noq,noa,tranno,custno,cust,datea,carno,product,mount,price,total,class,straddr,endaddr,ender,weight,chk4) 
-select '0',ROW_NUMBER()over(partition by a.custno order by a.noa),a.noa,c.po,a.custno,a.comp,c.trandate,b.carno,b.product,b.mount,b.price,b.total,c.calctype 
+select '5',ROW_NUMBER()over(partition by a.custno order by a.noa),a.noa,c.po,a.custno,a.comp,c.trandate,b.carno,b.product,b.mount,b.price,b.total,c.calctype 
 ,c.straddr,c.aaddr,c.endaddr,c.weight,case when isnull(c.chk4,0)=1 then 'V' else '' end 
 from view_trd a 
 left join view_trds b on a.noa = b.noa 
 left join view_trans c on b.tranno = c.noa and b.trannoq = c.noq 
-where a.datea between @t_bdate and @t_edate and a.custno like '029%' and (charindex(substring(@typea,1,1),c.calctype)>0 or len(@typea)=0) 
+where a.datea between @t_bdate and @t_edate and a.custno like '029%' and (c.calctype = @typea or len(@typea)=0) 
 
 update a set a.serialno=b.serial 
 from @tmp a outer apply(select * from cust where a.custno=noa)b 
 
 insert into @tmp(gno,class,mount,weight,price,total) 
-select '1',class,SUM(mount),SUM(weight),price,SUM(total) 
+select '6',class,SUM(mount),SUM(weight),price,SUM(total) 
 from @tmp group by price,class 
 
 update @tmp set [weight]=ROUND([weight],3) 
+
+update @tmp set noq2 = RIGHT('000'+noq,3) 
+
+update @tmp set curPage = (noq/30)+1 
+
+update a set a.totPage= (b.noq/30)+1 
+from @tmp a 
+outer apply (select max(noq2) noq,class,price from @tmp group by class,price)b 
+where a.class = b.class 
+
 
 update @tmp set endaddr= case when charindex('市',endaddr)>0 or charindex('區',endaddr)>0 or charindex('鄉',endaddr)>0 then SUBSTRING(endaddr,charindex('市',endaddr)-2,2)+SUBSTRING(endaddr,charindex('區',endaddr)-2,2)+SUBSTRING(endaddr,charindex('鄉',endaddr)-2,2) 
 when charindex('縣',endaddr)>0 or charindex('區',endaddr)>0 or charindex('鄉',endaddr)>0 then SUBSTRING(endaddr,charindex('縣',endaddr)-2,2)+SUBSTRING(endaddr,charindex('區',endaddr)-2,2)+SUBSTRING(endaddr,charindex('鄉',endaddr)-2,2) 
 else endaddr END 
 
+
+if(@car='1')
+begin
+insert into @tmp(gno,custno,cust,serialno,datea,class,mount,weight,price,total) 
+select '1',min(custno),min(cust),min(serialno),min(datea),class,SUM(mount),SUM(weight),price,SUM(total)
+from @tmp group by price,class 
+insert into @tmp(gno,class,mount,weight,price,total) 
+select '2',class,SUM(mount),SUM(weight),price,SUM(total)
+from @tmp group by price,class 
+
+insert into @tmp (gno,datea,custno,cust,serialno,class,curPage,totPage) 
+select '1',min(datea),custno,cust,serialno,class,curPage,max(totPage) 
+from @tmp where curPage is not null group by custno,cust,serialno,class,curPage 
+
+insert into @tmp (gno,datea,custno,cust,serialno,class,curPage,totPage) 
+select '2',min(datea),custno,cust,serialno,class,curPage,max(totPage) 
+from @tmp where curPage is not null group by custno,cust,serialno,class,curPage 
+
+update @tmp set noq2=curPage*29,curpage = curpage+1 where gno='1' or gno='2'
+update @tmp set gno='3' where gno='5'
+end
+else
+begin
+insert into @tmp(gno,custno,cust,serialno,datea,class,mount,weight,price,total) 
+select '1',min(custno),min(cust),min(serialno),min(datea),class,SUM(mount),SUM(weight),price,SUM(total)
+from @tmp group by price,class 
+insert into @tmp(gno,class,mount,weight,price,total,noq2) 
+select '4',class,SUM(mount),SUM(weight),price,SUM(total),'000'
+from @tmp group by price,class 
+
+insert into @tmp (gno,datea,custno,cust,serialno,class,curPage,totPage) 
+select '1',min(datea),custno,cust,serialno,class,curPage,max(totPage) 
+from @tmp where curPage is not null group by custno,cust,serialno,class,curPage 
+insert into @tmp (gno,datea,custno,cust,serialno,class,curPage,totPage) 
+select '4',min(datea),custno,cust,serialno,class,curPage,max(totPage) 
+from @tmp where curPage is not null group by custno,cust,serialno,class,curPage 
+
+update @tmp set curpage= 0 where gno='4' and len(noq2)=0
+update @tmp set noq2=curPage*29,curpage = curpage+1 where (gno='1' or gno='4')
+end
+
+update @tmp set noq2=right('000'+noq2,3) 
+update @tmp set noq2='9999' where gno='6' 
+
+delete from @tmp where curPage>totPage
+
+update a set a.curpage='1',a.totPage=b.totPage
+from @tmp a outer apply(select max(totPage) totPage,class from @tmp group by class)b
+where (a.gno='1' and a.noq2 is null) and a.class=b.class
+if(@car='1')
+begin
+update @tmp set curpage='1' where gno='2' and noq2 is null
+end
+else
+begin
+update @tmp set curpage='1' where gno='4' and noq2 is null
+end
 select a.*,SUBSTRING(datea,1,3) as yy, SUBSTRING(datea,5,2) as mm,SUBSTRING(datea,5,5) as dateb 
-from @tmp a order by price,class,gno ;
+from @tmp a order by class,noq2,curPage,gno;
 ------------------------------------------------------------------
 z_trd_wj4:--z_trd_wj4
 declare @t_mon nvarchar(10)
