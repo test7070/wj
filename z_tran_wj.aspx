@@ -87,6 +87,10 @@
                         type : '5',//[19]
                         name : 'xshowch4',
                         value : ' @全部,無@無,有@有'.split(',')
+                    }, {
+                            type : '8', //[20]
+                            name : 'showoutumm', //外帳
+                            value : "1@外帳".split(',')
                     }]
                     });
                 q_popAssign();

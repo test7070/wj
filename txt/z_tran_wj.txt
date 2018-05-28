@@ -960,6 +960,7 @@ declare @t_bcustno nvarchar(10)
 declare @t_ecustno nvarchar(10)
 declare @t_xtype nvarchar(10)
 declare @t_xshow nvarchar(10)
+declare @t_xshowumm nvarchar(10)
 
 set @t_bdate = case when '#non'=[2] then '' else [2] end
 set @t_edate = case when '#non'=[3] then char(255) else [3] end
@@ -967,6 +968,7 @@ set @t_xtype = case when '#non'=[12] then '' else [12] end
 set @t_bcustno = case when '#non'=[17] then '' else [17] end
 set @t_ecustno = case when '#non'=[18] then char(255) else [18] end
 set @t_xshow = case when '#non'=[19] then '' else [19] end
+set @t_xshowumm = case when '#non'=[20] then '' else [20] end 
 
 declare @tmp table(
 	gno nvarchar(1),
@@ -1009,6 +1011,15 @@ update @tmp
 set chk4=case when isnull(b.chk4,0)=1 then '有' else '無' end
 from @tmp sa
 outer apply(select max(cast(a.chk4 as int))chk4,b.ordeno,b.no2 from view_trans a left join view_tranvcces b on a.ordeno=b.noa and a.so=b.noq where sa.noa=b.ordeno and sa.noq=b.no2 group by b.ordeno,b.no2)b
+
+if(@t_xshowumm='1')
+begin
+	update @tmp
+	set price= case a.custno when '029-001' then round(a.price/(1-(b.price1/100))*1.08,0) when '029-002' then round(a.price/(1-(b.price1/100))*1.08094,0) when '029-003' then round(a.price/(1-(b.price1/100))*1.13986,0) when '029-004' then round(a.price/(1-(b.price1/100)),0) end
+	,total= round((case a.custno when '029-001' then round(a.price/(1-(b.price1/100))*1.08,0) when '029-002' then round(a.price/(1-(b.price1/100))*1.08094,0) when '029-003' then round(a.price/(1-(b.price1/100))*1.13986,0) when '029-004' then round(a.price/(1-(b.price1/100)),0) else a.price end)*(a.uweight/1000),0)
+	from @tmp a
+	outer apply( select top 1 * from addr3s where productno=a.custno and (date2 between addrno and addr) order by noa desc)b
+end
 
 insert @tmp(gno,weight,uweight,total,po,date1)
 select '1',sum(isnull(weight,0)),sum(isnull(uweight,0)),sum(isnull(total,0)),char(255),char(255)
