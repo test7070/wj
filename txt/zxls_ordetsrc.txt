@@ -309,8 +309,6 @@ from #tmps a
 outer apply(select * from #tmp)b
 outer apply(select * from addr2s where addrno=b.custno and a.area1=address and a.area2=lng)c
 where a.noa=b.noa
-
-update #tmps set total = case when [tvolume]>0 then round(price*([tvolume]/1000),0) else 0 end
 ----------------------------------------------------------------------------------------------------
 insert into #tmpss (noa,calctype,date1,date2,product,addrno,addr,address,addrno2,addr2,address2,weight,tvolume,mount,caseno,addrno3,addr3,tel,conn,area1,area2,price,total,po)
 select noa,calctype,date1,date2,product,addrno,addr,address,addrno2,addr2,address2,weight,sum(tvolume),sum(mount),caseno,addrno3,addr3,tel,conn,area1,area2,price,sum(total),po
@@ -354,6 +352,8 @@ update #tmpsss set product=case when RIGHT(product,1)='-' then SUBSTRING(product
 update #tmpsss set noq = RIGHT('000'+noq ,3)
 
 update #tmpsss set doc = case when len(namea)>0 then '1' else '0' end
+
+update #tmpsss set total = case when [tvolume]>0 then round(price*([tvolume]/1000),0) else 0 end
 
 DECLARE MyCursor Cursor FOR
 select po,count(1) www from #tmp group by po

@@ -253,11 +253,11 @@ BEGIN
 		" select noa,cast(cast(substring("+"'"+@curdate+"'"+",1,4) as int)-1911 as nvarchar) + '/' + substring("+"'"+@curdate+"'"+",6,2) +'/'+ substring("+"'"+@curdate+"'"+",9,2),'02','欣城通運股份有限公司',custno,cust,po,case when charindex('#',date1)>0 then date1 else cast(cast(substring(date1,1,4) as int)-1911 as nvarchar) + '/' + substring(date1,6,10) end,nick,price2,mount,tweight2,"+"'"+@worker+"'"+
 		" from #tmpp where po='" + @ordenoa2 + "'"
 		EXEC(@cmd)
-		set @cmd = 'insert into tranordes' + @accy + '(noa,noq,calctype,productno,product,addrno,addr,address,addrno2,addr2,address2,uno,tvolume,mount,memo,addrno3,addr3,caseno,date1,date2,containerno1,containerno2,unit2,otype,typea,driver,price,total,money,tranno,volume,weight,theight,unit,memo2,productno2,chk1)' +
+		set @cmd = 'insert into tranordes' + @accy + '(noa,noq,calctype,productno,product,addrno,addr,address,addrno2,addr2,address2,uno,tvolume,mount,memo,addrno3,addr3,caseno,date1,date2,containerno1,containerno2,unit2,otype,typea,driver,price,total,money,tranno,volume,weight,theight,unit,memo2,productno2,chk1,conn,tel)' +
 		" select noa,noq,typea,productno,product,addrno,addr,address,addrno2,addr2,address2,uno,weight,mount,memo,addrno3,addr3,caseno,
 		case when charindex('#',date1)>0 then date1 else cast(cast(substring(date1,1,4) as int)-1911 as nvarchar) + '/' + substring(date1,6,10) end,
 		case when charindex('#',date1)>0 then date1 else cast(cast(substring(date1,1,4) as int)-1911 as nvarchar) + '/' + substring(date1,6,10) end
-		,area2,'1','噸','',typea2,area,price,total,total,po,volume,weight2,theight,unit,memo2,namea,doc"+
+		,area2,'1','噸','',typea2,area,price,total,total,po,volume,weight2,theight,unit,memo2,namea,doc,conn,tel"+
 		" from #tmp where po='" + @ordenoa2 + "'"
 		EXEC(@cmd)
 Fetch NEXT FROM MyCursor INTO @ordenoa2,@z
