@@ -224,7 +224,7 @@
                                     $('#txtTrandate_' + b_seq).val(s14);
                                     var s15 = $('#txtMemo_' + i).val();
                                     $('#txtMemo_' + b_seq).val(s15);
-                                    var s16 = $('#Addrno_' + i).val();
+                                    var s16 = $('#txtAddrno_' + i).val();
                                     $('#txtAddrno_' + b_seq).val(s16);
                                     var s17 = $('#txtAddr_' + i).val();
                                     $('#txtAddr_' + b_seq).val(s17);
