@@ -61,19 +61,19 @@
 	IF OBJECT_ID('tempdb..#tmp')is not null
 	BEGIN
 	drop table #tmp
-	END;
+	END
 	IF OBJECT_ID('tempdb..#tmpp')is not null
 	BEGIN
 		drop table #tmpp
-	END;
+	END
 	IF OBJECT_ID('tempdb..#tmps')is not null
 	BEGIN
 		drop table #tmps
-	END;
+	END
 	IF OBJECT_ID('tempdb..#tmpss')is not null
 	BEGIN
 		drop table #tmpss
-	END;
+	END
 	
 	create table #tmpp(
 		noa nvarchar(max),
@@ -775,15 +775,15 @@
 	IF OBJECT_ID('tempdb..#tmp')is not null
 	BEGIN
 	drop table #tmp
-	END;
+	END
 	IF OBJECT_ID('tempdb..#tmpp')is not null
 	BEGIN
 		drop table #tmpp
-	END;
+	END
 	IF OBJECT_ID('tempdb..#tmps')is not null
 	BEGIN
 		drop table #tmps
-	END;
+	END
 	IF OBJECT_ID('tempdb..#tmpss')is not null
 	BEGIN
 		drop table #tmpss

@@ -318,94 +318,67 @@ from @tmp a order by class,noq2,curPage,gno;
 z_trd_wj4:--z_trd_wj4
 declare @t_mon nvarchar(10)
 set @t_mon = case when '#non'=[2] then '' else [2] end
-declare @tmp table(
-	gno nvarchar(5),
-	mon nvarchar(30),
-	[weight] float,
-	price numeric(10,2),
-	total float,
-	des6 float,
-	tax float,
-	noa nvarchar(30)
-)
---北區 
-insert into @tmp(gno,mon,weight,price,noa) 
-select '11',max(a.mon),c.weight,c.price,a.noa 
+declare @tmp table( 
+	gno nvarchar(5), 
+	mon nvarchar(30), 
+	[weight] numeric(10,3), 
+	price numeric(10,2), 
+	total float, 
+	pen float, 
+	desp float, 
+	tax float, 
+	invono nvarchar(30) 
+) 
+insert into @tmp(gno,mon,weight,price,total,pen,invono) 
+select '1',a.mon,round(sum(b.weight),3),b.price,sum(b.total),c.price1,a.vccano 
 from view_trd a 
 left join view_trds b on a.noa=b.noa 
-left join view_trans c on c.noa = b.tranno
+left join addr3s c on a.custno=c.productno 
 where a.custno='029-001' and (a.mon = @t_mon or len(@t_mon)=0) 
-group by c.weight,c.price,a.noa 
-update @tmp set total = round(price * weight,0) 
+group by b.price,a.mon,c.price1,a.vccano 
 
-insert into @tmp(gno,mon,weight,price,total) 
-select '1',mon,SUM(weight),price,SUM(total) 
-from @tmp where gno='11' group by mon,price 
---北區 END 
-
---中區 
-insert into @tmp(gno,mon,weight,price,noa) 
-select '22',max(a.mon),c.weight,c.price,a.noa 
+insert into @tmp(gno,mon,weight,price,total,pen,invono) 
+select '2',a.mon,round(sum(b.weight),3),b.price,sum(b.total),c.price1,a.vccano 
 from view_trd a 
 left join view_trds b on a.noa=b.noa 
-left join view_trans c on c.noa = b.tranno 
-where c.custno='029-002' and (a.mon = @t_mon or len(@t_mon)=0) 
-group by c.weight,c.price,a.noa 
-update @tmp set total = round(price * weight,0) 
+left join addr3s c on a.custno=c.productno 
+where a.custno='029-002' and (a.mon = @t_mon or len(@t_mon)=0) 
+group by b.price,a.mon,c.price1,a.vccano 
 
-insert into @tmp(gno,mon,weight,price,total) 
-select '2',mon,SUM(weight),price,SUM(total) 
-from @tmp where gno='22' group by mon,price 
---中區 END 
-
---中區 
-insert into @tmp(gno,mon,weight,price,noa) 
-select '33',max(a.mon),c.weight,c.price,a.noa 
+insert into @tmp(gno,mon,weight,price,total,pen,invono) 
+select '3',a.mon,round(sum(b.weight),3),b.price,sum(b.total),c.price1,a.vccano 
 from view_trd a 
 left join view_trds b on a.noa=b.noa 
-left join view_trans c on c.noa = b.tranno 
-where c.custno='029-003' and (a.mon = @t_mon or len(@t_mon)=0) 
-group by c.weight,c.price,a.noa 
-update @tmp set total = round(price * weight,0) 
+left join addr3s c on a.custno=c.productno 
+where a.custno='029-003' and (a.mon = @t_mon or len(@t_mon)=0) 
+group by b.price,a.mon,c.price1,a.vccano 
 
-insert into @tmp(gno,mon,weight,price,total) 
-select '3',mon,SUM(weight),price,SUM(total) 
-from @tmp where gno='33' group by mon,price 
---中區 END 
-
---移倉 
-insert into @tmp(gno,mon,weight,price,noa) 
-select '44',max(a.mon),c.weight,c.price,a.noa 
+insert into @tmp(gno,mon,weight,price,total,pen,invono) 
+select '4',a.mon,round(sum(b.weight),3),b.price,sum(b.total),c.price1,a.vccano 
 from view_trd a 
 left join view_trds b on a.noa=b.noa 
-left join view_trans c on c.noa = b.tranno 
-where c.custno='029-004' and (a.mon = @t_mon or len(@t_mon)=0) 
-group by c.weight,c.price,a.noa 
-update @tmp set total = round(price * weight,0) 
+left join addr3s c on a.custno=c.productno 
+where a.custno='029-004' and (a.mon = @t_mon or len(@t_mon)=0) 
+group by b.price,a.mon,c.price1,a.vccano 
 
-insert into @tmp(gno,mon,weight,price,total) 
-select '4',mon,SUM(weight),price,SUM(total) 
-from @tmp where gno='44' group by mon,price 
---移倉 END 
-delete from @tmp where len(gno)>1 
+insert into @tmp (gno,total,pen,invono) 
+select '5',sum(total),max(pen),max(invono) 
+from @tmp 
 
-insert into @tmp (gno,mon,total,des6) 
-select '5',mon,round(SUM(total),0),round(SUM(total)*0.06,0) from @tmp group by mon 
+update @tmp set desp = round((total*pen)/100,0) where gno='5' 
 
-insert into @tmp (gno,mon,total,tax) 
-select '6',mon,round(total-des6,0),round((total-des6)*0.05,0) 
+insert into @tmp (gno,total,tax,invono) 
+select '6',total-desp,round((total-desp)*0.05,0),invono 
 from @tmp where gno='5' 
 
-insert into @tmp (gno,mon,total) 
-select '7',mon,round(total+tax,0) 
+insert into @tmp (gno,total) 
+select '7',total+tax
 from @tmp where gno='6' 
 
-insert into @tmp (gno,mon) 
-select '8',mon
-from @tmp group by mon 
+insert into @tmp(gno) values('8') 
 
-select a.*,SUBSTRING(mon,1,3) as yy,SUBSTRING(mon,5,2) as mm 
-from @tmp a order by yy,mm,gno ;
+select a.*,substring(@t_mon,1,3) yy,substring(@t_mon,5,2) mm 
+from @tmp a order by gno ;
 ------------------------------------------------------------------
 z_trd_wj5:--z_trd_wj5
 declare @t_mon nvarchar(10)
