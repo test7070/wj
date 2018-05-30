@@ -281,8 +281,8 @@
                         	as = b_ret;
                         	while(q_bbsCount<as.length)
                         		$('#btnPlus').click();
-				                q_gridAddRow(bbsHtm, 'tbbs', 'txtCalctype,txtOrdeno,txtCstype,txtCarno,txtCustno,txtComp,txtNick,txtProductno,txtProduct,txtMount,txtUnit,txtVolume,txtWeight,txtStraddrno,txtStraddr,txtEndaddrno,txtEndaddr,txtMemo,txtTotal,txtPrice2,txtPrice3,txtTotal2'
-                        	   , as.length, as, 'calctype,ordeno,typea,carno,custno,cust,cust,productno,product,mount,unit,volume,weight,straddrno,straddr,endaddrno,endaddr,memo,total,tvolume,theight,total2', '','');
+				                q_gridAddRow(bbsHtm, 'tbbs', 'txtCalctype,txtOrdeno,txtCstype,txtCarno,txtCustno,txtComp,txtNick,txtProductno,txtProduct,txtMount,txtUnit,txtVolume,txtWeight,txtStraddrno,txtStraddr,txtEndaddrno,txtEndaddr,txtMemo,txtTotal,txtPrice2,txtPrice3,txtTotal2,txtCaseuse'
+                        	   , as.length, as, 'calctype,ordeno,typea,carno,custno,cust,cust,productno,product,mount,unit,volume,weight,straddrno,straddr,endaddrno,endaddr,memo,total,tvolume,theight,total2,typea', '','');
                         	sum();
                         }else{
                         	Unlock(1);
