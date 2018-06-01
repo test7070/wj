@@ -319,66 +319,89 @@ z_trd_wj4:--z_trd_wj4抓立帳
 declare @t_mon nvarchar(10)
 set @t_mon = case when '#non'=[2] then '' else [2] end
 declare @tmp table( 
-	gno nvarchar(5), 
-	mon nvarchar(30), 
-	[weight] numeric(10,3), 
-	price numeric(10,2), 
-	total float, 
-	pen float, 
-	desp float, 
-	tax float, 
-	invono nvarchar(30) 
+gno nvarchar(5), 
+mon nvarchar(30),
+custno nvarchar(15),
+[weight] numeric(10,3), 
+price numeric(10,2),
+price2 numeric(10,2),
+total float,
+total2 float,
+pen float, 
+desp float, 
+tax float, 
+invono nvarchar(30) 
 ) 
-insert into @tmp(gno,mon,weight,price,total,pen,invono) 
-select '1',a.mon,round(sum(b.weight),3),b.price,sum(b.total),c.price1,a.vccano 
+insert into @tmp(gno,mon,custno,weight,price,total,pen) 
+select '9',a.mon,a.custno,b.weight,b.price,b.total,c.price1
 from view_trd a 
 left join view_trds b on a.noa=b.noa 
 left join addr3s c on a.custno=c.productno 
 where a.custno='029-001' and (a.mon = @t_mon or len(@t_mon)=0) 
-group by b.price,a.mon,c.price1,a.vccano 
 
-insert into @tmp(gno,mon,weight,price,total,pen,invono) 
-select '2',a.mon,round(sum(b.weight),3),b.price,sum(b.total),c.price1,a.vccano 
+insert into @tmp(gno,mon,custno,weight,price,total,pen) 
+select '9',a.mon,a.custno,b.weight,b.price,b.total,c.price1
 from view_trd a 
 left join view_trds b on a.noa=b.noa 
 left join addr3s c on a.custno=c.productno 
 where a.custno='029-002' and (a.mon = @t_mon or len(@t_mon)=0) 
-group by b.price,a.mon,c.price1,a.vccano 
 
-insert into @tmp(gno,mon,weight,price,total,pen,invono) 
-select '3',a.mon,round(sum(b.weight),3),b.price,sum(b.total),c.price1,a.vccano 
+insert into @tmp(gno,mon,custno,weight,price,total,pen) 
+select '9',a.mon,a.custno,b.weight,b.price,b.total,c.price1
 from view_trd a 
 left join view_trds b on a.noa=b.noa 
 left join addr3s c on a.custno=c.productno 
 where a.custno='029-003' and (a.mon = @t_mon or len(@t_mon)=0) 
-group by b.price,a.mon,c.price1,a.vccano 
 
-insert into @tmp(gno,mon,weight,price,total,pen,invono) 
-select '4',a.mon,round(sum(b.weight),3),b.price,sum(b.total),c.price1,a.vccano 
+insert into @tmp(gno,mon,custno,weight,price,total,pen) 
+select '9',a.mon,a.custno,b.weight,b.price,b.total,c.price1
 from view_trd a 
 left join view_trds b on a.noa=b.noa 
 left join addr3s c on a.custno=c.productno 
 where a.custno='029-004' and (a.mon = @t_mon or len(@t_mon)=0) 
-group by b.price,a.mon,c.price1,a.vccano 
 
-insert into @tmp (gno,total,pen,invono) 
-select '5',sum(total),max(pen),max(invono) 
-from @tmp 
+update @tmp set price2 = round(price/(1-0.01*pen),0)
+update @tmp set total2 = round(price2*weight,0)
+update @tmp set desp = total2-total
 
-update @tmp set desp = round((total*pen)/100,0) where gno='5' 
+insert into @tmp (gno,weight,price,total)
+select '1',sum(weight),max(price2),sum(total2)
+from @tmp where custno='029-001'
+
+insert into @tmp (gno,weight,price,total)
+select '2',sum(weight),max(price2),sum(total2)
+from @tmp where custno='029-002'
+
+insert into @tmp (gno,weight,price,total)
+select '3',sum(weight),max(price2),sum(total2)
+from @tmp where custno='029-003'
+
+insert into @tmp (gno,weight,price,total)
+select '4',sum(weight),max(price2),sum(total2)
+from @tmp where custno='029-004'
+
+insert into @tmp (gno,total,pen,desp) 
+select '5',sum(total2),max(pen),sum(desp)
+from @tmp where gno='9'
 
 insert into @tmp (gno,total,tax,invono) 
 select '6',total-desp,round((total-desp)*0.05,0),invono 
 from @tmp where gno='5' 
 
 insert into @tmp (gno,total) 
-select '7',total+tax
+select '7',total+tax 
 from @tmp where gno='6' 
 
-insert into @tmp(gno) values('8') 
+insert into @tmp(gno) values('8')
+
+delete from @tmp where gno='9'
+
+update a set a.invono=b.vccano
+from @tmp a outer apply(select * from view_trd where mon=@t_mon and custno='029')b
+where gno='6'
 
 select a.*,substring(@t_mon,1,3) yy,substring(@t_mon,5,2) mm 
-from @tmp a order by gno ;
+from @tmp a order by gno;
 ------------------------------------------------------------------
 z_trd_wj5:--z_trd_wj5
 declare @t_mon nvarchar(10)
