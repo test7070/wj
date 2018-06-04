@@ -256,7 +256,7 @@ begin
 	b.typea,b.uno,b.productno,b.product,b.unit,b.weight,b.theight,b.tvolume,b.mount, 
 	b.total2,b.total3,b.addrno2,dbo.charbr(b.addr2,10),b.address2,c.carno,c.driverno,c.driver,b.tranno,b.trandate,b.date2,dbo.charbr(b.memo,24.5),c.noa 
 	from view_tranorde a left join view_tranordes b on a.noa=b.noa 
-	left join view_tranvcces c on c.ordeno=b.noa and c.no2=b.noa
+	left join view_tranvcces c on c.ordeno=b.noa and c.no2=b.noq
 	outer apply(select top 1 memo from addr2 where custno=b.addrno order by sdate desc)d
 	where (b.date1 between @t_bdate and @t_edate) and (b.date2 between @t_bdate2 and @t_edate2)
 	and (isnull(c.carno,'') between @t_bcarno and @t_ecarno)
@@ -272,7 +272,7 @@ begin
 	b.typea,b.uno,b.productno,b.product,b.unit,b.weight,b.theight,b.tvolume,b.mount, 
 	b.total2,b.total3,b.addrno2,dbo.charbr(b.addr2,10),b.address2,c.carno,c.driverno,c.driver,b.tranno,b.trandate,b.date2,dbo.charbr(b.memo,24.5),c.noa 
 	from view_tranorde a left join view_tranordes b on a.noa=b.noa 
-	left join view_tranvcces c on c.ordeno=b.noa and c.no2=b.noa
+	left join view_tranvcces c on c.ordeno=b.noa and c.no2=b.noq
 	outer apply(select top 1 memo from addr2 where custno=b.addrno order by sdate desc)d
 	where (b.date1 between @t_bdate and @t_edate) and (b.date2 between @t_bdate2 and @t_edate2)
 	and (isnull(c.carno,'') between @t_bcarno and @t_ecarno)
@@ -281,6 +281,7 @@ begin
 	and (b.calctype=@t_xtype or len(@t_xtype)=0)
 	and (a.custno between @t_bcustno and @t_ecustno)
 end
+
 
 update a
 set rr=rx,noa=case when rx!=1 then '' else noa end
