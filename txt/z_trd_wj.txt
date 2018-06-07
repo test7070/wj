@@ -344,8 +344,11 @@ from view_trd a
 left join view_trds b on a.noa=b.noa 
 left join addr3s c on a.custno=c.productno 
 where (a.mon = @t_mon or len(@t_mon)=0) 
---update 浮動油價
-update @tmp set price = round(price/(1-0.01*isnull(pen,0)),0) 
+--update 浮動油價&空箱
+update @tmp set price = round(price/(1-0.01*isnull(pen,0)),0)
+update @tmp set price = round(price*1.08,0) where custno = '029-001'
+update @tmp set price = round(price*1.08094,0) where custno = '029-002'
+update @tmp set price = round(price*1.13986,0) where custno = '029-003'
 update @tmp set total = round(price*weight,0) 
 --update 類別&公司
 update a set a.typea=b.calctype from @tmp a
