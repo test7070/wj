@@ -327,8 +327,16 @@
 			else if(@h!='' and ISNUMERIC(@c)=1 and @a!='合計')
 			begin
 				print 'a7'
-				insert into #tmps (mount,Theight,Tvolume,page,page2) values(@c,@h,@i,@n,@m)
-				update #tmps set mount=@c,Theight=@h,Tvolume=@i where page=@y
+				if(len(@c)>3)
+				begin
+					insert into #tmps (mount,Theight,Tvolume,page,page2) values(@b,@h,@i,@y,@x)
+					update #tmps set mount=@b,Theight=@h,Tvolume=@i where page=@y
+				end
+				else
+				begin
+					insert into #tmps (mount,Theight,Tvolume,page,page2) values(@c,@h,@i,@y,@x)
+					update #tmps set mount=@c,Theight=@h,Tvolume=@i where page=@y
+				end
 			end
 		end
 		if(ISNUMERIC(@a)=1 and @b='') --同品名分成兩筆
@@ -342,8 +350,16 @@
 			else if(@g!='' and ISNUMERIC(@c)=0 and @a!='合計')
 			begin
 				print 'a9'
+				if(ISNUMERIC(@h)=1)
+				begin
 				insert into #tmps (mount,Theight,Tvolume,page,page2) values(@a,@g,@h,@y,@x)
 				update #tmps set mount=@a,Theight=@g,Tvolume=@h where page=@y
+				end
+				if(ISNUMERIC(@i)=1)
+				begin
+				insert into #tmps (mount,Theight,Tvolume,page,page2) values(@a,@g,@i,@y,@x)
+				update #tmps set mount=@a,Theight=@g,Tvolume=@i where page=@y
+				end
 			end
 			else if(@h!='' and ISNUMERIC(@c)=0 and @a!='合計')
 			begin
@@ -462,29 +478,32 @@
 		
 		if(right('000000' + CAST(@comp+1 as nvarchar) ,6)= @noa)
 		begin
-			update #tmp set nick = case when CHARINDEX('LSP',@a)>0  then '台拜'
-										when CHARINDEX('HUA',@a)>0  then '台拜線西'
-										when CHARINDEX('YUAN',@a)>0 then '拜耳'
-										else '台拜' end
+			update #tmp set nick = case when CHARINDEX('LSP',@a)>0  then '科思創台北'
+										when CHARINDEX('HUA',@a)>0  then '科思創線西'
+										when CHARINDEX('YUAN',@a)>0 then '科思創林園'
+										else '科思創台北' end
 		end
 		
 		if(right('000000' + CAST(@product+1 as nvarchar) ,6)= @noa)
 		begin
 			set @strproduct = @a
 		end
-		
 		--收貨人
 		if(right('000000' + CAST(@endaddr+1 as nvarchar) ,6)= @noa)
 		begin
 		set @straddr = ''
 		if(CHARINDEX('下一頁',@a)=0 and CHARINDEX('--------------',@a)=0)
 		begin
-		if(@a!=''  and (CHARINDEX('弄',@a)>0 or CHARINDEX('縣',@a)>0 or CHARINDEX('市',@a)>0 and CHARINDEX('路',@a)>0 or CHARINDEX('街',@a)>0 or CHARINDEX('鄉',@a)>0 and CHARINDEX('鎮',@a)>0 or CHARINDEX('號',@a)>0 or CHARINDEX('巷',@a)>0 or CHARINDEX('村',@a)>0 or CHARINDEX('區',@a)>0))
+		if(@a!=''  and (CHARINDEX('弄',@a)>0 or CHARINDEX('縣',@a)>0 or CHARINDEX('市',@a)>0 or CHARINDEX('路',@a)>0 or CHARINDEX('街',@a)>0 or CHARINDEX('鄉',@a)>0 and CHARINDEX('鎮',@a)>0 or CHARINDEX('號',@a)>0 or CHARINDEX('巷',@a)>0 or CHARINDEX('村',@a)>0 or CHARINDEX('區',@a)>0))
 			set @straddr = @straddr + @a
-		else if(@b!=''  and (CHARINDEX('弄',@b)>0 or CHARINDEX('縣',@b)>0 or CHARINDEX('市',@b)>0 and CHARINDEX('路',@b)>0 or CHARINDEX('街',@b)>0 or CHARINDEX('鄉',@b)>0 and CHARINDEX('鎮',@b)>0 or CHARINDEX('號',@b)>0 or CHARINDEX('巷',@b)>0 or CHARINDEX('村',@b)>0 or CHARINDEX('區',@b)>0))
+		else if(@b!=''  and (CHARINDEX('弄',@b)>0 or CHARINDEX('縣',@b)>0 or CHARINDEX('市',@b)>0 or CHARINDEX('路',@b)>0 or CHARINDEX('街',@b)>0 or CHARINDEX('鄉',@b)>0 and CHARINDEX('鎮',@b)>0 or CHARINDEX('號',@b)>0 or CHARINDEX('巷',@b)>0 or CHARINDEX('村',@b)>0 or CHARINDEX('區',@b)>0))
 			set @straddr = @straddr + @b
-		else if(@c!=''  and (CHARINDEX('弄',@c)>0 or CHARINDEX('縣',@c)>0 or CHARINDEX('市',@c)>0 and CHARINDEX('路',@c)>0 or CHARINDEX('街',@c)>0 or CHARINDEX('鄉',@c)>0 and CHARINDEX('鎮',@c)>0 or CHARINDEX('號',@c)>0 or CHARINDEX('巷',@c)>0 or CHARINDEX('村',@c)>0 or CHARINDEX('區',@c)>0))
+		else if(@c!=''  and (CHARINDEX('弄',@c)>0 or CHARINDEX('縣',@c)>0 or CHARINDEX('市',@c)>0 or CHARINDEX('路',@c)>0 or CHARINDEX('街',@c)>0 or CHARINDEX('鄉',@c)>0 and CHARINDEX('鎮',@c)>0 or CHARINDEX('號',@c)>0 or CHARINDEX('巷',@c)>0 or CHARINDEX('村',@c)>0 or CHARINDEX('區',@c)>0))
 			set @straddr = @straddr + @c
+		else if(@d!=''  and (CHARINDEX('弄',@d)>0 or CHARINDEX('縣',@d)>0 or CHARINDEX('市',@d)>0 or CHARINDEX('路',@d)>0 or CHARINDEX('街',@d)>0 or CHARINDEX('鄉',@d)>0 and CHARINDEX('鎮',@d)>0 or CHARINDEX('號',@d)>0 or CHARINDEX('巷',@d)>0 or CHARINDEX('村',@d)>0 or CHARINDEX('區',@d)>0))
+			set @straddr = @straddr + @d
+		else if(@e!=''  and (CHARINDEX('弄',@e)>0 or CHARINDEX('縣',@e)>0 or CHARINDEX('市',@e)>0 or CHARINDEX('路',@e)>0 or CHARINDEX('街',@e)>0 or CHARINDEX('鄉',@e)>0 and CHARINDEX('鎮',@e)>0 or CHARINDEX('號',@e)>0 or CHARINDEX('巷',@e)>0 or CHARINDEX('村',@e)>0 or CHARINDEX('區',@e)>0))
+			set @straddr = @straddr + @e
 		end
 		end
 		
@@ -492,19 +511,16 @@
 		begin
 		if(CHARINDEX('下一頁',@a)=0 and CHARINDEX('--------------',@a)=0)
 		begin
-		if(@a!=''  and (CHARINDEX('弄',@a)>0 or CHARINDEX('縣',@a)>0 or CHARINDEX('市',@a)>0 and CHARINDEX('路',@a)>0 or CHARINDEX('街',@a)>0 or CHARINDEX('鄉',@a)>0 and CHARINDEX('鎮',@a)>0 or CHARINDEX('號',@a)>0 or CHARINDEX('巷',@a)>0 or CHARINDEX('村',@a)>0 or CHARINDEX('區',@a)>0))
+		if(@a!=''  and (CHARINDEX('弄',@a)>0 or CHARINDEX('縣',@a)>0 or CHARINDEX('市',@a)>0 or CHARINDEX('路',@a)>0 or CHARINDEX('街',@a)>0 or CHARINDEX('鄉',@a)>0 or CHARINDEX('鎮',@a)>0 or CHARINDEX('號',@a)>0 or CHARINDEX('巷',@a)>0 or CHARINDEX('村',@a)>0 or CHARINDEX('區',@a)>0))
 			set @straddr = @straddr + @a
-		else if(@b!='' and (CHARINDEX('弄',@b)>0 or CHARINDEX('縣',@b)>0 or CHARINDEX('市',@b)>0 and CHARINDEX('路',@b)>0 or CHARINDEX('街',@b)>0 or CHARINDEX('鄉',@b)>0 and CHARINDEX('鎮',@b)>0 or CHARINDEX('號',@b)>0 or CHARINDEX('巷',@b)>0 or CHARINDEX('村',@b)>0 or CHARINDEX('區',@b)>0))
+		else if(@b!='' and (CHARINDEX('弄',@b)>0 or CHARINDEX('縣',@b)>0 or CHARINDEX('市',@b)>0 or CHARINDEX('路',@b)>0 or CHARINDEX('街',@b)>0 or CHARINDEX('鄉',@b)>0 or CHARINDEX('鎮',@b)>0 or CHARINDEX('號',@b)>0 or CHARINDEX('巷',@b)>0 or CHARINDEX('村',@b)>0 or CHARINDEX('區',@b)>0))
 			set @straddr = @straddr + @b
-		else if(@c!='' and (CHARINDEX('弄',@c)>0 or CHARINDEX('縣',@c)>0 or CHARINDEX('市',@c)>0 and CHARINDEX('路',@c)>0 or CHARINDEX('街',@c)>0 or CHARINDEX('鄉',@c)>0 and CHARINDEX('鎮',@c)>0 or CHARINDEX('號',@c)>0 or CHARINDEX('巷',@c)>0 or CHARINDEX('村',@c)>0 or CHARINDEX('區',@c)>0))
+		else if(@c!='' and (CHARINDEX('弄',@c)>0 or CHARINDEX('縣',@c)>0 or CHARINDEX('市',@c)>0 or CHARINDEX('路',@c)>0 or CHARINDEX('街',@c)>0 or CHARINDEX('鄉',@c)>0 or CHARINDEX('鎮',@c)>0 or CHARINDEX('號',@c)>0 or CHARINDEX('巷',@c)>0 or CHARINDEX('村',@c)>0 or CHARINDEX('區',@c)>0))
 			set @straddr = @straddr + @c
-		--郵遞區號
-		if(isnumeric(SUBSTRING(@a,1,1))=1)
-			update #tmps set @strpost = SUBSTRING(@a,1,3)
-		if(isnumeric(SUBSTRING(@b,1,1))=1)
-			update #tmps set @strpost = SUBSTRING(@b,1,3)
-		if(isnumeric(SUBSTRING(@c,1,1))=1)
-			update #tmps set @strpost = SUBSTRING(@c,1,3)
+		else if(@d!=''  and (CHARINDEX('弄',@d)>0 or CHARINDEX('縣',@d)>0 or CHARINDEX('市',@d)>0 or CHARINDEX('路',@d)>0 or CHARINDEX('街',@d)>0 or CHARINDEX('鄉',@d)>0 and CHARINDEX('鎮',@d)>0 or CHARINDEX('號',@d)>0 or CHARINDEX('巷',@d)>0 or CHARINDEX('村',@d)>0 or CHARINDEX('區',@d)>0))
+			set @straddr = @straddr + @d
+		else if(@e!=''  and (CHARINDEX('弄',@e)>0 or CHARINDEX('縣',@e)>0 or CHARINDEX('市',@e)>0 or CHARINDEX('路',@e)>0 or CHARINDEX('街',@e)>0 or CHARINDEX('鄉',@e)>0 and CHARINDEX('鎮',@e)>0 or CHARINDEX('號',@e)>0 or CHARINDEX('巷',@e)>0 or CHARINDEX('村',@e)>0 or CHARINDEX('區',@e)>0))
+			set @straddr = @straddr + @e
 		end
 		end
 		
@@ -512,19 +528,16 @@
 		begin
 		if(CHARINDEX('下一頁',@a)=0 and CHARINDEX('--------------',@a)=0)
 		begin
-		if(@a!='' and (CHARINDEX('弄',@a)>0 or CHARINDEX('縣',@a)>0 or CHARINDEX('市',@a)>0 and CHARINDEX('路',@a)>0 or CHARINDEX('街',@a)>0 or CHARINDEX('鄉',@a)>0 and CHARINDEX('鎮',@a)>0 or CHARINDEX('號',@a)>0 or CHARINDEX('巷',@a)>0 or CHARINDEX('村',@a)>0 or CHARINDEX('區',@a)>0))
+		if(@a!='' and (CHARINDEX('弄',@a)>0 or CHARINDEX('縣',@a)>0 or CHARINDEX('市',@a)>0 or CHARINDEX('路',@a)>0 or CHARINDEX('街',@a)>0 or CHARINDEX('鄉',@a)>0 or CHARINDEX('鎮',@a)>0 or CHARINDEX('號',@a)>0 or CHARINDEX('巷',@a)>0 or CHARINDEX('村',@a)>0 or CHARINDEX('區',@a)>0))
 			set @straddr = @straddr + @a
-		else if(@b!='' and (CHARINDEX('弄',@b)>0 or CHARINDEX('縣',@b)>0 or CHARINDEX('市',@b)>0 and CHARINDEX('路',@b)>0 or CHARINDEX('街',@b)>0 or CHARINDEX('鄉',@b)>0 and CHARINDEX('鎮',@b)>0 or CHARINDEX('號',@b)>0 or CHARINDEX('巷',@b)>0 or CHARINDEX('村',@b)>0 or CHARINDEX('區',@b)>0))
+		else if(@b!='' and (CHARINDEX('弄',@b)>0 or CHARINDEX('縣',@b)>0 or CHARINDEX('市',@b)>0 or CHARINDEX('路',@b)>0 or CHARINDEX('街',@b)>0 or CHARINDEX('鄉',@b)>0 or CHARINDEX('鎮',@b)>0 or CHARINDEX('號',@b)>0 or CHARINDEX('巷',@b)>0 or CHARINDEX('村',@b)>0 or CHARINDEX('區',@b)>0))
 			set @straddr = @straddr + @b
-		else if(@c!='' and (CHARINDEX('弄',@c)>0 or CHARINDEX('縣',@c)>0 or CHARINDEX('市',@c)>0 and CHARINDEX('路',@c)>0 or CHARINDEX('街',@c)>0 or CHARINDEX('鄉',@c)>0 and CHARINDEX('鎮',@c)>0 or CHARINDEX('號',@c)>0 or CHARINDEX('巷',@c)>0 or CHARINDEX('村',@c)>0 or CHARINDEX('區',@c)>0))
+		else if(@c!='' and (CHARINDEX('弄',@c)>0 or CHARINDEX('縣',@c)>0 or CHARINDEX('市',@c)>0 or CHARINDEX('路',@c)>0 or CHARINDEX('街',@c)>0 or CHARINDEX('鄉',@c)>0 or CHARINDEX('鎮',@c)>0 or CHARINDEX('號',@c)>0 or CHARINDEX('巷',@c)>0 or CHARINDEX('村',@c)>0 or CHARINDEX('區',@c)>0))
 			set @straddr = @straddr + @c
-		--郵遞區號
-		if(isnumeric(SUBSTRING(@a,1,1))=1)
-			update #tmps set @strpost = SUBSTRING(@a,1,3)
-		if(isnumeric(SUBSTRING(@b,1,1))=1)
-			update #tmps set @strpost = SUBSTRING(@b,1,3)
-		if(isnumeric(SUBSTRING(@c,1,1))=1)
-			update #tmps set @strpost = SUBSTRING(@c,1,3)
+		else if(@d!=''  and (CHARINDEX('弄',@d)>0 or CHARINDEX('縣',@d)>0 or CHARINDEX('市',@d)>0 or CHARINDEX('路',@d)>0 or CHARINDEX('街',@d)>0 or CHARINDEX('鄉',@d)>0 and CHARINDEX('鎮',@d)>0 or CHARINDEX('號',@d)>0 or CHARINDEX('巷',@d)>0 or CHARINDEX('村',@d)>0 or CHARINDEX('區',@d)>0))
+			set @straddr = @straddr + @d
+		else if(@e!=''  and (CHARINDEX('弄',@e)>0 or CHARINDEX('縣',@e)>0 or CHARINDEX('市',@e)>0 or CHARINDEX('路',@e)>0 or CHARINDEX('街',@e)>0 or CHARINDEX('鄉',@e)>0 and CHARINDEX('鎮',@e)>0 or CHARINDEX('號',@e)>0 or CHARINDEX('巷',@e)>0 or CHARINDEX('村',@e)>0 or CHARINDEX('區',@e)>0))
+			set @straddr = @straddr + @e
 		end
 		end
 		
@@ -532,22 +545,19 @@
 		begin
 		if(CHARINDEX('下一頁',@a)=0 and CHARINDEX('--------------',@a)=0)
 		begin
-		if(@a!='' and (CHARINDEX('弄',@a)>0 or CHARINDEX('縣',@a)>0 or CHARINDEX('市',@a)>0 and CHARINDEX('路',@a)>0 or CHARINDEX('街',@a)>0 or CHARINDEX('鄉',@a)>0 and CHARINDEX('鎮',@a)>0 or CHARINDEX('號',@a)>0 or CHARINDEX('巷',@a)>0 or CHARINDEX('村',@a)>0 or CHARINDEX('區',@a)>0))
+		if(@a!='' and (CHARINDEX('弄',@a)>0 or CHARINDEX('縣',@a)>0 or CHARINDEX('市',@a)>0 or CHARINDEX('路',@a)>0 or CHARINDEX('街',@a)>0 or CHARINDEX('鄉',@a)>0 or CHARINDEX('鎮',@a)>0 or CHARINDEX('號',@a)>0 or CHARINDEX('巷',@a)>0 or CHARINDEX('村',@a)>0 or CHARINDEX('區',@a)>0))
 			set @straddr = @straddr + @a
-		else if(@b!='' and (CHARINDEX('弄',@b)>0 or CHARINDEX('縣',@b)>0 or CHARINDEX('市',@b)>0 and CHARINDEX('路',@b)>0 or CHARINDEX('街',@b)>0 or CHARINDEX('鄉',@b)>0 and CHARINDEX('鎮',@b)>0 or CHARINDEX('號',@b)>0 or CHARINDEX('巷',@b)>0 or CHARINDEX('村',@b)>0 or CHARINDEX('區',@b)>0))
+		else if(@b!='' and (CHARINDEX('弄',@b)>0 or CHARINDEX('縣',@b)>0 or CHARINDEX('市',@b)>0 or CHARINDEX('路',@b)>0 or CHARINDEX('街',@b)>0 or CHARINDEX('鄉',@b)>0 or CHARINDEX('鎮',@b)>0 or CHARINDEX('號',@b)>0 or CHARINDEX('巷',@b)>0 or CHARINDEX('村',@b)>0 or CHARINDEX('區',@b)>0))
 			set @straddr = @straddr + @b
-		else if(@c!='' and (CHARINDEX('弄',@c)>0 or CHARINDEX('縣',@c)>0 or CHARINDEX('市',@c)>0 and CHARINDEX('路',@c)>0 or CHARINDEX('街',@c)>0 or CHARINDEX('鄉',@c)>0 and CHARINDEX('鎮',@c)>0 or CHARINDEX('號',@c)>0 or CHARINDEX('巷',@c)>0 or CHARINDEX('村',@c)>0 or CHARINDEX('區',@c)>0))
+		else if(@c!='' and (CHARINDEX('弄',@c)>0 or CHARINDEX('縣',@c)>0 or CHARINDEX('市',@c)>0 or CHARINDEX('路',@c)>0 or CHARINDEX('街',@c)>0 or CHARINDEX('鄉',@c)>0 or CHARINDEX('鎮',@c)>0 or CHARINDEX('號',@c)>0 or CHARINDEX('巷',@c)>0 or CHARINDEX('村',@c)>0 or CHARINDEX('區',@c)>0))
 			set @straddr = @straddr + @c
-		--郵遞區號
-		if(isnumeric(SUBSTRING(@a,1,1))=1)
-			update #tmps set @strpost = SUBSTRING(@a,1,3)
-		if(isnumeric(SUBSTRING(@b,1,1))=1)
-			update #tmps set @strpost = SUBSTRING(@b,1,3)
-		if(isnumeric(SUBSTRING(@c,1,1))=1)
-			update #tmps set @strpost = SUBSTRING(@c,1,3)
+		else if(@d!=''  and (CHARINDEX('弄',@d)>0 or CHARINDEX('縣',@d)>0 or CHARINDEX('市',@d)>0 or CHARINDEX('路',@d)>0 or CHARINDEX('街',@d)>0 or CHARINDEX('鄉',@d)>0 and CHARINDEX('鎮',@d)>0 or CHARINDEX('號',@d)>0 or CHARINDEX('巷',@d)>0 or CHARINDEX('村',@d)>0 or CHARINDEX('區',@d)>0))
+			set @straddr = @straddr + @d
+		else if(@e!=''  and (CHARINDEX('弄',@e)>0 or CHARINDEX('縣',@e)>0 or CHARINDEX('市',@e)>0 or CHARINDEX('路',@e)>0 or CHARINDEX('街',@e)>0 or CHARINDEX('鄉',@e)>0 and CHARINDEX('鎮',@e)>0 or CHARINDEX('號',@e)>0 or CHARINDEX('巷',@e)>0 or CHARINDEX('村',@e)>0 or CHARINDEX('區',@e)>0))
+			set @straddr = @straddr + @e
 		end
 		end--收貨人END
-		
+
 		if(right('000000' + CAST(@uno+1 as nvarchar) ,6)= @noa)
 		begin
 		if(@e!='')
@@ -687,9 +697,9 @@
 	from #tmps
 	
 	update #tmpss set noq = RIGHT('000' + noq,3)
-	--帶UCC,思科創不帶單位淨重&單位毛重
-	update a set a.productno = b.noa,unit=b.unit,memo2=b.memo,productno2=b.namea
-	from #tmpss a outer apply (select * from ucc where CHARINDEX(a.product,product)>0)b
+	--帶UCC,科思創不帶單位淨重&單位毛重
+	update a set unit=b.unit,memo2=b.memo,productno2=b.namea
+	from #tmpss a outer apply (select * from ucc where CHARINDEX(a.product,product)>0 and a.addrno like left(noa,3)+'%')b
 	--update表頭
 	update a set a.addrno2 =b.addrno2,a.addr2=b.addr2,a.address2=b.address2 from #tmpss a outer apply (select TOP 1 * from #tmpss) b
 	update a set a.memo = b.memo from #tmpss a outer apply(select * from addr2 where custno = a.addrno2)b
@@ -703,9 +713,10 @@
 	--addr2計價區域
 	update a set a.area2 = b.siteno
 	from #tmpss a outer apply(select * from addr2 where a.addrno2 = custno)b
-	
-	update a set a.addrno=b.custno,area=b.siteno from #tmpss a
-	outer apply(select * from addr2 where left(a.addr,4)=LEFT(cust,4))b
+	--編號&計價區域
+	update a set a.addrno=c.custno,area=c.siteno from #tmpss a
+	outer apply(select * from #tmp where a.noa=noa)b
+	outer apply(select * from addr2 where left(a.addr,4)=LEFT(cust,4) and custno like b.custno+'%')c
 	--addr2單價
 	update a set a.price=c.value
 	from #tmpss a
@@ -718,7 +729,7 @@
 	--addr帶簡稱
 	update a set a.addr = case when len(b.addr)>0 then b.addr else a.addr end
 	from #tmpss a outer apply(select * from addr2 where custno=a.addrno)b
-	update a set a.addr2 = case when len(b.addr)>0 then b.addr else a.addr end
+	update a set a.addr2 = case when len(b.addr)>0 then b.addr else a.addr2 end
 	from #tmpss a outer apply(select * from addr2 where custno=a.addrno2)b
 
 	update #tmpss set conn=custno,tel=comp from #tmp
@@ -730,6 +741,13 @@
 			else cast(cast(SUBSTRING(@curdate,1,4) as float)-1911 as nvarchar) + SUBSTRING(@curdate,6,2) + SUBSTRING(@curdate,9,2) + '001' end
 			else a.po end
 			from #tmp a outer apply(select MAX(po) po from view_tranorde where datea = cast(cast(SUBSTRING(@curdate,1,4) as float)-1911 as nvarchar)+SUBSTRING(@curdate,5,7) and po like cast(cast(SUBSTRING(@curdate,1,4) as float)-1911 as nvarchar) + SUBSTRING(@curdate,6,2) + SUBSTRING(@curdate,9,2)+'%')b
+	--update客戶編號,品號要同區域
+	update a set a.addrno2=b.custno
+	from #tmpss a
+	outer apply(select * from addr2 where left(custno,3) = left(a.addrno,3) and a.addr2=addr)b
+	update a set a.productno=b.noa
+	from #tmpss a
+	outer apply(select * from ucc where left(noa,3) = left(a.addrno,3) and charindex(a.product,product)>0)b
 	
 	declare @ordenoa nvarchar(100) = (select po from #tmp)
 	if not exists(select conn from view_tranvcces where conn = @ordenoa) --先判斷運輸單號有沒有派車
@@ -771,7 +789,6 @@
 		set @msg += "運輸單號:" + @ordenoa + " 已派車"
 	end
 
-		
 	IF OBJECT_ID('tempdb..#tmp')is not null
 	BEGIN
 	drop table #tmp
