@@ -406,11 +406,9 @@
 		if(@a='收貨人')
 		begin
 		if(@b!='')
-			update a set a.addr2 = ISNULL(b.addr,@b),a.addrno2 = b.custno from #tmps a
-			outer apply (select * from addr2 where LEFT(@b,4) = LEFT(cust,4))b
+			update #tmps set addr2 = @b
 		if(@c!='')
-			update a set a.addr2 = ISNULL(b.addr,@c),a.addrno2 = b.custno from #tmps a
-			outer apply (select * from addr2 where LEFT(@c,4) = LEFT(cust,4))b
+			update #tmps set addr2 = @c
 			set @endaddr = @noa
 		end
 		if(@a='到貨日')
@@ -667,11 +665,6 @@
 		--注意事項END
 		----------------------------------------------------------------------------------------
 		update #tmps set product = @strproduct where left(page2,3) = left(@x,3)
-		--單位淨重=品名下面的數字+KG
-		--update #tmps set [weight] = case when charindex('KG',@strweight)>0 then @strweight else '0KG' END where left(page,3) = left(@y,3)
-		update #tmps set [address] = replace(@strtranaddr+@strtranaddr2,' ','') where cast(left(page,1) as float)+1 = left(@y,1)
-		--update a set addrno=b.custno,addr=b.cust from #tmps a outer apply(select * from addr2) b
-		--where cast(left(page,1) as float)+1 = left(@y,1) and charindex(SUBSTRING(@strtranaddr2,1,charindex('號',@strtranaddr2)),b.address) >0
 		update #tmps set unit = substring(@strunit,1,1) where substring(@strunit,2,3) = left(page2,3)
 		update #tmps set memo2 = @strmemo where cast(left(page,1) as float)+1 = left(@y,1)
 		end try
@@ -687,8 +680,6 @@
 	update a set custno=b.noa,comp=b.comp from #tmp a outer apply(select * from cust)b where a.nick=b.nick
 	update a set a.cno=b.noa from #tmp a outer apply(select * from acomp)b where CHARINDEX(b.acomp,a.acomp)>0
 	update a set a.noa=b.noa,a.date1=b.date1,a.caseno=b.po,a.addrno3=b.cno,a.addr3=b.acomp from #tmps a outer apply (select * from #tmp)b
-	update #tmps set address2 = @straddr
-	update #tmps set address2 = REPLACE(address2,' ','')
 	
 	delete from #tmps where mount is null --無數量，抓到的不是品名
 	
@@ -706,27 +697,18 @@
 	update a set a.tweight2 = b.a from #tmp a outer apply (select sum(cast(replace(Theight,',','') as float)) a from #tmpss)b
 	update a set a.price2 = b.a from #tmp a outer apply (select sum(cast(replace(Tvolume,',','') as float)) a from #tmpss)b
 	update a set a.mount = b.a from #tmp a outer apply (select sum(cast(replace(mount,',','') as float)) a from #tmpss)b
-	--地址開頭是郵遞區號的話,從第四個字開始
-	update #tmpss set address2 = case when isnumeric(substring(address2,1,1))=1 then substring(address2,4,len(address2)) else address2 end
 	--把訂單上的淨重&毛重中的 , 去掉才能計算
 	update #tmpss set Theight = ROUND(cast(replace(Theight,',','') as float),0),Tvolume = ROUND(cast(replace(Tvolume,',','') as float),0)
-	--addr2計價區域
-	update a set a.area2 = b.siteno
-	from #tmpss a outer apply(select * from addr2 where a.addrno2 = custno)b
+	--推算單位淨重&毛重
+	update #tmpss set volume = case when mount>0 then cast(Theight as float)/mount else 0 end,
+					[weight] = case when mount>0 then cast(Tvolume as float)/mount else 0 end
 	--編號&計價區域
 	update a set a.addrno=c.custno,area=c.siteno from #tmpss a
 	outer apply(select * from #tmp where a.noa=noa)b
 	outer apply(select * from addr2 where left(a.addr,4)=LEFT(cust,4) and custno like b.custno+'%')c
-	--addr2單價
-	update a set a.price=c.value
-	from #tmpss a
-	outer apply(select * from #tmp)b
-	outer apply(select * from addr2s where addrno=b.custno and a.area=address and a.area2=lng and cast(b.tweight2 as float)/1000 between rate and rate2 and a.typea = carno)c
-	update #tmpss set total = case when Theight>0 then round(price*(cast(Theight as float)/1000),0) else 0 end,money=case when Theight>0 then round(price*(cast(Theight as float)/1000),0) else 0 end
-	--推算單位淨重&毛重
-	update #tmpss set volume = case when mount>0 then cast(Theight as float)/mount else 0 end,
-					[weight] = case when mount>0 then cast(Tvolume as float)/mount else 0 end
-	--addr帶簡稱
+	update a set a.addrno2 = b.custno from #tmpss a
+	outer apply(select * from addr2 where left(custno,3) = left(a.addrno,3) and left(addr2,4)=left(cust,4))b
+	--帶addr2簡稱
 	update a set a.addr = case when len(b.addr)>0 then b.addr else a.addr end
 	from #tmpss a outer apply(select * from addr2 where custno=a.addrno)b
 	update a set a.addr2 = case when len(b.addr)>0 then b.addr else a.addr2 end
@@ -748,7 +730,21 @@
 	update a set a.productno=b.noa
 	from #tmpss a
 	outer apply(select * from ucc where left(noa,3) = left(a.addrno,3) and charindex(a.product,product)>0)b
-	
+	--用編號update addr2的地址
+	update a set a.address = b.address
+	from #tmpss a outer apply(select * from addr2 where a.addrno=custno)b
+	update a set a.address2 = b.address
+	from #tmpss a outer apply(select * from addr2 where a.addrno2=custno)b
+	--addr2計價區域
+	update a set a.area2 = b.siteno
+	from #tmpss a outer apply(select * from addr2 where a.addrno2 = custno)b
+	--addr2單價&算運費
+	update a set a.price=c.value
+	from #tmpss a
+	outer apply(select * from #tmp)b
+	outer apply(select * from addr2s where addrno=b.custno and a.area=address and a.area2=lng and cast(b.tweight2 as float)/1000 between rate and rate2 and a.typea = carno)c
+	update #tmpss set total = case when Theight>0 then round(price*(cast(Theight as float)/1000),0) else 0 end,money=case when Theight>0 then round(price*(cast(Theight as float)/1000),0) else 0 end
+
 	declare @ordenoa nvarchar(100) = (select po from #tmp)
 	if not exists(select conn from view_tranvcces where conn = @ordenoa) --先判斷運輸單號有沒有派車
 	begin	--如有相同運輸單,Update所有資料,如沒有,Insert所有資料
