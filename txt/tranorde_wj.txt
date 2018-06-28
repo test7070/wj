@@ -7,5 +7,18 @@ declare @r_accy nvarchar(max)= (select accy from view_tranorde where noa=@t_noa)
 
 exec("update tranorde"+@r_accy+" set worker2='"+@t_name+"',enda='1' where noa='"+@t_noa+"'")
 
-select noa,enda from view_tranorde where noa=@t_noa
+declare @tmp table(
+	msg nvarchar(max)
+)
+if ((select count(*) from view_tranordes where noa=@t_noa and (isnull(theight,0)=0 or isnull(tvolume,0)=0) and (isnull(price,0)=0 or isnull(total,0)=0))>0)
+begin
+	insert @tmp 
+	select '單價或運費為0'
+end
+else
+begin
+	select noa,enda from view_tranorde where noa=@t_noa
+end
+
+select msg from @tmp
 ;

@@ -116,8 +116,6 @@
                         
                         q_func('qtxt.query.tranorde_apv', 'tranorde_wj.txt,tranorde_apv,' 
                             + encodeURI(t_noa)+';'+encodeURI(r_userno)+';'+encodeURI(r_name)+';'+encodeURI(r_accy),r_accy,1);
-                            
-                        var as = _q_appendData("tmp0", "", true, true);
                     }
                     $('#chkEnda').prop('checked', true);
                     
@@ -130,6 +128,19 @@
                         $('#chkBrow_'+i).focus();
                      }
                 });
+            }
+            
+            function q_funcPost(t_func, result) {
+                switch(t_func) {
+                    case 'qtxt.query.tranorde_apv':
+                        var as = _q_appendData("tmp0", "", true, true);
+                        if (as[0].msg.length!=0) {
+                            alert(as[0].msg);
+                        }
+                        break;
+                    default:
+                        break;
+                }
             }
             
             function q_boxClose(s2) {
