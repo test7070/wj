@@ -3,6 +3,7 @@ SET QUOTED_IDENTIFIER OFF
 	declare @cmd nvarchar(max)
 	declare @curdate nvarchar(max) = replace(substring(convert(nvarchar,getDate(),120),1,10),'-','/')
 	declare @accy nvarchar(5)= cast(cast(left(@curdate,4)as int)-1911 as nvarchar)
+	declare @workerno nvarchar(max) = [1]
 	declare @worker nvarchar(max) = [2]
 	declare @msg nvarchar(max) = ''
 IF OBJECT_ID('tempdb..#tmp')is not null
@@ -153,9 +154,9 @@ outer apply(select MAX(po) po from view_tranorde where datea = cast(cast(SUBSTRI
 update a set a.po = cast(cast(SUBSTRING(@curdate,1,4) as float)-1911 as nvarchar)+SUBSTRING(@curdate,6,2)+SUBSTRING(@curdate,9,2)+RIGHT('000'+cast(cast(RIGHT(b.npo,3) as float)+CAST(b.id as float) as nvarchar),3) from #tmpp a outer apply(select * from @po)b where len(a.po)=0
 update a set a.po = cast(cast(SUBSTRING(@curdate,1,4) as float)-1911 as nvarchar)+SUBSTRING(@curdate,6,2)+SUBSTRING(@curdate,9,2)+RIGHT('000'+cast(cast(RIGHT(b.npo,3) as float)+CAST(b.id as float) as nvarchar),3) from #tmp a outer apply(select * from @po)b where len(a.po)=0
 --update addr
-update a set a.addrno2=b.custno,a.address2 = b.address,a.area2=b.siteno
-from #tmp a outer apply(select * from addr2) b
-where left(a.addr2,4) = left(b.cust,4) and b.custno like '029%'
+update a set a.addrno2=b.custno,a.address2=b.address,a.area2=b.siteno,a.addr2=b.addr
+from #tmp a outer apply (select * from addr2)b
+where LEFT(a.addr2,4) =  LEFT(b.cust,4) and b.custno like '029%'
 
 update a set a.addr=b.cust,a.address=b.address,area=b.siteno from #tmp a 
 outer apply (select * from addr2 where custno=a.addrno)b

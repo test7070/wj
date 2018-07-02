@@ -3,6 +3,7 @@
 	declare @cmd nvarchar(max)
 	declare @curdate nvarchar(max) = replace(substring(convert(nvarchar,getDate(),120),1,10),'-','/')
 	declare @accy nvarchar(5)=cast(cast(left(@curdate,4)as int)-1911 as nvarchar)
+	declare @workerno nvarchar(max)  = [1]
 	declare @worker nvarchar(max)  = [2]
 	declare @msg nvarchar(max) = ''
 	---------------------------------------------------------------------------------------------------------
@@ -688,9 +689,7 @@
 	from #tmps
 	
 	update #tmpss set noq = RIGHT('000' + noq,3)
-	--帶UCC,科思創不帶單位淨重&單位毛重
-	update a set unit=b.unit,memo2=b.memo,productno2=b.namea
-	from #tmpss a outer apply (select * from ucc where CHARINDEX(a.product,product)>0 and a.addrno like left(noa,3)+'%')b
+
 	--update表頭
 	update a set a.addrno2 =b.addrno2,a.addr2=b.addr2,a.address2=b.address2 from #tmpss a outer apply (select TOP 1 * from #tmpss) b
 	update a set a.memo = b.memo from #tmpss a outer apply(select * from addr2 where custno = a.addrno2)b
@@ -702,20 +701,6 @@
 	--推算單位淨重&毛重
 	update #tmpss set volume = case when mount>0 then cast(Theight as float)/mount else 0 end,
 					[weight] = case when mount>0 then cast(Tvolume as float)/mount else 0 end
-	--編號&計價區域
-	update a set a.addrno=c.custno,area=c.siteno from #tmpss a
-	outer apply(select * from #tmp where a.noa=noa)b
-	outer apply(select * from addr2 where left(a.addr,4)=LEFT(cust,4) and custno like b.custno+'%')c
-	update a set a.addrno2 = b.custno from #tmpss a
-	outer apply(select * from addr2 where left(custno,3) = left(a.addrno,3) and left(addr2,4)=left(cust,4))b
-	--帶addr2簡稱
-	update a set a.addr = case when len(b.addr)>0 then b.addr else a.addr end
-	from #tmpss a outer apply(select * from addr2 where custno=a.addrno)b
-	update a set a.addr2 = case when len(b.addr)>0 then b.addr else a.addr2 end
-	from #tmpss a outer apply(select * from addr2 where custno=a.addrno2)b
-
-	update #tmpss set conn=custno,tel=comp from #tmp
-	update #tmpss set chk1 = case when len(productno2)>0 then '1' else '0' end
 	--沒有運輸單號時,update日期+流水號
 	update a set a.po = case when len(a.po)=0 then 
 			case when b.po is not null then 
@@ -723,28 +708,36 @@
 			else cast(cast(SUBSTRING(@curdate,1,4) as float)-1911 as nvarchar) + SUBSTRING(@curdate,6,2) + SUBSTRING(@curdate,9,2) + '001' end
 			else a.po end
 			from #tmp a outer apply(select MAX(po) po from view_tranorde where datea = cast(cast(SUBSTRING(@curdate,1,4) as float)-1911 as nvarchar)+SUBSTRING(@curdate,5,7) and po like cast(cast(SUBSTRING(@curdate,1,4) as float)-1911 as nvarchar) + SUBSTRING(@curdate,6,2) + SUBSTRING(@curdate,9,2)+'%')b
-	--update客戶編號,品號要同區域
-	update a set a.addrno2=b.custno
-	from #tmpss a
-	outer apply(select * from addr2 where left(custno,3) = left(a.addrno,3) and a.addr2=addr)b
+	--編號(要和表頭同區域)
+	update a set a.addrno=c.custno from #tmpss a
+	outer apply(select * from #tmp where a.noa=noa)b
+	outer apply(select * from addr2 where left(a.addr,4)=LEFT(cust,4) and custno like b.custno+'%')c
+	update a set a.addrno2 = b.custno from #tmpss a
+	outer apply(select * from addr2 where left(custno,3) = left(a.addrno,3) and left(addr2,4)=left(cust,4))b
+	--最後起點迄點是東興倉+線西場時,東興倉帶003-124
+	update #tmpss set addrno2='003-124' where addrno='003-118' and addrno2='003-116'
+	update #tmpss set addrno ='003-124' where addrno='003-116' and addrno2='003-118'
+	--帶addr2簡稱,地址,計價區間
+	update a set a.addr = case when len(b.addr)>0 then b.addr else a.addr end,a.address = b.address,a.area=b.siteno
+	from #tmpss a outer apply(select * from addr2 where custno=a.addrno)b
+	update a set a.addr2 = case when len(b.addr)>0 then b.addr else a.addr2 end,a.address2 = b.address,a.area2=b.siteno
+	from #tmpss a outer apply(select * from addr2 where custno=a.addrno2)b
+	update #tmpss set conn=custno,tel=comp from #tmp
+	--update 品號要同區域
 	update a set a.productno=b.noa
 	from #tmpss a
 	outer apply(select * from ucc where left(noa,3) = left(a.addrno,3) and charindex(a.product,product)>0)b
-	--用編號update addr2的地址
-	update a set a.address = b.address
-	from #tmpss a outer apply(select * from addr2 where a.addrno=custno)b
-	update a set a.address2 = b.address
-	from #tmpss a outer apply(select * from addr2 where a.addrno2=custno)b
-	--addr2計價區域
-	update a set a.area2 = b.siteno
-	from #tmpss a outer apply(select * from addr2 where a.addrno2 = custno)b
+	--有編號的品項,帶入UCC資料
+	update a set unit=b.unit,memo2=b.memo,productno2=b.namea
+	from #tmpss a outer apply (select * from ucc where noa=a.productno)b
+	update #tmpss set chk1 = case when len(productno2)>0 then '1' else '0' end
 	--addr2單價&算運費
 	update a set a.price=c.value
 	from #tmpss a
 	outer apply(select * from #tmp)b
 	outer apply(select * from addr2s where addrno=b.custno and a.area=address and a.area2=lng and cast(b.tweight2 as float)/1000 between rate and rate2 and a.typea = carno)c
 	update #tmpss set total = case when Theight>0 then round(price*(cast(Theight as float)/1000),0) else 0 end,money=case when Theight>0 then round(price*(cast(Theight as float)/1000),0) else 0 end
-
+	
 	declare @ordenoa nvarchar(100) = (select po from #tmp)
 	if not exists(select conn from view_tranvcces where conn = @ordenoa) --先判斷運輸單號有沒有派車
 	begin	--如有相同運輸單,Update所有資料,如沒有,Insert所有資料
@@ -784,7 +777,7 @@
 	begin
 		set @msg += "運輸單號:" + @ordenoa + " 已派車"
 	end
-
+	
 	IF OBJECT_ID('tempdb..#tmp')is not null
 	BEGIN
 	drop table #tmp
