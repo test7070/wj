@@ -10,7 +10,7 @@ exec("update tranorde"+@r_accy+" set worker2='"+@t_name+"',enda='1' where noa='"
 declare @tmp table(
 	msg nvarchar(max)
 )
-if ((select count(*) from view_tranordes where noa=@t_noa and (isnull(theight,0)=0 or isnull(tvolume,0)=0) and (isnull(price,0)=0 or isnull(total,0)=0))>0)
+if ((select count(*) from view_tranordes where noa=@t_noa and (isnull(theight,0)!=0 or isnull(tvolume,0)!=0) and (isnull(price,0)=0 or isnull(total,0)=0))>0)
 begin
 	insert @tmp 
 	select '單價或運費為0'

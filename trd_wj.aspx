@@ -20,10 +20,10 @@
             }
             q_tables = 's';
             var q_name = "trd";
-            var q_readonly = ['txtTax', 'txtNoa', 'txtMoney', 'txtTotal','txtWorker2','txtWorker', 'txtMount', 'txtStraddr', 'txtEndaddr', 'txtPlusmoney', 'txtMinusmoney', 'txtVccano', 'txtCustchgno','txtAccno','txtAccno2','txtYear2','txtYear1'];
-            var q_readonlys = [ 'txtTranno','txtTrannoq','txtTrandate','txtStraddr','txtProduct','txtCarno','txtCustorde','txtCaseno','txtMount','txtPrice','txtTotal','txtTranmoney','txtFill','txtOthercost','txtEndaddr'];
-            var bbmNum = [['txtPlus', 10, 0,1],['txtDiscount', 10, 0,1],['txtMoney', 10, 0,1], ['txtTax', 10, 0,1], ['txtTotal', 10, 0,1], ['txtMount', 10, 3,1], ['txtPlusmoney', 10, 0,1], ['txtMinusmoney', 10, 0,1]];
-            var bbsNum = [['txtTranmoney', 10, 0,1], ['txtOverweightcost', 10, 0,1], ['txtOthercost', 10, 0,1], ['txtMount', 10, 3,1], ['txtPrice', 10, 3,1], ['txtTotal', 10, 0,1], ['txtOthercost', 10, 0,1]];
+            var q_readonly = ['txtTax', 'txtNoa', 'txtMoney', 'txtTotal','txtWorker2','txtWorker', 'txtMount', 'txtWeight', 'txtStraddr', 'txtEndaddr', 'txtPlusmoney', 'txtMinusmoney', 'txtVccano', 'txtCustchgno','txtAccno','txtAccno2','txtYear2','txtYear1'];
+            var q_readonlys = [ 'txtTranno','txtTrannoq','txtTrandate','txtStraddr','txtProduct','txtCarno','txtCustorde','txtCaseno','txtMount','txtWeight','txtPrice','txtTotal','txtTranmoney','txtFill','txtOthercost','txtEndaddr'];
+            var bbmNum = [['txtPlus', 10, 0,1],['txtDiscount', 10, 0,1],['txtMoney', 10, 0,1], ['txtTax', 10, 0,1], ['txtTotal', 10, 0,1], ['txtMount', 10, 3,1], ['txtWeight', 10, 3,1], ['txtPlusmoney', 10, 0,1], ['txtMinusmoney', 10, 0,1]];
+            var bbsNum = [['txtTranmoney', 10, 0,1], ['txtOverweightcost', 10, 0,1], ['txtOthercost', 10, 0,1], ['txtMount', 10, 3,1], ['txtWeight', 10, 3,1], ['txtPrice', 10, 3,1], ['txtTotal', 10, 0,1], ['txtOthercost', 10, 0,1]];
             var bbmMask = [];
             var bbsMask = [];
 
@@ -479,13 +479,15 @@
                 if (!(q_cur == 1 || q_cur == 2))
                     return;
                	//小數 可能會有問題需注意
-                var t_money = 0,t_mount = 0;
+                var t_money = 0,t_mount = 0,t_weight = 0;
                 for ( i = 0; i < q_bbsCount; i++) {
                     t_money = t_money.add(q_float('txtTranmoney_' + i));
                     
                     t_mount = t_mount.add(q_float('txtMount_' + i));
+                    t_weight = t_weight.add(q_float('txtWeight_' + i));
                 }
                 t_mount = t_mount.round(3);
+                t_weight = t_weight.round(3);
 				var t_plusmoney = q_float('txtPlusmoney');
 				var t_minusmoney = q_float('txtMinusmoney');
 				var t_tax = q_float('txtTax'); 
@@ -496,6 +498,7 @@
                 $('#txtMoney').val(FormatNumber(t_money));
                 $('#txtTotal').val(FormatNumber(t_total));
                 $('#txtMount').val(FormatNumber(t_mount));
+                $('#txtWeight').val(FormatNumber(t_weight));
             }
             function refresh(recno) {
                 _refresh(recno);
@@ -654,7 +657,7 @@
             }
             .dview {
                 float: left;
-                width: 950px;
+                width: 1100px;
                 border-width: 0px;
             }
             .tview {
@@ -782,6 +785,7 @@
 						<td align="center" style="width:70px; color:black;"><a id="vewTax"> </a></td>
 						<td align="center" style="width:70px; color:black;"><a id="vewTotal"> </a> </td>
 						<td align="center" style="width:70px; color:black;"><a id="vewMount"> </a> </td>
+						<td align="center" style="width:70px; color:black;"><a id="vewWeight">重量</a> </td>
 						<td align="center" style="width:100px; color:black;"><a id="vewVccano"> </a></td>
 						<td align="center" style="width:70px; color:black;"><a id="vewUnpay"> </a></td>
 					</tr>
@@ -796,6 +800,7 @@
 						<td id="tax,0,1" style="text-align: right;">~tax,0,1</td>
 						<td id="total,0,1" style="text-align: right;">~total,0,1</td>
 						<td id="mount" style="text-align: right;">~mount</td>
+						<td id="weight" style="text-align: right;">~weight</td>
 						<td id="vccano,10" style="text-align: left;" >~vccano,10</td>
 						<td id="unpay,0,1" style="text-align: right;">~unpay,0,1</td>
 					</tr>
@@ -905,9 +910,13 @@
 						<td><input id="txtMinusmoney" type="text"  class="txt c1 num"/></td>
 						<td><span> </span><a id="lblTotal" class="lbl"> </a></td>
 						<td><input id="txtTotal" type="text"  class="txt c1 num"/></td>
-						<td><span> </span><a id="lblMount" class="lbl"> </a></td>
-						<td><input id="txtMount" type="text"  class="txt c1 num"/></td>
 					</tr>
+					<tr>
+                        <td><span> </span><a id="lblMount" class="lbl"> </a></td>
+                        <td><input id="txtMount" type="text"  class="txt c1 num"/></td>
+                        <td><span> </span><a id="lblWeight" class="lbl">總重量</a></td>
+                        <td><input id="txtWeight" type="text"  class="txt c1 num"/></td>
+                    </tr>
 					<tr>
 						<td><span> </span><a id="lblMemo" class="lbl"> </a></td>
 						<td colspan="3"><input id="txtMemo" type="text"  class="txt c1"/></td>
@@ -939,6 +948,7 @@
 					<td align="center" style="width:100px;"><a id='lblEndaddr_wj'>卸貨地點</a></td>
 					<td align="center" style="width:120px;"><a id='lblProduct_s'> </a></td>
 					<td align="center" style="width:80px;"><a id='lblMount_s'> </a></td>
+					<td align="center" style="width:80px;"><a id='lblWeight_s'>重量</a></td>
 					<td align="center" style="width:80px;"><a id='lblPrice_s'> </a></td>
 					<td align="center" style="width:80px;"><a id='lblTotal_s'> </a></td>
 					<td align="center" style="width:80px;"><a id='lblCarno_s'> </a></td>
@@ -968,9 +978,11 @@
 					   <input type="text" id="txtProduct.*" style="width:95%;" />
 					</td>
 					<td >
-					   <input type="text" id="txtWeight.*" style="display: none;"/>
 					   <input type="text" id="txtMount.*" style="width:95%;text-align: right;" />
 					</td>
+					<td >
+                       <input type="text" id="txtWeight.*" style="width:95%;text-align: right;" />
+                    </td>
 					<td >
 					   <input type="text" id="txtPrice.*" style="width:95%;text-align: right;" />
 					</td>
