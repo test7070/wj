@@ -356,6 +356,15 @@
 
             function btnOk() {
             	sum();
+            	
+            	for (var i = 0; i < q_bbsCount; i++) {
+            	   if($('#txtBdate_'+i).val()!=$('#txtEdate_'+i).val() && $('#chkChk1_'+i).prop('checked') && $('#chkChk2_'+i).prop('checked')){
+            	       alert("資料有裝卸日期不同，卻勾選裝貨與卸貨，麻煩請重新查核!");
+            	       Unlock(1);
+            	       return;
+            	   }   
+            	}
+            	
                 if(q_cur ==1){
                     $('#txtWorker').val(r_name);
                 }else if(q_cur ==2){
